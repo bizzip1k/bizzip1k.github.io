@@ -200,11 +200,39 @@
     .operator-visual{
       box-shadow:0 14px 34px rgba(16,36,56,.06);
     }
-    .career{background:white;border:1px solid var(--line);border-radius:18px;padding:34px}
-    .career h2{font-size:32px;margin:0 0 18px;letter-spacing:-1px}
-    .career p{color:#545b63}
-    .career-list{display:grid;gap:12px;margin-top:22px}
-    .career-item{padding-top:12px;border-top:1px solid var(--line);font-size:14px;color:#454a50}
+    .career{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:28px 30px;
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+    .career h2{
+      font-size:28px;
+      margin:0 0 14px;
+      letter-spacing:-1px;
+      line-height:1.2;
+    }
+    .career p{
+      color:#545b63;
+      font-size:13px;
+      line-height:1.7;
+      margin:0;
+    }
+    .career-list{
+      display:grid;
+      gap:0;
+      margin-top:18px;
+    }
+    .career-item{
+      padding:13px 0;
+      border-top:1px solid var(--line);
+      font-size:13px;
+      color:#454a50;
+      line-height:1.45;
+    }
     .channels{
       display:grid;grid-template-columns:repeat(7,1fr);gap:10px;
     }
@@ -234,6 +262,7 @@
       .contents{grid-template-columns:1fr}
       .channels{grid-template-columns:repeat(2,1fr)}
       .cta{flex-direction:column;align-items:flex-start}
+      .career{padding:24px}
     }
     @media(max-width:560px){
       .wrap{width:min(var(--max),calc(100% - 28px))}
@@ -358,7 +387,7 @@
         <div class="about">
           <div class="profile operator-visual"><img src="bizzip-operator.png" alt="BIZZIP 운영자 소개 브랜드 이미지"></div>
           <div class="career">
-            <div class="tag" style="color:var(--teal-dark);margin-bottom:8px;">ABOUT THE OPERATOR</div>
+            <div class="tag" style="color:var(--teal-dark);margin-bottom:6px;font-size:12px;letter-spacing:.03em;">ABOUT THE OPERATOR</div>
             <h2>BIZZIP을 만드는 사람</h2>
             <p>
               소비재와 서비스, 유통, 건강기능식품 분야에서 오랫동안 상품기획, 브랜드, 마케팅,
