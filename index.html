@@ -173,22 +173,28 @@
     .content-body h3{font-size:20px;line-height:1.45;margin:0 0 12px}
     .content-body p{font-size:14px;color:var(--muted);margin:0}
     .about{
-      display:grid;grid-template-columns:.8fr 1.2fr;gap:26px;align-items:stretch;
+      display:grid;grid-template-columns:1.08fr .92fr;gap:26px;align-items:stretch;
     }
     .profile{
-      background:
-        linear-gradient(rgba(245,251,252,.78),rgba(245,251,252,.78)),
-        url('bizzip-cover.png') center/cover no-repeat;
+      background:white;
       border:1px solid var(--line);
-      border-radius:18px;min-height:330px;
-      display:flex;align-items:center;justify-content:center;text-align:center;
-      color:#57717f;padding:30px;
+      border-radius:18px;
+      min-height:330px;
+      overflow:hidden;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+      padding:0;
     }
     .profile img{
-      width:min(240px,70%);
-      aspect-ratio:1/1;
-      object-fit:contain;
-      filter:drop-shadow(0 10px 20px rgba(16,36,56,.08));
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .operator-visual{
+      box-shadow:0 14px 34px rgba(16,36,56,.06);
     }
     .career{background:white;border:1px solid var(--line);border-radius:18px;padding:34px}
     .career h2{font-size:32px;margin:0 0 18px;letter-spacing:-1px}
@@ -346,8 +352,9 @@
     <section id="operator">
       <div class="wrap">
         <div class="about">
-          <div class="profile"><img src="bizzip-logo.png" alt="BIZZIP 브랜드 로고"></div>
+          <div class="profile operator-visual"><img src="bizzip-operator.png" alt="BIZZIP 운영자 소개 브랜드 이미지"></div>
           <div class="career">
+            <div class="tag" style="color:var(--teal-dark);margin-bottom:8px;">ABOUT THE OPERATOR</div>
             <h2>BIZZIP을 만드는 사람</h2>
             <p>
               소비재와 서비스, 유통, 건강기능식품 분야에서 오랫동안 상품기획, 브랜드, 마케팅,
