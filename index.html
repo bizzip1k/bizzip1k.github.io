@@ -1,12 +1,318 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIZZIP</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BIZZIP은 창업과 사업 운영 과정에서 생기는 작지만 해결하기 어려운 실무 문제를 정리합니다." />
+  <title>BIZZIP | 사업의 작은 문제를 해결합니다</title>
+  <style>
+    :root{
+      --bg:#f7f8fa;
+      --card:#ffffff;
+      --text:#15171a;
+      --muted:#656b73;
+      --line:#e7e9ed;
+      --accent:#111827;
+      --soft:#eef1f4;
+      --max:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.65;
+      word-break:keep-all;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(var(--max),calc(100% - 40px));margin:0 auto}
+    header{
+      position:sticky;top:0;z-index:20;
+      background:rgba(247,248,250,.92);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+    }
+    .logo{font-size:25px;font-weight:900;letter-spacing:-1px}
+    .menu{display:flex;gap:28px;font-size:14px;color:#3f444a}
+    .menu a:hover{color:#000}
+    .hero{padding:100px 0 74px}
+    .eyebrow{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px}
+    h1{
+      font-size:clamp(42px,7vw,78px);
+      line-height:1.08;letter-spacing:-3px;margin:0 0 26px;
+      max-width:900px;
+    }
+    .hero p{
+      max-width:720px;font-size:20px;color:#4f555c;margin:0 0 34px;
+    }
+    .buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:48px;padding:0 20px;border-radius:10px;border:1px solid var(--accent);
+      font-weight:700;font-size:15px;
+    }
+    .btn.primary{background:var(--accent);color:white}
+    .btn.secondary{background:white;border-color:var(--line)}
+    section{padding:72px 0}
+    .section-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:28px}
+    .section-head h2{font-size:34px;letter-spacing:-1.4px;margin:0}
+    .section-head p{margin:0;color:var(--muted);max-width:560px}
+    .intro{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:26px;
+    }
+    .panel{
+      background:var(--card);border:1px solid var(--line);border-radius:18px;padding:34px;
+    }
+    .panel h3{margin:0 0 14px;font-size:24px;letter-spacing:-.8px}
+    .panel p{margin:0;color:#555c64}
+    .quote{
+      background:var(--accent);color:white;display:flex;flex-direction:column;justify-content:space-between;
+    }
+    .quote strong{font-size:26px;line-height:1.4;letter-spacing:-.8px}
+    .quote span{font-size:13px;color:#cdd2d8;margin-top:30px}
+    .grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    }
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;
+      min-height:180px;transition:.2s ease;
+    }
+    .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.06)}
+    .num{font-size:12px;color:#9aa0a7;margin-bottom:22px}
+    .card h3{font-size:20px;margin:0 0 10px;letter-spacing:-.5px}
+    .card p{font-size:14px;color:var(--muted);margin:0}
+    .contents{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .content-card{
+      background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    }
+    .thumb{
+      height:190px;background:linear-gradient(135deg,#e7e9ed,#f7f8fa);
+      display:flex;align-items:flex-end;padding:24px;font-size:13px;color:#6f747a;
+    }
+    .content-body{padding:24px}
+    .tag{font-size:12px;font-weight:700;color:#737980;margin-bottom:10px}
+    .content-body h3{font-size:20px;line-height:1.45;margin:0 0 12px}
+    .content-body p{font-size:14px;color:var(--muted);margin:0}
+    .about{
+      display:grid;grid-template-columns:.8fr 1.2fr;gap:26px;align-items:stretch;
+    }
+    .profile{
+      background:#e9ecef;border-radius:18px;min-height:330px;
+      display:flex;align-items:center;justify-content:center;text-align:center;color:#7a8087;padding:30px;
+    }
+    .career{background:white;border:1px solid var(--line);border-radius:18px;padding:34px}
+    .career h2{font-size:32px;margin:0 0 18px;letter-spacing:-1px}
+    .career p{color:#545b63}
+    .career-list{display:grid;gap:12px;margin-top:22px}
+    .career-item{padding-top:12px;border-top:1px solid var(--line);font-size:14px;color:#454a50}
+    .channels{
+      display:grid;grid-template-columns:repeat(7,1fr);gap:10px;
+    }
+    .channel{
+      background:white;border:1px solid var(--line);border-radius:12px;padding:18px 12px;text-align:center;
+      font-size:13px;font-weight:700;
+    }
+    .cta{
+      background:var(--accent);color:white;border-radius:22px;padding:48px;
+      display:flex;justify-content:space-between;gap:28px;align-items:center;
+    }
+    .cta h2{font-size:34px;line-height:1.3;margin:0 0 10px;letter-spacing:-1px}
+    .cta p{margin:0;color:#cfd3d8}
+    .cta .btn{border-color:white;color:white;white-space:nowrap}
+    footer{padding:34px 0 50px;color:#757b82;font-size:13px}
+    .footer-inner{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:24px}
+    @media(max-width:900px){
+      .menu{display:none}
+      .hero{padding:74px 0 50px}
+      h1{letter-spacing:-2px}
+      .intro,.about{grid-template-columns:1fr}
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .contents{grid-template-columns:1fr}
+      .channels{grid-template-columns:repeat(2,1fr)}
+      .cta{flex-direction:column;align-items:flex-start}
+    }
+    @media(max-width:560px){
+      .wrap{width:min(var(--max),calc(100% - 28px))}
+      .grid{grid-template-columns:1fr}
+      .section-head{display:block}
+      .section-head p{margin-top:10px}
+      .hero p{font-size:18px}
+      .panel,.career{padding:26px}
+      .cta{padding:30px}
+    }
+  </style>
 </head>
 <body>
-  <h1>BIZZIP</h1>
-  <p>사업을 하면서 생기는 작은 문제를 해결합니다.</p>
+  <header>
+    <div class="wrap nav">
+      <a class="logo" href="#">BIZZIP</a>
+      <nav class="menu">
+        <a href="#about">BIZZIP 소개</a>
+        <a href="#topics">사업 주제</a>
+        <a href="#contents">콘텐츠</a>
+        <a href="#operator">운영자</a>
+        <a href="#channels">채널</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">BUSINESS KNOW-HOW ARCHIVE</div>
+        <h1>사업을 하다 보면,<br>작은 문제에서 막힙니다.</h1>
+        <p>
+          창업부터 상품, 마케팅, 판매, 회사 운영까지.
+          직접 해보지 않으면 알기 어려운 사업의 작은 문제들을 하나씩 정리합니다.
+        </p>
+        <div class="buttons">
+          <a class="btn primary" href="#topics">주제 둘러보기</a>
+          <a class="btn secondary" href="#contents">최근 콘텐츠</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>BIZZIP은 이런 곳입니다.</h2>
+          <p>거창한 이론보다 실제 사업을 운영하면서 바로 부딪히는 문제에 집중합니다.</p>
+        </div>
+        <div class="intro">
+          <div class="panel">
+            <h3>사업의 작은 문제를 실무의 언어로</h3>
+            <p>
+              시설을 계약하기 전 무엇을 확인해야 하는지, 첫 상품 가격을 어떻게 정할지,
+              네이버와 쿠팡에서 무엇을 먼저 고쳐야 할지처럼 사업 현장에서 바로 생기는 질문을 다룹니다.
+              정답처럼 말하기보다 판단 기준과 최소한의 실행 방법을 정리합니다.
+            </p>
+          </div>
+          <div class="panel quote">
+            <strong>내 생각이 정말 옳은 것인지,<br>사업을 실행하기 전에 한 번 더 확인할 수 있도록.</strong>
+            <span>BIZZIP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="topics">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>사업 주제</h2>
+          <p>창업과 운영 과정에서 자주 마주치는 문제를 주제별로 정리합니다.</p>
+        </div>
+        <div class="grid">
+          <article class="card"><div class="num">01</div><h3>창업 준비</h3><p>사업 아이디어, 시장 확인, 사업자등록, 상표, 도메인, 초기비용</p></article>
+          <article class="card"><div class="num">02</div><h3>상품과 서비스</h3><p>상품기획, 원가, 가격, 제조, 패키지, 출시 전 검증</p></article>
+          <article class="card"><div class="num">03</div><h3>브랜드</h3><p>브랜드명, 포지셔닝, 메시지, 패키지, 고객에게 보이는 방식</p></article>
+          <article class="card"><div class="num">04</div><h3>마케팅</h3><p>검색, 광고, 콘텐츠, 프로모션, 고객 유입, 전환</p></article>
+          <article class="card"><div class="num">05</div><h3>판매와 유통</h3><p>네이버, 쿠팡, 오프라인, 입점, 유통마진, 채널운영</p></article>
+          <article class="card"><div class="num">06</div><h3>회사 운영</h3><p>계약, 세금, 카드, 인력, 외주, 각종 실무 판단</p></article>
+          <article class="card"><div class="num">07</div><h3>물류와 재고</h3><p>3PL, 택배, 포장, 재고, 반품, 이관, 운영비용</p></article>
+          <article class="card"><div class="num">08</div><h3>데이터와 업무도구</h3><p>내부데이터, 시장자료, AI, 자동화, 업무 생산성</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contents">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>최근 콘텐츠</h2>
+          <p>현재는 예시 영역입니다. 앞으로 발행하는 글을 이곳에 연결합니다.</p>
+        </div>
+        <div class="contents">
+          <article class="content-card">
+            <div class="thumb">BIZZIP CONTENT</div>
+            <div class="content-body">
+              <div class="tag">창업 준비</div>
+              <h3>시설을 계약하기 전에 꼭 확인해야 할 것</h3>
+              <p>사업을 시작하기도 전에 큰 고정비를 만들지 않기 위해 무엇부터 확인해야 할까요?</p>
+            </div>
+          </article>
+          <article class="content-card">
+            <div class="thumb">BIZZIP CONTENT</div>
+            <div class="content-body">
+              <div class="tag">상품과 가격</div>
+              <h3>가격을 정할 때 원가만 보면 안 되는 이유</h3>
+              <p>판매수수료와 광고비, 물류비까지 실제 돈이 빠져나가는 구조로 가격을 다시 봅니다.</p>
+            </div>
+          </article>
+          <article class="content-card">
+            <div class="thumb">BIZZIP CONTENT</div>
+            <div class="content-body">
+              <div class="tag">마케팅</div>
+              <h3>광고를 늘리기 전에 먼저 봐야 하는 숫자</h3>
+              <p>광고비보다 먼저 유입, 전환, 객단가, 재구매 구조를 확인해야 하는 이유를 정리합니다.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="operator">
+      <div class="wrap">
+        <div class="about">
+          <div class="profile">운영자 사진 또는 BIZZIP 브랜드 이미지 영역</div>
+          <div class="career">
+            <h2>BIZZIP을 만드는 사람</h2>
+            <p>
+              소비재와 서비스, 유통, 건강기능식품 분야에서 오랫동안 상품기획, 브랜드, 마케팅,
+              영업과 사업운영을 경험했습니다. 대기업 브랜드 매니저부터 신규사업 총괄까지 현장에서
+              직접 겪은 경험을 바탕으로 사업자가 실제로 부딪히는 문제를 정리합니다.
+            </p>
+            <div class="career-list">
+              <div class="career-item">LG생활건강 브랜드 매니저</div>
+              <div class="career-item">한국인삼공사 마케팅 총괄</div>
+              <div class="career-item">헬스밸런스 CMO</div>
+              <div class="career-item">하루틴 사업 총괄</div>
+              <div class="career-item">저서 「시장조사 잘하는 습관」, 「온라인사업, 데이터로 정복하라」</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="channels">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>BIZZIP 채널</h2>
+          <p>같은 주제를 각 플랫폼에 맞는 방식으로 전달합니다.</p>
+        </div>
+        <div class="channels">
+          <div class="channel">브런치</div>
+          <div class="channel">네이버 블로그</div>
+          <div class="channel">네이버 카페</div>
+          <div class="channel">인스타그램</div>
+          <div class="channel">페이스북</div>
+          <div class="channel">Threads</div>
+          <div class="channel">LinkedIn</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="cta">
+          <div>
+            <h2>사업을 하면서<br>막히는 작은 문제가 있나요?</h2>
+            <p>BIZZIP은 그런 문제를 하나씩 모으고 정리합니다.</p>
+          </div>
+          <a class="btn" href="mailto:bizzip1k@naver.com">문의하기</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <div>© 2026 BIZZIP. All rights reserved.</div>
+      <div>bizzip.co.kr</div>
+    </div>
+  </footer>
 </body>
 </html>
