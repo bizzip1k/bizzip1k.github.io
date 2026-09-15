@@ -6,136 +6,136 @@
 <title>BIZZIP 관리자</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body{background:#f4f9fa}
-  .admin-wrap{max-width:1180px;margin:0 auto;padding:32px 24px 70px}
-  .admin-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
-  .admin-title h1{margin:0;font-size:32px;letter-spacing:-1.2px;color:#102b46}
-  .admin-title p{margin:8px 0 0;color:#6f7f89;font-size:14px}
-  .admin-badge{font-size:12px;font-weight:800;color:#147b70;background:#dff4ef;border:1px solid #c8eae4;padding:8px 12px;border-radius:999px}
-  .admin-grid{display:grid;grid-template-columns:340px 1fr;gap:22px}
-  .admin-card{background:#fff;border:1px solid #d9e6e9;border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(16,43,70,.04)}
-  .admin-card h2{margin:0 0 16px;font-size:19px;color:#102b46}
-  .token-row{display:flex;gap:8px}
-  .admin-input,.admin-select,.admin-textarea{
-    width:100%;box-sizing:border-box;border:1px solid #cfdde1;border-radius:10px;padding:11px 12px;
-    font:inherit;color:#102b46;background:#fff;outline:none
-  }
-  .admin-input:focus,.admin-select:focus,.admin-textarea:focus{border-color:#2a9b87;box-shadow:0 0 0 3px rgba(42,155,135,.10)}
-  .admin-textarea{min-height:250px;resize:vertical;line-height:1.7}
-  .admin-label{display:block;margin:14px 0 7px;font-size:12px;font-weight:800;color:#425966}
-  .admin-btn{
-    border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;font:inherit
-  }
-  .primary{background:#123e58;color:#fff}
-  .teal{background:#168a7c;color:#fff}
-  .light{background:#edf5f6;color:#264c5d}
-  .danger{background:#fff0ef;color:#a63f36;border:1px solid #f0ceca}
-  .admin-btn:disabled{opacity:.45;cursor:not-allowed}
-  .helper{font-size:12px;line-height:1.6;color:#7c8a92;margin-top:8px}
-  .status{margin-top:12px;padding:11px 12px;border-radius:10px;font-size:13px;display:none}
-  .status.show{display:block}
-  .status.ok{background:#e6f6f0;color:#166a5c}
-  .status.err{background:#fff0ef;color:#9c4037}
-  .status.info{background:#edf5fb;color:#355d78}
-  .post-list{display:flex;flex-direction:column;gap:9px;max-height:600px;overflow:auto;padding-right:4px}
-  .post-item{border:1px solid #e0eaed;border-radius:12px;padding:12px;background:#fbfdfd}
-  .post-item strong{display:block;font-size:14px;color:#102b46;margin-bottom:5px}
-  .post-meta{font-size:11px;color:#7e8d95;margin-bottom:10px}
-  .post-actions{display:flex;gap:7px}
-  .post-actions button{padding:7px 9px;font-size:12px}
-  .form-row{display:grid;grid-template-columns:1fr 180px;gap:12px}
-  .form-actions{display:flex;gap:10px;align-items:center;margin-top:18px}
-  .edit-note{font-size:12px;color:#168a7c;font-weight:800;margin-left:auto}
-  .format-guide{margin-top:12px;padding:13px 14px;background:#f5faf9;border-radius:10px;border:1px solid #deece9;font-size:12px;color:#51636b;line-height:1.7}
-  code{background:#eef3f4;padding:2px 5px;border-radius:5px}
-  @media(max-width:850px){.admin-grid{grid-template-columns:1fr}.admin-top{align-items:flex-start}.form-row{grid-template-columns:1fr}}
+body{background:#f4f9fa;color:#102b46}
+.admin-wrap{max-width:1240px;margin:0 auto;padding:28px 22px 70px}
+.admin-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}
+.admin-title h1{margin:0;font-size:31px;letter-spacing:-1.1px}
+.admin-title p{margin:7px 0 0;color:#6f7f89;font-size:13px}
+.admin-badge{font-size:12px;font-weight:800;color:#147b70;background:#dff4ef;border:1px solid #c8eae4;padding:8px 12px;border-radius:999px}
+.connect-card{background:#fff;border:1px solid #d9e6e9;border-radius:16px;padding:16px 18px;margin-bottom:16px;display:grid;grid-template-columns:150px minmax(260px,1fr) auto minmax(260px,1fr);gap:10px;align-items:end}
+.admin-label{display:block;margin:12px 0 6px;font-size:12px;font-weight:800;color:#425966}
+.connect-card .admin-label{margin-top:0}
+.admin-input,.admin-select,.admin-textarea{width:100%;box-sizing:border-box;border:1px solid #cfdde1;border-radius:10px;padding:10px 11px;font:inherit;color:#102b46;background:#fff;outline:none}
+.admin-input:focus,.admin-select:focus,.admin-textarea:focus{border-color:#2a9b87;box-shadow:0 0 0 3px rgba(42,155,135,.10)}
+.admin-textarea{min-height:150px;resize:vertical;line-height:1.65}
+.admin-btn{border:0;border-radius:9px;padding:10px 13px;font-weight:800;cursor:pointer;font:inherit}
+.primary{background:#123e58;color:#fff}.teal{background:#168a7c;color:#fff}.light{background:#edf5f6;color:#264c5d}.danger{background:#fff0ef;color:#a63f36;border:1px solid #f0ceca}
+.admin-btn:disabled{opacity:.45;cursor:not-allowed}
+.status{padding:10px 11px;border-radius:9px;font-size:12px;display:none}.status.show{display:block}.status.ok{background:#e6f6f0;color:#166a5c}.status.err{background:#fff0ef;color:#9c4037}.status.info{background:#edf5fb;color:#355d78}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.tab-btn{border:1px solid #cfdde1;background:#fff;color:#315261;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
+.tab-btn.active{background:#123e58;color:#fff;border-color:#123e58}
+.panel{display:none}.panel.active{display:block}
+.admin-grid{display:grid;grid-template-columns:330px 1fr;gap:18px}
+.admin-card{background:#fff;border:1px solid #d9e6e9;border-radius:16px;padding:18px;box-shadow:0 8px 30px rgba(16,43,70,.035)}
+.admin-card h2{margin:0 0 12px;font-size:18px}
+.helper{font-size:12px;line-height:1.55;color:#7c8a92;margin-top:7px}
+.item-list{display:flex;flex-direction:column;gap:8px;max-height:650px;overflow:auto;padding-right:3px}
+.item{border:1px solid #e0eaed;border-radius:11px;padding:11px;background:#fbfdfd}
+.item strong{display:block;font-size:13px;margin-bottom:4px}.item-meta{font-size:11px;color:#7e8d95;margin-bottom:8px}.item-actions{display:flex;gap:6px}.item-actions button{padding:6px 8px;font-size:11px}
+.form-row{display:grid;grid-template-columns:1fr 180px;gap:10px}
+.form-actions{display:flex;gap:9px;align-items:center;margin-top:15px}
+.edit-note{font-size:12px;color:#168a7c;font-weight:800;margin-left:auto}
+.guide{margin-top:10px;padding:11px 12px;background:#f5faf9;border-radius:9px;border:1px solid #deece9;font-size:12px;color:#51636b;line-height:1.6}
+.fixed-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fixed-fields .wide{grid-column:1/-1}
+.file-drop{border:1.5px dashed #b7cdd3;border-radius:12px;padding:18px;background:#fbfefe}
+.notice{padding:11px 12px;border-radius:10px;background:#fff8e9;border:1px solid #efdfba;color:#725e2f;font-size:12px;line-height:1.6}
+@media(max-width:900px){.connect-card{grid-template-columns:1fr}.admin-grid{grid-template-columns:1fr}.form-row,.fixed-fields{grid-template-columns:1fr}.fixed-fields .wide{grid-column:auto}}
 </style>
 </head>
 <body>
 <div class="admin-wrap">
   <div class="admin-top">
-    <div class="admin-title">
-      <h1>BIZZIP 관리자</h1>
-      <p>콘텐츠를 사업실무의 세부 메뉴에 연결해 추가·수정하고 GitHub에 바로 반영합니다.</p>
-    </div>
-    <div class="admin-badge">ADMIN v2</div>
+    <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
+    <div class="admin-badge">ADMIN v3</div>
   </div>
 
-  <div class="admin-grid">
-    <aside>
-      <div class="admin-card">
-        <h2>1. GitHub 연결</h2>
-        <label class="admin-label" for="token">Fine-grained token</label>
-        <div class="token-row">
-          <input id="token" class="admin-input" type="password" autocomplete="off" placeholder="github_pat_...">
-          <button id="connectBtn" class="admin-btn primary">연결</button>
-        </div>
-        <div class="helper">토큰은 브라우저에 저장하지 않습니다. 페이지를 닫으면 다시 입력해야 합니다.</div>
-        <div id="status" class="status"></div>
-      </div>
+  <div class="connect-card">
+    <div><label class="admin-label">GitHub 연결</label><strong style="font-size:14px">bizzip1k.github.io</strong></div>
+    <div><label class="admin-label" for="token">Fine-grained token</label><input id="token" class="admin-input" type="password" autocomplete="off" placeholder="github_pat_..."></div>
+    <button id="connectBtn" class="admin-btn primary">연결</button>
+    <div id="status" class="status"></div>
+  </div>
 
-      <div class="admin-card" style="margin-top:18px">
-        <h2>2. 등록된 글</h2>
-        <div id="postList" class="post-list">
-          <div class="helper">먼저 GitHub에 연결하세요.</div>
-        </div>
-      </div>
-    </aside>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="posts">콘텐츠 관리</button>
+    <button class="tab-btn" data-tab="business">사업실무 페이지</button>
+    <button class="tab-btn" data-tab="files">첨부파일 관리</button>
+  </div>
 
-    <main>
+  <section id="panel-posts" class="panel active">
+    <div class="admin-grid">
+      <aside class="admin-card">
+        <h2>등록된 콘텐츠</h2>
+        <div id="postList" class="item-list"><div class="helper">먼저 GitHub에 연결하세요.</div></div>
+      </aside>
       <div class="admin-card">
-        <h2>3. 글 작성 / 수정</h2>
+        <h2>콘텐츠 작성 / 수정</h2>
         <input id="postId" type="hidden">
-
         <div class="form-row">
-          <div>
-            <label class="admin-label" for="title">제목</label>
-            <input id="title" class="admin-input" placeholder="예: 가격을 정할 때 원가만 보면 안 되는 이유">
-          </div>
-          <div>
-            <label class="admin-label" for="date">발행일</label>
-            <input id="date" class="admin-input" type="date">
-          </div>
+          <div><label class="admin-label" for="title">제목</label><input id="title" class="admin-input"></div>
+          <div><label class="admin-label" for="date">발행일</label><input id="date" class="admin-input" type="date"></div>
         </div>
-
-        <label class="admin-label" for="category">사업실무 카테고리</label>
-        <select id="category" class="admin-select">
-          <option value="startup">창업 준비</option>
-          <option value="product">상품과 서비스</option>
-          <option value="brand">브랜드</option>
-          <option value="marketing">마케팅</option>
-          <option value="sales">판매와 유통</option>
-          <option value="operation">회사 운영</option>
-          <option value="logistics">물류와 재고</option>
-          <option value="data-ai">데이터와 AI</option>
-        </select>
-
-        <label class="admin-label" for="subcategory">세부 메뉴</label>
-        <select id="subcategory" class="admin-select"></select>
-        <div class="helper">새 글은 반드시 위 사업실무의 세부 메뉴 하나에 연결합니다. 저장하면 해당 세부 페이지와 상위 카테고리의 최신 콘텐츠에 함께 표시됩니다.</div>
-
-        <label class="admin-label" for="summary">요약</label>
-        <textarea id="summary" class="admin-textarea" style="min-height:90px" placeholder="목록 카드에 표시될 1~2문장 요약"></textarea>
-
-        <label class="admin-label" for="body">본문</label>
-        <textarea id="body" class="admin-textarea" placeholder="아래 형식 안내를 참고해 작성하세요."></textarea>
-
-        <div class="format-guide">
-          <strong>본문 작성 방식</strong><br>
-          <code>## 소제목</code> → 새로운 소제목<br>
-          일반 문장 → 본문 문단<br>
-          <code>- 확인항목</code> → 체크리스트/목록<br><br>
-          예: <code>## 먼저 확인할 것</code> 다음 줄에 내용을 쓰고, 항목은 <code>- 원가 확인</code>처럼 입력하면 됩니다.
-        </div>
-
-        <div class="form-actions">
-          <button id="newBtn" class="admin-btn light">새 글</button>
-          <button id="saveBtn" class="admin-btn teal" disabled>GitHub에 저장</button>
-          <span id="editNote" class="edit-note">새 글 작성</span>
-        </div>
+        <label class="admin-label" for="category">사업실무 카테고리</label><select id="category" class="admin-select"></select>
+        <label class="admin-label" for="subcategory">세부 메뉴</label><select id="subcategory" class="admin-select"></select>
+        <label class="admin-label" for="summary">요약</label><textarea id="summary" class="admin-textarea" style="min-height:80px"></textarea>
+        <label class="admin-label" for="body">본문</label><textarea id="body" class="admin-textarea" style="min-height:280px"></textarea>
+        <div class="guide"><strong>본문 작성</strong><br>## 소제목 → 소제목 / 일반 문장 → 문단 / - 항목 → 목록</div>
+        <div class="form-actions"><button id="newBtn" class="admin-btn light">새 글</button><button id="savePostBtn" class="admin-btn teal" disabled>GitHub에 저장</button><span id="editNote" class="edit-note">새 글 작성</span></div>
       </div>
-    </main>
-  </div>
+    </div>
+  </section>
+
+  <section id="panel-business" class="panel">
+    <div class="admin-grid">
+      <aside class="admin-card">
+        <h2>사업실무 페이지 선택</h2>
+        <label class="admin-label" for="pageCategory">카테고리</label><select id="pageCategory" class="admin-select"></select>
+        <label class="admin-label" for="pageSubcategory">세부 메뉴</label><select id="pageSubcategory" class="admin-select"></select>
+        <button id="loadPageBtn" class="admin-btn primary" style="width:100%;margin-top:12px" disabled>페이지 불러오기</button>
+        <div class="helper">44개 세부페이지의 기본 설명을 수정합니다. 최신 콘텐츠 목록은 그대로 유지됩니다.</div>
+      </aside>
+      <div class="admin-card">
+        <h2>기본페이지 수정</h2>
+        <div class="notice">레이아웃과 메뉴는 건드리지 않고, 현재 페이지의 설명 문구와 실무 내용만 수정합니다.</div>
+        <div class="fixed-fields">
+          <div><label class="admin-label">페이지 제목</label><input id="fpTitle" class="admin-input"></div>
+          <div><label class="admin-label">상단 한줄 설명</label><input id="fpHeroSummary" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">왜 이 내용을 먼저 봐야 할까요?</label><textarea id="fpIntro" class="admin-textarea" style="min-height:85px"></textarea></div>
+          <div class="wide"><label class="admin-label">실무에서 먼저 보는 기준 (한 줄에 한 항목)</label><textarea id="fpCriteria" class="admin-textarea" style="min-height:110px"></textarea></div>
+          <div class="wide"><label class="admin-label">바로 해볼 일</label><textarea id="fpAction" class="admin-textarea" style="min-height:85px"></textarea></div>
+          <div><label class="admin-label">STEP 1 제목</label><input id="fpStep1Title" class="admin-input"></div><div><label class="admin-label">STEP 1 설명</label><input id="fpStep1Body" class="admin-input"></div>
+          <div><label class="admin-label">STEP 2 제목</label><input id="fpStep2Title" class="admin-input"></div><div><label class="admin-label">STEP 2 설명</label><input id="fpStep2Body" class="admin-input"></div>
+          <div><label class="admin-label">STEP 3 제목</label><input id="fpStep3Title" class="admin-input"></div><div><label class="admin-label">STEP 3 설명</label><input id="fpStep3Body" class="admin-input"></div>
+          <div><label class="admin-label">STEP 4 제목</label><input id="fpStep4Title" class="admin-input"></div><div><label class="admin-label">STEP 4 설명</label><input id="fpStep4Body" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">현장 예시</label><textarea id="fpExample" class="admin-textarea" style="min-height:85px"></textarea></div>
+          <div class="wide"><label class="admin-label">자주 하는 실수 (한 줄에 한 항목)</label><textarea id="fpMistakes" class="admin-textarea" style="min-height:110px"></textarea></div>
+          <div class="wide"><label class="admin-label">마무리 제목</label><input id="fpFinishTitle" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">마무리 설명</label><textarea id="fpFinishBody" class="admin-textarea" style="min-height:85px"></textarea></div>
+        </div>
+        <div class="form-actions"><button id="savePageBtn" class="admin-btn teal" disabled>페이지 저장</button><span id="pageEditNote" class="edit-note">페이지를 먼저 불러오세요</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-files" class="panel">
+    <div class="admin-grid">
+      <aside class="admin-card"><h2>현재 첨부파일</h2><div id="fileList" class="item-list"><div class="helper">먼저 GitHub에 연결하세요.</div></div></aside>
+      <div class="admin-card">
+        <h2>첨부파일 업로드 / 교체</h2>
+        <div class="notice">현재 토큰의 <strong>Contents: Read and write</strong> 권한이면 첨부파일도 수정할 수 있습니다. 별도 권한 추가는 필요 없습니다.</div>
+        <div class="file-drop" style="margin-top:14px">
+          <label class="admin-label" for="fileInput">업로드할 파일</label><input id="fileInput" type="file">
+          <div id="selectedFileInfo" class="helper">PDF, XLSX, DOCX, HWP, CSV, ZIP, 이미지 등 일반 파일을 올릴 수 있습니다.</div>
+          <label class="admin-label" for="fileName">사이트에 저장할 파일명</label><input id="fileName" class="admin-input" placeholder="예: 사업시작_체크리스트.xlsx">
+          <div class="helper">파일은 downloads/파일명에 저장됩니다. 기존 파일과 같은 이름이면 교체됩니다.</div>
+          <div class="form-actions"><button id="uploadFileBtn" class="admin-btn teal" disabled>업로드 / 교체</button><button id="clearFileBtn" class="admin-btn light">선택 취소</button></div>
+        </div>
+        <div class="guide"><strong>사용 예</strong><br>기존 사업시작_체크리스트.csv를 수정했다면 같은 이름으로 다시 올리면 됩니다. 새 파일명을 쓰면 새 파일이 추가됩니다.</div>
+      </div>
+    </div>
+  </section>
 </div>
 <script src="admin.js"></script>
 </body>
