@@ -177,13 +177,74 @@ body{background:#f4f9fa;color:#102b46}
 .repeater-footer{display:flex;gap:8px;margin-top:10px}
 .mini-help{font-size:11px;color:#7a8a92}
 
+
+/* v3.8 generalized preview/repeater */
+.dual-editor{
+  display:grid;
+  grid-template-columns:minmax(520px,1fr) minmax(420px,.9fr);
+  gap:18px;
+  align-items:start;
+}
+.live-preview{
+  position:sticky;
+  top:18px;
+  background:#eef6f7;
+  border:1px solid #d9e6e9;
+  border-radius:16px;
+  padding:14px;
+}
+.live-preview-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+.live-preview-head h2{margin:0;font-size:16px}
+.live-preview-head span{font-size:11px;color:#70828a}
+.live-canvas{
+  background:#fff;
+  border:1px solid #d9e6e9;
+  border-radius:14px;
+  overflow:hidden;
+  min-height:520px;
+  box-shadow:0 8px 26px rgba(16,43,70,.045);
+}
+.live-hero{
+  padding:28px 28px 20px;
+  background:#f8fbfb;
+  border-bottom:1px solid #e2ecee;
+}
+.live-eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:#188577;margin-bottom:18px}
+.live-hero h1{margin:0 0 10px;font-size:28px;line-height:1.25;letter-spacing:-.8px}
+.live-hero p{margin:0;color:#6f7f89;font-size:14px;line-height:1.65}
+.live-body{padding:24px 28px 28px}
+.live-body h2{margin:18px 0 8px;font-size:18px;color:#173b50}
+.live-body h2:first-child{margin-top:0}
+.live-body p{margin:0 0 10px;line-height:1.7;color:#354d59;font-size:14px}
+.live-body ul{margin:6px 0 14px 20px;padding:0;color:#354d59}
+.live-body li{margin-bottom:4px;line-height:1.55}
+.live-box{margin:10px 0;padding:12px 14px;border-radius:10px;background:#f5faf9;border:1px solid #dcebe8}
+.live-card{margin:8px 0;padding:12px 14px;border:1px solid #e0eaed;border-radius:10px;background:#fbfdfd}
+.live-card strong{display:block;margin-bottom:4px}
+.rep-group{display:flex;flex-direction:column;gap:10px}
+.rep-item{border:1px solid #dfe9ec;border-radius:12px;padding:12px;background:#fbfdfd}
+.rep-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.rep-head strong{font-size:12px;color:#345566}
+.rep-actions{display:flex;gap:6px}
+.rep-actions .admin-btn{min-height:30px;padding:6px 9px;font-size:12px}
+.rep-footer{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+@media(max-width:1100px){
+  .dual-editor{grid-template-columns:1fr}
+  .live-preview{position:static}
+}
+
 </style>
 </head>
 <body>
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.7</div>
+    <div class="admin-badge">ADMIN v3.8</div>
   </div>
 
   <div class="connect-card">
@@ -199,6 +260,7 @@ body{background:#f4f9fa;color:#102b46}
     <button class="tab-btn" data-tab="resources">실무자료 관리</button>
     <button class="tab-btn" data-tab="problems">문제별 해결 관리</button>
     <button class="tab-btn" data-tab="about">BIZZIP 소개 관리</button>
+    <button class="tab-btn" data-tab="contact">문의 관리</button>
     <button class="tab-btn" data-tab="files">첨부파일 관리</button>
   </div>
 
@@ -304,12 +366,18 @@ body{background:#f4f9fa;color:#102b46}
         </div>
       </aside>
 
-      <div class="admin-card">
+      <div class="dual-editor"><div class="admin-card">
         <h2>실무자료 수정</h2>
         <div class="notice">
           기존 페이지 디자인은 그대로 두고 내용과 다운로드 파일만 수정합니다.
           새 첨부파일을 선택하면 저장할 때 파일 업로드와 다운로드 링크 변경까지 함께 처리합니다.
         </div>
+<div class="live-preview">
+  <div class="live-preview-head"><h2>저장 전 미리보기</h2><span>입력 즉시 반영</span></div>
+  <div id="resourcePreview" class="live-canvas">
+    <div class="live-hero"><div class="live-eyebrow">PRACTICAL RESOURCE</div><h1>페이지를 불러오세요</h1><p>수정 내용이 이곳에 바로 표시됩니다.</p></div>
+  </div>
+</div></div>
 
         <div class="fixed-fields">
           <div><label class="admin-label">자료 제목</label><input id="rsTitle" class="admin-input"></div>
@@ -383,12 +451,18 @@ body{background:#f4f9fa;color:#102b46}
         </div>
       </aside>
 
-      <div class="admin-card">
+      <div class="dual-editor"><div class="admin-card">
         <h2>문제 페이지 수정</h2>
         <div class="notice">
           문제 페이지의 현재 구조를 그대로 유지하면서 문구만 수정합니다.
           연결되는 상세페이지 주소는 변경하지 않습니다.
         </div>
+<div class="live-preview">
+  <div class="live-preview-head"><h2>저장 전 미리보기</h2><span>입력 즉시 반영</span></div>
+  <div id="problemPreview" class="live-canvas">
+    <div class="live-hero"><div class="live-eyebrow">PROBLEM SOLVING</div><h1>페이지를 불러오세요</h1><p>수정 내용이 이곳에 바로 표시됩니다.</p></div>
+  </div>
+</div></div>
 
         <div class="fixed-fields">
           <div><label class="admin-label">페이지 제목</label><input id="pbTitle" class="admin-input"></div>
@@ -397,19 +471,27 @@ body{background:#f4f9fa;color:#102b46}
           <div><label class="admin-label">관련 문제 영역 제목</label><input id="pbSectionTitle" class="admin-input"></div>
           <div><label class="admin-label">관련 문제 영역 설명</label><input id="pbSectionSummary" class="admin-input"></div>
 
-          <div class="wide"><label class="admin-label">관련 문제 카드</label>
-            <div class="guide">각 줄을 <strong>카드제목 | 카드설명</strong> 형식으로 입력하세요. 기존 카드의 연결 주소는 그대로 유지됩니다.</div>
-            <textarea id="pbCards" class="admin-textarea" style="min-height:150px"></textarea>
-          </div>
+          <div class="wide">
+      <label class="admin-label">관련 문제 카드</label>
+      <div id="problemCardsEditor" class="rep-group"></div>
+      <div class="rep-footer">
+        <button id="addProblemCardBtn" type="button" class="admin-btn light">+ 카드 추가</button>
+        <button id="removeProblemCardBtn" type="button" class="admin-btn light">− 마지막 카드 삭제</button>
+      </div>
+      <div class="helper">카드의 연결 주소는 기존 순서를 유지합니다. 새 카드는 링크 없이 추가되며 추후 링크 편집 기능을 붙일 수 있습니다.</div>
+    </div>
 
           <div><label class="admin-label">QUICK CHECK 영역 제목</label><input id="pbQuickTitle" class="admin-input"></div>
           <div><label class="admin-label">QUICK CHECK 영역 설명</label><input id="pbQuickSummary" class="admin-input"></div>
 
-          <div><label class="admin-label">QUICK CHECK 1 제목</label><input id="pbQuick1Title" class="admin-input"></div>
-          <div><label class="admin-label">QUICK CHECK 1 설명</label><input id="pbQuick1Body" class="admin-input"></div>
-
-          <div><label class="admin-label">QUICK CHECK 2 제목</label><input id="pbQuick2Title" class="admin-input"></div>
-          <div><label class="admin-label">QUICK CHECK 2 설명</label><input id="pbQuick2Body" class="admin-input"></div>
+          <div class="wide">
+      <label class="admin-label">QUICK CHECK 항목</label>
+      <div id="quickChecksEditor" class="rep-group"></div>
+      <div class="rep-footer">
+        <button id="addQuickCheckBtn" type="button" class="admin-btn light">+ QUICK CHECK 추가</button>
+        <button id="removeQuickCheckBtn" type="button" class="admin-btn light">− 마지막 항목 삭제</button>
+      </div>
+    </div>
         </div>
 
         <div class="form-actions">
@@ -429,30 +511,103 @@ body{background:#f4f9fa;color:#102b46}
         <button id="loadAboutBtn" class="admin-btn primary" style="width:100%" disabled>소개 페이지 불러오기</button>
         <div class="helper">운영자 소개, 컨설팅 프로젝트, 주요 브랜드 프로젝트, 출판서적 내용을 수정합니다.</div>
       </aside>
-      <div class="admin-card">
+      <div class="dual-editor"><div class="admin-card">
         <h2>BIZZIP 소개 수정</h2>
         <div class="notice">페이지 레이아웃과 이미지 배치는 유지하고 텍스트 중심으로 수정합니다.</div>
+<div class="live-preview">
+  <div class="live-preview-head"><h2>저장 전 미리보기</h2><span>입력 즉시 반영</span></div>
+  <div id="aboutPreview" class="live-canvas">
+    <div class="live-hero"><div class="live-eyebrow">ABOUT BIZZIP</div><h1>페이지를 불러오세요</h1><p>수정 내용이 이곳에 바로 표시됩니다.</p></div>
+  </div>
+</div></div>
         <div class="fixed-fields">
           <div><label class="admin-label">페이지 제목</label><input id="abTitle" class="admin-input"></div>
           <div><label class="admin-label">상단 한줄 설명</label><input id="abHeroSummary" class="admin-input"></div>
           <div class="wide"><label class="admin-label">운영자 소개 제목</label><input id="abOperatorTitle" class="admin-input"></div>
           <div class="wide"><label class="admin-label">운영자 소개 본문</label><textarea id="abOperatorBody" class="admin-textarea" style="min-height:110px"></textarea></div>
           <div class="wide"><label class="admin-label">운영자 경력 목록 (한 줄에 한 항목)</label><textarea id="abOperatorList" class="admin-textarea" style="min-height:120px"></textarea></div>
-          <div class="wide"><label class="admin-label">2026 컨설팅 프로젝트 (한 줄에 한 프로젝트)</label>
-            <div class="guide">형식: 기간 | 회사명 | 주제 | 설명</div>
-            <textarea id="abConsulting" class="admin-textarea" style="min-height:160px"></textarea></div>
-          <div class="wide"><label class="admin-label">주요 브랜드 프로젝트 (한 줄에 한 프로젝트)</label>
-            <div class="guide">형식: 연도 | 브랜드명 | 주제 | 설명</div>
-            <textarea id="abBrands" class="admin-textarea" style="min-height:160px"></textarea></div>
-          <div class="wide"><label class="admin-label">출판서적 (한 줄에 한 권)</label>
-            <div class="guide">형식: 연도 | 도서명 | 설명 | 링크</div>
-            <textarea id="abBooks" class="admin-textarea" style="min-height:150px"></textarea></div>
+          <div class="wide">
+          <label class="admin-label">2026 컨설팅 프로젝트</label>
+          <div id="consultingEditor" class="rep-group"></div>
+          <div class="rep-footer">
+            <button id="addConsultingBtn" type="button" class="admin-btn light">+ 추가</button>
+            <button id="removeConsultingBtn" type="button" class="admin-btn light">− 마지막 항목 삭제</button>
+          </div>
+        </div>
+          <div class="wide">
+          <label class="admin-label">주요 브랜드 프로젝트</label>
+          <div id="brandProjectsEditor" class="rep-group"></div>
+          <div class="rep-footer">
+            <button id="addBrandProjectBtn" type="button" class="admin-btn light">+ 추가</button>
+            <button id="removeBrandProjectBtn" type="button" class="admin-btn light">− 마지막 항목 삭제</button>
+          </div>
+        </div>
+          <div class="wide">
+          <label class="admin-label">출판서적</label>
+          <div id="booksEditor" class="rep-group"></div>
+          <div class="rep-footer">
+            <button id="addBookBtn" type="button" class="admin-btn light">+ 추가</button>
+            <button id="removeBookBtn" type="button" class="admin-btn light">− 마지막 항목 삭제</button>
+          </div>
+        </div>
         </div>
         <div class="form-actions">
           <button id="saveAboutBtn" class="admin-btn teal" disabled>BIZZIP 소개 저장</button>
           <span id="aboutEditNote" class="edit-note">페이지를 먼저 불러오세요</span>
         </div>
         <div id="aboutSaveStatus" class="status" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="panel-contact" class="panel">
+    <div class="admin-grid">
+      <aside class="admin-card">
+        <h2>문의 페이지</h2>
+        <button id="loadContactBtn" class="admin-btn primary" style="width:100%" disabled>문의 페이지 불러오기</button>
+        <div class="helper">문의 페이지의 제목, 안내문, 문의방법, 링크/버튼 문구를 수정합니다.</div>
+      </aside>
+
+      <div class="dual-editor">
+        <div class="admin-card">
+          <h2>문의 페이지 수정</h2>
+          <div class="notice">페이지의 레이아웃은 유지하고 문구와 연락수단만 수정합니다.</div>
+
+          <div class="fixed-fields">
+            <div><label class="admin-label">페이지 제목</label><input id="ctTitle" class="admin-input"></div>
+            <div><label class="admin-label">상단 한줄 설명</label><input id="ctHeroSummary" class="admin-input"></div>
+
+            <div class="wide"><label class="admin-label">문의 안내 제목</label><input id="ctSectionTitle" class="admin-input"></div>
+            <div class="wide"><label class="admin-label">문의 안내 본문</label><textarea id="ctSectionBody" class="admin-textarea" style="min-height:110px"></textarea></div>
+
+            <div class="wide"><label class="admin-label">문의방법</label>
+              <div id="contactMethods" class="rep-group"></div>
+              <div class="rep-footer">
+                <button id="addContactMethodBtn" type="button" class="admin-btn light">+ 문의방법 추가</button>
+                <button id="removeContactMethodBtn" type="button" class="admin-btn light">− 마지막 항목 삭제</button>
+              </div>
+            </div>
+
+            <div class="wide"><label class="admin-label">마무리 안내</label><textarea id="ctFinish" class="admin-textarea" style="min-height:90px"></textarea></div>
+          </div>
+
+          <div class="form-actions">
+            <button id="saveContactBtn" class="admin-btn teal" disabled>문의 페이지 저장</button>
+            <span id="contactEditNote" class="edit-note">페이지를 먼저 불러오세요</span>
+          </div>
+          <div id="contactSaveStatus" class="status" style="margin-top:10px"></div>
+        </div>
+
+        <div class="live-preview">
+          <div class="live-preview-head">
+            <h2>저장 전 미리보기</h2>
+            <span>입력 즉시 반영 / 저장 전 사이트 미반영</span>
+          </div>
+          <div id="contactPreview" class="live-canvas">
+            <div class="live-hero"><div class="live-eyebrow">CONTACT</div><h1>문의</h1><p>페이지를 불러오면 미리보기가 표시됩니다.</p></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -475,6 +630,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.7"></script>
+<script src="admin.js?v=3.8"></script>
 </body>
 </html>
