@@ -7,7 +7,7 @@ const CONFIG = {
 };
 const TAXONOMY = {"startup": {"label": "창업 준비", "subs": {"idea-validation": {"label": "사업 아이디어 검증", "page": "startup-idea-validation.html"}, "market-check": {"label": "시장성 확인", "page": "startup-market-check.html"}, "business-registration": {"label": "사업자등록", "page": "startup-business-registration.html"}, "trademark": {"label": "상표 출원", "page": "startup-trademark.html"}, "domain": {"label": "도메인 확보", "page": "startup-domain.html"}, "office-contract": {"label": "사무실 계약", "page": "startup-office-contract.html"}, "startup-cost": {"label": "초기비용 계산", "page": "startup-startup-cost.html"}, "startup-checklist": {"label": "사업 시작 체크리스트", "page": "startup-startup-checklist.html"}}}, "product": {"label": "상품과 서비스", "subs": {"product-planning": {"label": "상품기획", "page": "product-product-planning.html"}, "costing": {"label": "원가 계산", "page": "product-costing.html"}, "pricing": {"label": "가격 결정", "page": "product-pricing.html"}, "oem": {"label": "OEM 견적 확인", "page": "product-oem.html"}, "package": {"label": "패키지", "page": "product-package.html"}, "launch-test": {"label": "출시 전 검증", "page": "product-launch-test.html"}}}, "brand": {"label": "브랜드", "subs": {"brand-name": {"label": "브랜드명", "page": "brand-brand-name.html"}, "positioning": {"label": "포지셔닝", "page": "brand-positioning.html"}, "message": {"label": "브랜드 메시지", "page": "brand-message.html"}, "visual": {"label": "비주얼 기준", "page": "brand-visual.html"}, "brand-check": {"label": "브랜드 점검", "page": "brand-brand-check.html"}}}, "marketing": {"label": "마케팅", "subs": {"search": {"label": "검색 노출", "page": "marketing-search.html"}, "ads": {"label": "광고 성과", "page": "marketing-ads.html"}, "content": {"label": "콘텐츠 기획", "page": "marketing-content.html"}, "promotion": {"label": "프로모션", "page": "marketing-promotion.html"}, "conversion": {"label": "전환율", "page": "marketing-conversion.html"}}}, "sales": {"label": "판매와 유통", "subs": {"channel-choice": {"label": "판매채널 선택", "page": "sales-channel-choice.html"}, "naver": {"label": "네이버 판매", "page": "sales-naver.html"}, "coupang": {"label": "쿠팡 판매", "page": "sales-coupang.html"}, "offline": {"label": "오프라인 입점", "page": "sales-offline.html"}, "proposal": {"label": "입점 제안서", "page": "sales-proposal.html"}}}, "operation": {"label": "회사 운영", "subs": {"contract": {"label": "계약 확인", "page": "operation-contract.html"}, "expense": {"label": "비용 관리", "page": "operation-expense.html"}, "outsourcing": {"label": "외주 관리", "page": "operation-outsourcing.html"}, "workflow": {"label": "업무 정리", "page": "operation-workflow.html"}, "document": {"label": "문서 관리", "page": "operation-document.html"}}}, "logistics": {"label": "물류와 재고", "subs": {"3pl": {"label": "3PL 선택", "page": "logistics-3pl.html"}, "inventory": {"label": "재고 관리", "page": "logistics-inventory.html"}, "packing": {"label": "포장비", "page": "logistics-packing.html"}, "returns": {"label": "반품 관리", "page": "logistics-returns.html"}, "warehouse-move": {"label": "물류 이관", "page": "logistics-warehouse-move.html"}}}, "data-ai": {"label": "데이터와 AI", "subs": {"sales-data": {"label": "매출 데이터", "page": "data-ai-sales-data.html"}, "customer-data": {"label": "고객 데이터", "page": "data-ai-customer-data.html"}, "free-data": {"label": "무료 데이터", "page": "data-ai-free-data.html"}, "ai-work": {"label": "AI 업무 활용", "page": "data-ai-ai-work.html"}, "automation": {"label": "업무 자동화", "page": "data-ai-automation.html"}}}};
 
-let token="", posts=[], postsSha="", currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, files=[];
+let token="", posts=[], postsSha="", currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, files=[];
 const $=id=>document.getElementById(id);
 
 function setStatus(message,type="info"){
@@ -25,6 +25,14 @@ function setResourceStatus(message,type="info"){
   el.textContent=message;
   el.className=`status show ${type}`;
 }
+
+function setProblemStatus(message,type="info"){
+  const el=$("problemSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+
 function todayLocal(){
   const d=new Date(), local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
   return local.toISOString().slice(0,10);
@@ -86,6 +94,8 @@ $("connectBtn").addEventListener("click",async()=>{
     if(loadPageBtn) loadPageBtn.disabled=false;
     const loadResourceBtn=$("loadResourceBtn");
     if(loadResourceBtn) loadResourceBtn.disabled=false;
+    const loadProblemBtn=$("loadProblemBtn");
+    if(loadProblemBtn) loadProblemBtn.disabled=false;
     if(uploadFileBtn) uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
     setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
   }catch(e){ setStatus("연결하지 못했습니다: "+e.message,"err"); }
@@ -384,6 +394,106 @@ $("saveResourceBtn").addEventListener("click",async()=>{
   }finally{
     btn.disabled=false;
     btn.textContent="실무자료 저장";
+  }
+});
+
+
+/* ---------- 문제별 해결 관리 ---------- */
+function pFindH2(article,text){
+  return Array.from(article.querySelectorAll(":scope > h2")).find(h=>h.textContent.trim()===text);
+}
+function pNextText(el){
+  const n=el?.nextElementSibling;
+  return n ? n.textContent.trim() : "";
+}
+function pSetNextText(el,text){
+  const n=el?.nextElementSibling;
+  if(n)n.textContent=text;
+}
+
+$("loadProblemBtn").addEventListener("click",async()=>{
+  const path=$("problemSelect").value;
+  $("saveProblemBtn").disabled=true;
+  setProblemStatus("문제 페이지를 불러오는 중입니다…","info");
+  try{
+    const data=await getFile(path);
+    const html=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(html,"text/html");
+    const article=doc.querySelector("article.article");
+    if(!article)throw new Error("문제 페이지 본문 영역을 찾지 못했습니다.");
+
+    currentProblem={path,sha:data.sha,html};
+    $("pbTitle").value=qText(doc,".page-hero h1");
+    $("pbHeroSummary").value=qText(doc,".page-hero h1 + p");
+
+    const introH=pFindH2(article,"이 문제를 그냥 두면 어떻게 될까요?");
+    const checkH=pFindH2(article,"먼저 확인할 것");
+    const processH=pFindH2(article,"실무에서는 이렇게 진행합니다");
+    const cautionH=pFindH2(article,"판단할 때 주의할 점");
+
+    $("pbIntro").value=pNextText(introH);
+    $("pbChecklist").value=textList(checkH?.nextElementSibling);
+    $("pbProcess").value=pNextText(processH);
+    $("pbCautions").value=textList(cautionH?.nextElementSibling);
+
+    const boxes=article.querySelectorAll(".small-cta,.finish-box");
+    const lastBox=boxes.length?boxes[boxes.length-1]:null;
+    $("pbFinish").value=lastBox ? lastBox.textContent.trim() : "";
+
+    $("saveProblemBtn").disabled=false;
+    $("problemEditNote").textContent=`수정 중: ${$("problemSelect").selectedOptions[0].textContent}`;
+    setProblemStatus("문제 페이지를 불러왔습니다. 수정 후 저장하세요.","ok");
+  }catch(e){
+    setProblemStatus("문제 페이지를 불러오지 못했습니다: "+e.message,"err");
+  }
+});
+
+$("problemSelect").addEventListener("change",()=>{
+  $("saveProblemBtn").disabled=true;
+  $("problemEditNote").textContent="페이지를 다시 불러오세요";
+  setProblemStatus("선택이 바뀌었습니다. ‘문제 페이지 불러오기’를 눌러주세요.","info");
+});
+
+$("saveProblemBtn").addEventListener("click",async()=>{
+  if(!currentProblem.path)return setProblemStatus("먼저 문제 페이지를 불러와주세요.","err");
+  const btn=$("saveProblemBtn");
+  btn.disabled=true; btn.textContent="저장 중…";
+  setProblemStatus("GitHub에 저장하는 중입니다…","info");
+  try{
+    const doc=new DOMParser().parseFromString(currentProblem.html,"text/html");
+    const article=doc.querySelector("article.article");
+    if(!article)throw new Error("문제 페이지 본문 영역을 찾지 못했습니다.");
+
+    const heroTitle=doc.querySelector(".page-hero h1");
+    const heroSummary=doc.querySelector(".page-hero h1 + p");
+    if(heroTitle)heroTitle.textContent=$("pbTitle").value.trim();
+    if(heroSummary)heroSummary.textContent=$("pbHeroSummary").value.trim();
+
+    const introH=pFindH2(article,"이 문제를 그냥 두면 어떻게 될까요?");
+    const checkH=pFindH2(article,"먼저 확인할 것");
+    const processH=pFindH2(article,"실무에서는 이렇게 진행합니다");
+    const cautionH=pFindH2(article,"판단할 때 주의할 점");
+
+    pSetNextText(introH,$("pbIntro").value.trim());
+    setList(checkH?.nextElementSibling,$("pbChecklist").value);
+    pSetNextText(processH,$("pbProcess").value.trim());
+    setList(cautionH?.nextElementSibling,$("pbCautions").value);
+
+    const boxes=article.querySelectorAll(".small-cta,.finish-box");
+    const lastBox=boxes.length?boxes[boxes.length-1]:null;
+    if(lastBox)lastBox.textContent=$("pbFinish").value.trim();
+
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const result=await putFile(currentProblem.path,encodeBase64Utf8(newHtml),currentProblem.sha,`Update problem page: ${currentProblem.path}`);
+    currentProblem.sha=result.content.sha;
+    currentProblem.html=newHtml;
+
+    setStatus("문제별 해결 페이지를 저장했습니다.","ok");
+    setProblemStatus("✓ 저장 완료 — 문제 페이지가 GitHub에 정상 저장되었습니다.","saved");
+  }catch(e){
+    setProblemStatus("저장 실패: "+e.message,"err");
+  }finally{
+    btn.disabled=false; btn.textContent="문제 페이지 저장";
   }
 });
 
