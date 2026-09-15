@@ -48,7 +48,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.4.1</div>
+    <div class="admin-badge">ADMIN v3.5</div>
   </div>
 
   <div class="connect-card">
@@ -63,6 +63,7 @@ body{background:#f4f9fa;color:#102b46}
     <button class="tab-btn" data-tab="business">사업실무 페이지</button>
     <button class="tab-btn" data-tab="resources">실무자료 관리</button>
     <button class="tab-btn" data-tab="problems">문제별 해결 관리</button>
+    <button class="tab-btn" data-tab="about">BIZZIP 소개 관리</button>
     <button class="tab-btn" data-tab="files">첨부파일 관리</button>
   </div>
 
@@ -261,6 +262,42 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 
+
+  <section id="panel-about" class="panel">
+    <div class="admin-grid">
+      <aside class="admin-card">
+        <h2>BIZZIP 소개</h2>
+        <button id="loadAboutBtn" class="admin-btn primary" style="width:100%" disabled>소개 페이지 불러오기</button>
+        <div class="helper">운영자 소개, 컨설팅 프로젝트, 주요 브랜드 프로젝트, 출판서적 내용을 수정합니다.</div>
+      </aside>
+      <div class="admin-card">
+        <h2>BIZZIP 소개 수정</h2>
+        <div class="notice">페이지 레이아웃과 이미지 배치는 유지하고 텍스트 중심으로 수정합니다.</div>
+        <div class="fixed-fields">
+          <div><label class="admin-label">페이지 제목</label><input id="abTitle" class="admin-input"></div>
+          <div><label class="admin-label">상단 한줄 설명</label><input id="abHeroSummary" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">운영자 소개 제목</label><input id="abOperatorTitle" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">운영자 소개 본문</label><textarea id="abOperatorBody" class="admin-textarea" style="min-height:110px"></textarea></div>
+          <div class="wide"><label class="admin-label">운영자 경력 목록 (한 줄에 한 항목)</label><textarea id="abOperatorList" class="admin-textarea" style="min-height:120px"></textarea></div>
+          <div class="wide"><label class="admin-label">2026 컨설팅 프로젝트 (한 줄에 한 프로젝트)</label>
+            <div class="guide">형식: 기간 | 회사명 | 주제 | 설명</div>
+            <textarea id="abConsulting" class="admin-textarea" style="min-height:160px"></textarea></div>
+          <div class="wide"><label class="admin-label">주요 브랜드 프로젝트 (한 줄에 한 프로젝트)</label>
+            <div class="guide">형식: 연도 | 브랜드명 | 주제 | 설명</div>
+            <textarea id="abBrands" class="admin-textarea" style="min-height:160px"></textarea></div>
+          <div class="wide"><label class="admin-label">출판서적 (한 줄에 한 권)</label>
+            <div class="guide">형식: 연도 | 도서명 | 설명 | 링크</div>
+            <textarea id="abBooks" class="admin-textarea" style="min-height:150px"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button id="saveAboutBtn" class="admin-btn teal" disabled>BIZZIP 소개 저장</button>
+          <span id="aboutEditNote" class="edit-note">페이지를 먼저 불러오세요</span>
+        </div>
+        <div id="aboutSaveStatus" class="status" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="panel-files" class="panel">
     <div class="admin-grid">
       <aside class="admin-card"><h2>현재 첨부파일</h2><div id="fileList" class="item-list"><div class="helper">먼저 GitHub에 연결하세요.</div></div></aside>
@@ -279,6 +316,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.4.1"></script>
+<script src="admin.js?v=3.5"></script>
 </body>
 </html>

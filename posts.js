@@ -103,7 +103,50 @@
     }
   }
 
+
+  /* ===== Problem-entry breadcrumb context ===== */
+  function preserveProblemEntryPath() {
+    const problemPages = {
+      "problem-start.html":"사업을 시작하려는데 무엇부터 해야 할지 모르겠다",
+      "problem-sales.html":"제품은 있는데 어디서 팔아야 할지 모르겠다",
+      "problem-ads.html":"광고비는 쓰는데 매출이 잘 나오지 않는다",
+      "problem-price.html":"가격을 얼마로 정해야 할지 모르겠다",
+      "problem-logistics.html":"재고와 물류비가 점점 부담스럽다",
+      "problem-documents.html":"계약, 문서, 양식이 필요한데 어디서 구할지 모르겠다"
+    };
+
+    const currentFile = location.pathname.split("/").pop() || "index.html";
+
+    if (problemPages[currentFile]) {
+      document.querySelectorAll("a.problem-subcard").forEach(a => {
+        try {
+          const url = new URL(a.getAttribute("href"), location.href);
+          url.searchParams.set("fromProblem", currentFile);
+          url.searchParams.set("fromProblemTitle", problemPages[currentFile]);
+          a.setAttribute("href", url.pathname.split("/").pop() + url.search);
+        } catch(e) {}
+      });
+      return;
+    }
+
+    const params = new URLSearchParams(location.search);
+    const fromProblem = params.get("fromProblem");
+    const fromTitle = params.get("fromProblemTitle");
+    if (!fromProblem || !fromTitle) return;
+
+    const breadcrumb = document.querySelector(".breadcrumb");
+    const pageTitle = document.querySelector(".page-hero h1")?.textContent.trim();
+    if (!breadcrumb || !pageTitle) return;
+
+    breadcrumb.innerHTML =
+      `<a href="index.html">홈</a> / ` +
+      `<a href="problems.html">문제별 해결</a> / ` +
+      `<a href="${fromProblem}">${fromTitle}</a> / ` +
+      `${pageTitle}`;
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    preserveProblemEntryPath();
     renderLists();
     renderPost();
   });
