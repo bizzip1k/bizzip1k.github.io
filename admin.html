@@ -238,13 +238,134 @@ body{background:#f4f9fa;color:#102b46}
   .live-preview{position:static}
 }
 
+
+/* ===== v3.9 Problem hierarchy manager ===== */
+.hierarchy-box{
+  background:#fff;
+  border:1px solid #d9e6e9;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+}
+.hierarchy-box h2{margin:0 0 6px;font-size:18px}
+.hierarchy-box .subcopy{font-size:12px;color:#71828a;margin-bottom:14px}
+.hierarchy-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.problem-root-item{
+  border:1px solid #dfe9ec;
+  border-radius:12px;
+  padding:12px;
+  background:#fbfdfd;
+}
+.problem-root-item .row{
+  display:grid;
+  grid-template-columns:1fr 220px;
+  gap:8px;
+}
+.problem-root-item .controls{
+  display:flex;
+  gap:6px;
+  margin-top:9px;
+  justify-content:flex-end;
+}
+.problem-root-item .controls .admin-btn{min-height:30px;padding:6px 9px;font-size:12px}
+.problem-link-editor{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px dashed #dfe8eb;
+}
+.problem-link-editor .linked-edit-btn{margin-top:7px}
+.hierarchy-path{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin:8px 0 0;
+  font-size:12px;
+  color:#687b84;
+}
+.hierarchy-path strong{color:#188577}
+@media(max-width:900px){
+  .hierarchy-grid{grid-template-columns:1fr}
+  .problem-root-item .row{grid-template-columns:1fr}
+}
+
+
+/* ===== ADMIN v4.0 unified hierarchy ===== */
+.structure-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.structure-card{
+  border:1px solid #dce8eb;
+  border-radius:14px;
+  background:#fbfdfd;
+  padding:15px;
+}
+.structure-card h3{margin:0 0 7px;font-size:16px}
+.structure-card p{margin:0 0 12px;color:#6d7f88;font-size:12px;line-height:1.55}
+.structure-actions{display:flex;gap:7px;flex-wrap:wrap}
+.landing-editor{
+  margin-top:18px;
+  border-top:1px solid #e3ecee;
+  padding-top:18px;
+}
+.hier-card{
+  border:1px solid #dfe9ec;
+  border-radius:12px;
+  padding:12px;
+  background:#fbfdfd;
+}
+.hier-card-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  margin-bottom:9px;
+}
+.hier-card-head strong{font-size:12px;color:#365766}
+.hier-actions{display:flex;gap:6px;flex-wrap:wrap}
+.hier-actions .admin-btn{min-height:30px;padding:6px 9px;font-size:12px}
+.hier-list{display:flex;flex-direction:column;gap:10px}
+.inline-two{display:grid;grid-template-columns:1fr 220px;gap:9px}
+.business-levels{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:18px;
+}
+.level-nav{
+  border:1px solid #d9e6e9;
+  border-radius:14px;
+  padding:14px;
+  background:#fbfdfd;
+}
+.level-nav h3{margin:0 0 10px;font-size:15px}
+.level-nav .admin-btn{width:100%;margin-bottom:7px;text-align:left;justify-content:flex-start}
+.category-editor{
+  border:1px solid #d9e6e9;
+  border-radius:14px;
+  padding:16px;
+  background:#fff;
+}
+@media(max-width:1050px){
+  .structure-grid{grid-template-columns:1fr 1fr}
+  .business-levels{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .structure-grid{grid-template-columns:1fr}
+  .inline-two{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.8.1</div>
+    <div class="admin-badge">ADMIN v4.0</div>
   </div>
 
   <div class="connect-card">
@@ -255,7 +376,8 @@ body{background:#f4f9fa;color:#102b46}
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="posts">콘텐츠 관리</button>
+    <button class="tab-btn" data-tab="structure">사이트 구조 관리</button>
+    <button class="tab-btn" data-tab="posts">콘텐츠 관리</button>
     <button class="tab-btn" data-tab="business">사업실무 페이지</button>
     <button class="tab-btn" data-tab="resources">실무자료 관리</button>
     <button class="tab-btn" data-tab="problems">문제별 해결 관리</button>
@@ -264,7 +386,85 @@ body{background:#f4f9fa;color:#102b46}
     <button class="tab-btn" data-tab="files">첨부파일 관리</button>
   </div>
 
-  <section id="panel-posts" class="panel active">
+  
+  <section id="panel-structure" class="panel active">
+    <div class="admin-card">
+      <h2>사이트 구조 관리</h2>
+      <div class="notice">
+        메인 메뉴 6개를 기준으로 랜딩페이지부터 하위 단계까지 이동하며 수정합니다.
+        아래의 “관리 열기”를 누르면 해당 메뉴의 실제 관리자 화면으로 이동합니다.
+      </div>
+
+      <div class="structure-grid" style="margin-top:14px">
+        <div class="structure-card">
+          <h3>사업실무</h3>
+          <p>사업실무 랜딩 → 분야 → 세부주제 → 상세페이지 순서로 관리합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="business">관리 열기</button>
+            <button class="admin-btn light landing-load" data-page="business.html" data-kind="business">랜딩 수정</button>
+          </div>
+        </div>
+        <div class="structure-card">
+          <h3>문제별 해결</h3>
+          <p>문제별 해결 랜딩 → 큰 문제 → 관련 문제 → 연결 상세페이지를 관리합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="problems">관리 열기</button>
+            <button class="admin-btn light landing-load" data-page="problems.html" data-kind="problems">랜딩 수정</button>
+          </div>
+        </div>
+        <div class="structure-card">
+          <h3>콘텐츠</h3>
+          <p>콘텐츠 랜딩 문구를 수정하고 개별 콘텐츠를 추가, 수정, 삭제합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="posts">콘텐츠 관리</button>
+            <button class="admin-btn light landing-load" data-page="contents.html" data-kind="contents">랜딩 수정</button>
+          </div>
+        </div>
+        <div class="structure-card">
+          <h3>실무자료</h3>
+          <p>실무자료 랜딩 → 자료 카드 → 자료 상세/첨부파일을 관리합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="resources">관리 열기</button>
+            <button class="admin-btn light landing-load" data-page="resources.html" data-kind="resources">랜딩 수정</button>
+          </div>
+        </div>
+        <div class="structure-card">
+          <h3>BIZZIP 소개</h3>
+          <p>소개 랜딩과 운영자, 프로젝트, 출판서적 내용을 관리합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="about">관리 열기</button>
+            <button class="admin-btn light landing-load" data-page="about.html" data-kind="about">랜딩 수정</button>
+          </div>
+        </div>
+        <div class="structure-card">
+          <h3>문의</h3>
+          <p>문의 랜딩, 이메일, 문의유형과 안내문구를 관리합니다.</p>
+          <div class="structure-actions">
+            <button class="admin-btn primary structure-open" data-target="contact">관리 열기</button>
+            <button class="admin-btn light landing-load" data-page="contact.html" data-kind="contact">랜딩 수정</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-editor">
+        <h2>선택한 랜딩페이지 수정</h2>
+        <div id="landingEditorHint" class="helper">위에서 “랜딩 수정”을 선택하세요.</div>
+        <div class="fixed-fields">
+          <div><label class="admin-label">페이지 제목</label><input id="ldTitle" class="admin-input"></div>
+          <div><label class="admin-label">상단 한줄 설명</label><input id="ldSummary" class="admin-input"></div>
+          <div class="wide"><label class="admin-label">영문 라벨</label><input id="ldEyebrow" class="admin-input"></div>
+        </div>
+        <div id="landingCardsArea" style="margin-top:12px"></div>
+        <div class="form-actions">
+          <button id="saveLandingBtn" class="admin-btn teal" disabled>랜딩페이지 저장</button>
+          <span id="landingEditNote" class="edit-note">랜딩페이지를 먼저 불러오세요</span>
+        </div>
+        <div id="landingSaveStatus" class="status" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-posts" class="panel">
     <div class="admin-grid">
       <aside class="admin-card">
         <h2>등록된 콘텐츠</h2>
@@ -287,7 +487,44 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 
-  <section id="panel-business" class="panel">
+  
+<section id="panel-business" class="panel">
+  <div class="hierarchy-box">
+    <h2>사업실무 계층 관리</h2>
+    <div class="subcopy">
+      1단계 사업실무 랜딩의 분야를 관리하고, 각 분야를 선택해 2단계 세부주제를 수정한 뒤,
+      세부주제의 “상세페이지 편집”으로 3단계 상세페이지까지 이어서 수정합니다.
+    </div>
+    <div class="business-levels">
+      <div class="level-nav">
+        <h3>1단계 분야</h3>
+        <div id="businessCategoryNav"><div class="helper">GitHub 연결 후 불러옵니다.</div></div>
+        <button id="reloadBusinessHierarchyBtn" class="admin-btn light" disabled>사업실무 구조 다시 불러오기</button>
+      </div>
+      <div class="category-editor">
+        <h3 style="margin-top:0">2단계 분야 페이지 수정</h3>
+        <div id="businessCategoryHint" class="helper">왼쪽에서 분야를 선택하세요.</div>
+        <div class="fixed-fields">
+          <div><label class="admin-label">분야 제목</label><input id="bcTitle" class="admin-input"></div>
+          <div><label class="admin-label">상단 한줄 설명</label><input id="bcSummary" class="admin-input"></div>
+          <div><label class="admin-label">세부주제 영역 제목</label><input id="bcSectionTitle" class="admin-input"></div>
+          <div><label class="admin-label">세부주제 영역 설명</label><input id="bcSectionSummary" class="admin-input"></div>
+        </div>
+        <label class="admin-label">세부주제 카드</label>
+        <div id="businessTopicsEditor" class="hier-list"></div>
+        <div class="rep-footer">
+          <button id="addBusinessTopicBtn" type="button" class="admin-btn light">+ 세부주제 추가</button>
+          <button id="removeBusinessTopicBtn" type="button" class="admin-btn light">− 마지막 주제 삭제</button>
+        </div>
+        <div class="form-actions">
+          <button id="saveBusinessCategoryBtn" class="admin-btn teal" disabled>분야 페이지 저장</button>
+          <span id="businessCategoryEditNote" class="edit-note">분야를 먼저 선택하세요</span>
+        </div>
+        <div id="businessCategoryStatus" class="status" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+
     <div class="admin-grid">
       <aside class="admin-card">
         <h2>사업실무 페이지 선택</h2>
@@ -432,7 +669,23 @@ body{background:#f4f9fa;color:#102b46}
 
 
   
-  <section id="panel-problems" class="panel">
+  
+<section id="panel-problems" class="panel">
+  <div class="hierarchy-box">
+    <h2>문제별 해결 1단계 구조 관리</h2>
+    <div class="subcopy">
+      현재 6개로 되어 있는 큰 문제 구분을 여기에서 추가, 삭제, 순서변경할 수 있습니다.
+      새 구분을 추가하면 저장 시 해당 중간 페이지도 자동으로 만들어집니다.
+    </div>
+    <div id="problemRootEditor" class="hierarchy-grid"></div>
+    <div class="form-actions">
+      <button id="addProblemRootBtn" type="button" class="admin-btn light">+ 문제 구분 추가</button>
+      <button id="removeProblemRootBtn" type="button" class="admin-btn light">− 마지막 구분 삭제</button>
+      <button id="saveProblemRootBtn" type="button" class="admin-btn teal" disabled>1단계 구조 저장</button>
+    </div>
+    <div id="problemRootStatus" class="status" style="margin-top:10px"></div>
+  </div>
+
     <div class="admin-grid">
       <aside class="admin-card">
         <h2>문제별 해결 선택</h2>
@@ -452,7 +705,7 @@ body{background:#f4f9fa;color:#102b46}
       </aside>
 
       <div class="dual-editor"><div class="admin-card">
-        <h2>문제 페이지 수정</h2>
+        <h2>문제 페이지 수정</h2><div class="hierarchy-path">1단계 <strong>큰 문제</strong> → 2단계 <strong>관련 문제 카드</strong> → 3단계 <strong>상세 실무페이지</strong></div>
         <div class="notice">
           문제 페이지의 현재 구조를 그대로 유지하면서 문구만 수정합니다.
           연결되는 상세페이지 주소는 변경하지 않습니다.
@@ -630,6 +883,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.8.1"></script>
+<script src="admin.js?v=4.0"></script>
 </body>
 </html>

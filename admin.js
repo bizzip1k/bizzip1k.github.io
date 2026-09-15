@@ -7,7 +7,7 @@ const CONFIG = {
 };
 const TAXONOMY = {"startup": {"label": "창업 준비", "subs": {"idea-validation": {"label": "사업 아이디어 검증", "page": "startup-idea-validation.html"}, "market-check": {"label": "시장성 확인", "page": "startup-market-check.html"}, "business-registration": {"label": "사업자등록", "page": "startup-business-registration.html"}, "trademark": {"label": "상표 출원", "page": "startup-trademark.html"}, "domain": {"label": "도메인 확보", "page": "startup-domain.html"}, "office-contract": {"label": "사무실 계약", "page": "startup-office-contract.html"}, "startup-cost": {"label": "초기비용 계산", "page": "startup-startup-cost.html"}, "startup-checklist": {"label": "사업 시작 체크리스트", "page": "startup-startup-checklist.html"}}}, "product": {"label": "상품과 서비스", "subs": {"product-planning": {"label": "상품기획", "page": "product-product-planning.html"}, "costing": {"label": "원가 계산", "page": "product-costing.html"}, "pricing": {"label": "가격 결정", "page": "product-pricing.html"}, "oem": {"label": "OEM 견적 확인", "page": "product-oem.html"}, "package": {"label": "패키지", "page": "product-package.html"}, "launch-test": {"label": "출시 전 검증", "page": "product-launch-test.html"}}}, "brand": {"label": "브랜드", "subs": {"brand-name": {"label": "브랜드명", "page": "brand-brand-name.html"}, "positioning": {"label": "포지셔닝", "page": "brand-positioning.html"}, "message": {"label": "브랜드 메시지", "page": "brand-message.html"}, "visual": {"label": "비주얼 기준", "page": "brand-visual.html"}, "brand-check": {"label": "브랜드 점검", "page": "brand-brand-check.html"}}}, "marketing": {"label": "마케팅", "subs": {"search": {"label": "검색 노출", "page": "marketing-search.html"}, "ads": {"label": "광고 성과", "page": "marketing-ads.html"}, "content": {"label": "콘텐츠 기획", "page": "marketing-content.html"}, "promotion": {"label": "프로모션", "page": "marketing-promotion.html"}, "conversion": {"label": "전환율", "page": "marketing-conversion.html"}}}, "sales": {"label": "판매와 유통", "subs": {"channel-choice": {"label": "판매채널 선택", "page": "sales-channel-choice.html"}, "naver": {"label": "네이버 판매", "page": "sales-naver.html"}, "coupang": {"label": "쿠팡 판매", "page": "sales-coupang.html"}, "offline": {"label": "오프라인 입점", "page": "sales-offline.html"}, "proposal": {"label": "입점 제안서", "page": "sales-proposal.html"}}}, "operation": {"label": "회사 운영", "subs": {"contract": {"label": "계약 확인", "page": "operation-contract.html"}, "expense": {"label": "비용 관리", "page": "operation-expense.html"}, "outsourcing": {"label": "외주 관리", "page": "operation-outsourcing.html"}, "workflow": {"label": "업무 정리", "page": "operation-workflow.html"}, "document": {"label": "문서 관리", "page": "operation-document.html"}}}, "logistics": {"label": "물류와 재고", "subs": {"3pl": {"label": "3PL 선택", "page": "logistics-3pl.html"}, "inventory": {"label": "재고 관리", "page": "logistics-inventory.html"}, "packing": {"label": "포장비", "page": "logistics-packing.html"}, "returns": {"label": "반품 관리", "page": "logistics-returns.html"}, "warehouse-move": {"label": "물류 이관", "page": "logistics-warehouse-move.html"}}}, "data-ai": {"label": "데이터와 AI", "subs": {"sales-data": {"label": "매출 데이터", "page": "data-ai-sales-data.html"}, "customer-data": {"label": "고객 데이터", "page": "data-ai-customer-data.html"}, "free-data": {"label": "무료 데이터", "page": "data-ai-free-data.html"}, "ai-work": {"label": "AI 업무 활용", "page": "data-ai-ai-work.html"}, "automation": {"label": "업무 자동화", "page": "data-ai-automation.html"}}}};
 
-let token="", posts=[], postsSha="", currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, currentAbout={path:"about.html",sha:"",html:""}, currentContact={path:"contact.html",sha:"",html:""}, files=[];
+let token="", posts=[], postsSha="", landingState={path:"",sha:"",html:"",kind:"",cards:[]}, businessHierarchy={sha:"",html:"",categories:[],current:null}, currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, currentAbout={path:"about.html",sha:"",html:""}, currentContact={path:"contact.html",sha:"",html:""}, files=[];
 const $=id=>document.getElementById(id);
 
 function setStatus(message,type="info"){
@@ -21,6 +21,13 @@ function setPageStatus(message,type="info"){
 }
 function setResourceStatus(message,type="info"){
   const el=$("resourceSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+
+function setProblemRootStatus(message,type="info"){
+  const el=$("problemRootStatus");
   if(!el)return;
   el.textContent=message;
   el.className=`status show ${type}`;
@@ -42,6 +49,20 @@ function setAboutStatus(message,type="info"){
 
 function setContactStatus(message,type="info"){
   const el=$("contactSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+
+
+function setLandingStatus(message,type="info"){
+  const el=$("landingSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+function setBusinessCategoryStatus(message,type="info"){
+  const el=$("businessCategoryStatus");
   if(!el)return;
   el.textContent=message;
   el.className=`status show ${type}`;
@@ -206,6 +227,19 @@ function fillSubcategories(catId,subId,selected=""){
   if(selected && subs[selected])$(subId).value=selected;
 }
 
+
+function openAdminTab(name){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  const tab=document.querySelector(`.tab-btn[data-tab="${name}"]`);
+  const panel=$(`panel-${name}`);
+  if(tab)tab.classList.add("active");
+  if(panel)panel.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".structure-open").forEach(btn=>btn.addEventListener("click",()=>openAdminTab(btn.dataset.target)));
+
+
 document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
@@ -217,6 +251,9 @@ $("connectBtn").addEventListener("click",async()=>{
   setStatus("GitHub에 연결하는 중입니다…","info");
   try{
     await Promise.all([loadPosts(),loadFiles()]);
+    const reloadBusinessHierarchyBtn=$("reloadBusinessHierarchyBtn");
+    if(reloadBusinessHierarchyBtn) reloadBusinessHierarchyBtn.disabled=false;
+    loadBusinessHierarchy();
     const loadPageBtn=$("loadPageBtn");
     const uploadFileBtn=$("uploadFileBtn");
     const fileInput=$("fileInput");
@@ -225,6 +262,7 @@ $("connectBtn").addEventListener("click",async()=>{
     if(loadResourceBtn) loadResourceBtn.disabled=false;
     const loadProblemBtn=$("loadProblemBtn");
     if(loadProblemBtn) loadProblemBtn.disabled=false;
+    loadProblemRootStructure();
     const loadAboutBtn=$("loadAboutBtn");
     if(loadAboutBtn) loadAboutBtn.disabled=false;
     const loadContactBtn=$("loadContactBtn");
@@ -562,9 +600,422 @@ $("saveResourceBtn").addEventListener("click",async()=>{
 });
 
 
+
+function findBusinessPageByHref(href){
+  for(const [catKey,cat] of Object.entries(TAXONOMY)){
+    for(const [subKey,sub] of Object.entries(cat.subs||{})){
+      if(sub.page===href)return {catKey,subKey,label:`${cat.label} → ${sub.label}`};
+    }
+  }
+  return null;
+}
+function businessPageOptions(selected){
+  const opts=[];
+  for(const [catKey,cat] of Object.entries(TAXONOMY)){
+    for(const [subKey,sub] of Object.entries(cat.subs||{})){
+      opts.push(`<option value="${sub.page}" ${selected===sub.page?"selected":""}>${cat.label} → ${sub.label}</option>`);
+    }
+  }
+  return opts.join("");
+}
+function openLinkedBusinessPage(href){
+  const found=findBusinessPageByHref(href);
+  if(!found){
+    setProblemStatus("연결된 상세페이지를 사업실무에서 찾지 못했습니다.","err");
+    return;
+  }
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  const tab=document.querySelector('.tab-btn[data-tab="business"]');
+  if(tab)tab.classList.add("active");
+  const panel=$("panel-business");
+  if(panel)panel.classList.add("active");
+  $("pageCategory").value=found.catKey;
+  fillSubcategories("pageCategory","pageSubcategory",found.subKey);
+  setTimeout(()=>{ $("loadPageBtn").click(); },50);
+}
+
+
+
+/* ---------- 사이트 랜딩페이지 통합 관리 ---------- */
+function extractLandingCards(doc,kind){
+  if(kind==="business"){
+    return Array.from(doc.querySelectorAll(".grid > a.card")).map(a=>({
+      title:qText(a,"h3"), body:qText(a,"p"), href:a.getAttribute("href")||"",
+      meta:qText(a,".num")
+    }));
+  }
+  if(kind==="problems"){
+    return Array.from(doc.querySelectorAll(".problem-grid > a.problem-card")).map(a=>({
+      title:qText(a,"strong"), body:"", href:a.getAttribute("href")||"",
+      meta:qText(a,"span"), cta:qText(a,"em")
+    }));
+  }
+  if(kind==="resources"){
+    return Array.from(doc.querySelectorAll(".resource-grid > a.resource-card")).map(a=>({
+      title:qText(a,"h3"), body:qText(a,"p"), href:a.getAttribute("href")||"",
+      meta:qText(a,".resource-meta b"), cta:qText(a,".download-link")
+    }));
+  }
+  return [];
+}
+function renderLandingCards(){
+  const area=$("landingCardsArea");
+  if(!area)return;
+  const kind=landingState.kind;
+  if(!["business","problems","resources"].includes(kind)){
+    area.innerHTML='<div class="helper">이 랜딩페이지는 제목과 설명만 수정합니다. 하위 내용은 해당 관리 메뉴에서 수정하세요.</div>';
+    return;
+  }
+  area.innerHTML=`
+    <label class="admin-label">랜딩 카드 목록</label>
+    <div id="landingCardsEditor" class="hier-list"></div>
+    <div class="rep-footer">
+      <button id="addLandingCardBtn" type="button" class="admin-btn light">+ 카드 추가</button>
+      <button id="removeLandingCardBtn" type="button" class="admin-btn light">− 마지막 카드 삭제</button>
+    </div>
+  `;
+  const mount=$("landingCardsEditor");
+  mount.innerHTML=landingState.cards.map((c,i)=>`
+    <div class="hier-card" data-index="${i}">
+      <div class="hier-card-head">
+        <strong>${i+1}번 카드</strong>
+        <div class="hier-actions">
+          <button type="button" class="admin-btn light ld-up" ${i===0?"disabled":""}>↑</button>
+          <button type="button" class="admin-btn light ld-down" ${i===landingState.cards.length-1?"disabled":""}>↓</button>
+          ${c.href?`<button type="button" class="admin-btn light ld-open">하위 편집</button>`:""}
+          <button type="button" class="admin-btn danger ld-delete" ${landingState.cards.length===1?"disabled":""}>삭제</button>
+        </div>
+      </div>
+      <div class="inline-two">
+        <div><label class="admin-label">카드 제목</label><input class="admin-input ld-title" value="${escapeHtml(c.title||"")}"></div>
+        <div><label class="admin-label">연결 파일</label><input class="admin-input ld-href" value="${escapeHtml(c.href||"")}"></div>
+      </div>
+      ${kind!=="problems"?`<label class="admin-label">카드 설명</label><textarea class="admin-textarea ld-body" style="min-height:70px">${escapeHtml(c.body||"")}</textarea>`:""}
+      <div class="inline-two">
+        <div><label class="admin-label">${kind==="business"?"번호":"표시정보"}</label><input class="admin-input ld-meta" value="${escapeHtml(c.meta||"")}"></div>
+        <div><label class="admin-label">버튼 문구</label><input class="admin-input ld-cta" value="${escapeHtml(c.cta||"")}"></div>
+      </div>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll(".hier-card").forEach(row=>{
+    const i=Number(row.dataset.index);
+    const sync=()=>{
+      landingState.cards[i]={
+        ...landingState.cards[i],
+        title:row.querySelector(".ld-title")?.value||"",
+        href:row.querySelector(".ld-href")?.value||"",
+        body:row.querySelector(".ld-body")?.value||"",
+        meta:row.querySelector(".ld-meta")?.value||"",
+        cta:row.querySelector(".ld-cta")?.value||""
+      };
+    };
+    row.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",sync));
+    row.querySelector(".ld-up")?.addEventListener("click",()=>{sync(); if(i>0)[landingState.cards[i-1],landingState.cards[i]]=[landingState.cards[i],landingState.cards[i-1]];renderLandingCards();});
+    row.querySelector(".ld-down")?.addEventListener("click",()=>{sync(); if(i<landingState.cards.length-1)[landingState.cards[i+1],landingState.cards[i]]=[landingState.cards[i],landingState.cards[i+1]];renderLandingCards();});
+    row.querySelector(".ld-delete")?.addEventListener("click",()=>{if(landingState.cards.length>1)landingState.cards.splice(i,1);renderLandingCards();});
+    row.querySelector(".ld-open")?.addEventListener("click",()=>openLandingChild(landingState.kind,landingState.cards[i]));
+  });
+
+  $("addLandingCardBtn")?.addEventListener("click",()=>{
+    landingState.cards.push({title:"새 항목",body:"",href:"",meta:"",cta:""});
+    renderLandingCards();
+  });
+  $("removeLandingCardBtn")?.addEventListener("click",()=>{
+    if(landingState.cards.length>1)landingState.cards.pop();
+    renderLandingCards();
+  });
+}
+function openLandingChild(kind,card){
+  if(kind==="business"){
+    openAdminTab("business");
+    setTimeout(()=>loadBusinessCategoryPage(card.href),50);
+  }else if(kind==="problems"){
+    openAdminTab("problems");
+    const sel=$("problemSelect");
+    if(sel){
+      if(!Array.from(sel.options).some(o=>o.value===card.href)){
+        const opt=document.createElement("option");opt.value=card.href;opt.textContent=card.title;sel.appendChild(opt);
+      }
+      sel.value=card.href;
+      setTimeout(()=>$("loadProblemBtn")?.click(),50);
+    }
+  }else if(kind==="resources"){
+    openAdminTab("resources");
+    if($("resourceSelect")){
+      $("resourceSelect").value=card.href;
+      setTimeout(()=>$("loadResourceBtn")?.click(),50);
+    }
+  }
+}
+document.querySelectorAll(".landing-load").forEach(btn=>btn.addEventListener("click",async()=>{
+  if(!token)return setLandingStatus("먼저 GitHub에 연결해주세요.","err");
+  const path=btn.dataset.page,kind=btn.dataset.kind;
+  setLandingStatus(`${path}를 불러오는 중입니다…`,"info");
+  try{
+    const data=await getFile(path);
+    const html=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(html,"text/html");
+    landingState={path,sha:data.sha,html,kind,cards:extractLandingCards(doc,kind)};
+    $("ldTitle").value=qText(doc,".page-hero h1");
+    $("ldSummary").value=qText(doc,".page-hero h1 + p");
+    $("ldEyebrow").value=qText(doc,".page-hero .eyebrow");
+    $("landingEditorHint").textContent=`현재 수정 중: ${btn.closest(".structure-card")?.querySelector("h3")?.textContent||path}`;
+    $("landingEditNote").textContent=`${path} 수정 중`;
+    $("saveLandingBtn").disabled=false;
+    renderLandingCards();
+    setLandingStatus("랜딩페이지를 불러왔습니다.","ok");
+    document.querySelector(".landing-editor")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){setLandingStatus("랜딩페이지를 불러오지 못했습니다: "+e.message,"err");}
+}));
+$("saveLandingBtn")?.addEventListener("click",async()=>{
+  if(!landingState.sha)return setLandingStatus("먼저 랜딩페이지를 불러오세요.","err");
+  const btn=$("saveLandingBtn");btn.disabled=true;btn.textContent="저장 중…";
+  try{
+    const doc=new DOMParser().parseFromString(landingState.html,"text/html");
+    const h1=doc.querySelector(".page-hero h1"),p=doc.querySelector(".page-hero h1 + p"),eye=doc.querySelector(".page-hero .eyebrow");
+    if(h1)h1.textContent=$("ldTitle").value.trim();
+    if(p)p.textContent=$("ldSummary").value.trim();
+    if(eye)eye.textContent=$("ldEyebrow").value.trim();
+
+    if(landingState.kind==="business"){
+      const grid=doc.querySelector(".grid"); if(grid){grid.innerHTML="";landingState.cards.forEach((c,i)=>{const a=doc.createElement("a");a.className="card";a.href=c.href;a.innerHTML=`<div class="num">${escapeHtml(c.meta||String(i+1).padStart(2,"0"))}</div><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.body)}</p>`;grid.appendChild(a);});}
+    }else if(landingState.kind==="problems"){
+      const grid=doc.querySelector(".problem-grid"); if(grid){grid.innerHTML="";landingState.cards.forEach((c,i)=>{const a=doc.createElement("a");a.className="problem-card problem-link";a.href=c.href;a.innerHTML=`<span>${escapeHtml(c.meta||String(i+1).padStart(2,"0"))}</span><strong>${escapeHtml(c.title)}</strong><em>${escapeHtml(c.cta||"세부 문제 보기 →")}</em>`;grid.appendChild(a);});}
+    }else if(landingState.kind==="resources"){
+      const grid=doc.querySelector(".resource-grid"); if(grid){grid.innerHTML="";landingState.cards.forEach(c=>{const a=doc.createElement("a");a.className="resource-card resource-card-link";a.href=c.href;a.innerHTML=`<div class="resource-meta"><span class="tag">PRACTICAL</span><b>${escapeHtml(c.meta||"GUIDE")}</b></div><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.body)}</p><span class="download-link">${escapeHtml(c.cta||"내용 보기 →")}</span>`;grid.appendChild(a);});}
+    }
+
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const result=await putFile(landingState.path,encodeBase64Utf8(newHtml),landingState.sha,`Update landing page: ${landingState.path}`);
+    landingState.sha=result.content.sha;landingState.html=newHtml;
+    setLandingStatus("✓ 저장 완료 — 랜딩페이지가 정상 저장되었습니다.","saved");
+    if(landingState.kind==="business")loadBusinessHierarchy();
+    if(landingState.kind==="problems")loadProblemRootStructure();
+  }catch(e){setLandingStatus("저장 실패: "+e.message,"err");}
+  finally{btn.disabled=false;btn.textContent="랜딩페이지 저장";}
+});
+
+/* ---------- 문제별 해결 1단계 구조 관리 ---------- */
+function rootItemsFromDoc(doc){
+  return Array.from(doc.querySelectorAll(".problem-grid .problem-card")).map(a=>({
+    title:a.querySelector("strong")?.textContent.trim()||"",
+    href:a.getAttribute("href")||"",
+    cta:a.querySelector("em")?.textContent.trim()||"세부 문제 보기 →"
+  }));
+}
+function slugifyProblemFile(title){
+  const base=(title||"new-problem").toLowerCase()
+    .replace(/[^a-z0-9가-힣]+/g,"-")
+    .replace(/^-+|-+$/g,"")
+    .slice(0,34);
+  return `problem-${base||Date.now()}.html`;
+}
+function renderProblemRootEditor(){
+  const mount=$("problemRootEditor");
+  if(!mount)return;
+  const data=problemRootState.items||[];
+  mount.innerHTML=data.map((item,i)=>`
+    <div class="problem-root-item" data-index="${i}">
+      <div class="row">
+        <div>
+          <label class="admin-label">큰 문제 제목</label>
+          <input class="admin-input root-title" value="${escapeHtml(item.title||"")}">
+        </div>
+        <div>
+          <label class="admin-label">중간 페이지 파일명</label>
+          <input class="admin-input root-href" value="${escapeHtml(item.href||"")}">
+        </div>
+      </div>
+      <label class="admin-label">카드 버튼 문구</label>
+      <input class="admin-input root-cta" value="${escapeHtml(item.cta||"세부 문제 보기 →")}">
+      <div class="controls">
+        <button type="button" class="admin-btn light root-up" ${i===0?"disabled":""}>↑</button>
+        <button type="button" class="admin-btn light root-down" ${i===data.length-1?"disabled":""}>↓</button>
+        <button type="button" class="admin-btn light root-open">이 구분 편집</button>
+        <button type="button" class="admin-btn danger root-delete" ${data.length===1?"disabled":""}>삭제</button>
+      </div>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll(".problem-root-item").forEach(row=>{
+    const i=Number(row.dataset.index);
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{
+      problemRootState.items[i]={
+        title:row.querySelector(".root-title").value,
+        href:row.querySelector(".root-href").value,
+        cta:row.querySelector(".root-cta").value
+      };
+    }));
+    row.querySelector(".root-up")?.addEventListener("click",()=>{
+      if(i>0)[problemRootState.items[i-1],problemRootState.items[i]]=[problemRootState.items[i],problemRootState.items[i-1]];
+      renderProblemRootEditor();
+    });
+    row.querySelector(".root-down")?.addEventListener("click",()=>{
+      if(i<problemRootState.items.length-1)[problemRootState.items[i+1],problemRootState.items[i]]=[problemRootState.items[i],problemRootState.items[i+1]];
+      renderProblemRootEditor();
+    });
+    row.querySelector(".root-delete")?.addEventListener("click",()=>{
+      if(problemRootState.items.length>1)problemRootState.items.splice(i,1);
+      renderProblemRootEditor();
+    });
+    row.querySelector(".root-open")?.addEventListener("click",()=>{
+      const href=problemRootState.items[i].href;
+      if(!href)return;
+      const sel=$("problemSelect");
+      if(!Array.from(sel.options).some(o=>o.value===href)){
+        const opt=document.createElement("option");opt.value=href;opt.textContent=problemRootState.items[i].title;sel.appendChild(opt);
+      }
+      sel.value=href;
+      $("loadProblemBtn").click();
+      document.getElementById("problemSelect")?.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+}
+async function loadProblemRootStructure(){
+  setProblemRootStatus("문제별 해결 1단계 구조를 불러오는 중입니다…","info");
+  try{
+    const data=await getFile("problems.html");
+    const html=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(html,"text/html");
+    problemRootState={sha:data.sha,html,items:rootItemsFromDoc(doc)};
+    renderProblemRootEditor();
+    syncProblemSelectFromRoot();
+    $("saveProblemRootBtn").disabled=false;
+    setProblemRootStatus(`현재 ${problemRootState.items.length}개의 큰 문제 구분이 있습니다.`,"ok");
+  }catch(e){
+    setProblemRootStatus("1단계 구조를 불러오지 못했습니다: "+e.message,"err");
+  }
+}
+function syncProblemSelectFromRoot(){
+  const sel=$("problemSelect");
+  if(!sel)return;
+  const current=sel.value;
+  sel.innerHTML=(problemRootState.items||[]).map(x=>`<option value="${escapeHtml(x.href)}">${escapeHtml(x.title)}</option>`).join("");
+  if(Array.from(sel.options).some(o=>o.value===current))sel.value=current;
+}
+async function createIntermediateProblemPage(item){
+  let templateData;
+  try{
+    templateData=await getFile("problem-start.html");
+  }catch(e){ throw new Error("새 문제 페이지용 기본 템플릿을 불러오지 못했습니다."); }
+
+  const doc=new DOMParser().parseFromString(decodeBase64Utf8(templateData.content),"text/html");
+  const title=doc.querySelector(".page-hero h1");
+  const summary=doc.querySelector(".page-hero h1 + p");
+  const breadcrumb=doc.querySelector(".breadcrumb");
+  const titleTag=doc.querySelector("title");
+  if(title)title.textContent=item.title||"새 문제";
+  if(summary)summary.textContent="이 문제를 해결하기 위해 필요한 세부 주제를 정리합니다.";
+  if(breadcrumb)breadcrumb.innerHTML=`<a href="index.html">홈</a> / <a href="problems.html">문제별 해결</a> / ${escapeHtml(item.title||"새 문제")}`;
+  if(titleTag)titleTag.textContent=`${item.title||"새 문제"} | BIZZIP`;
+
+  const cards=Array.from(doc.querySelectorAll(".problem-subcard"));
+  cards.forEach((c,i)=>{
+    if(i===0){
+      const h3=c.querySelector("h3"),p=c.querySelector("p");
+      if(h3)h3.textContent="새 관련 문제";
+      if(p)p.textContent="이 카드의 제목, 설명, 연결 페이지를 관리자에서 수정하세요.";
+      c.setAttribute("href","startup-idea-validation.html");
+    }else c.remove();
+  });
+  const boxes=Array.from(doc.querySelectorAll(".feature-box"));
+  boxes.forEach((b,i)=>{
+    if(i===0){
+      const h3=b.querySelector("h3"),p=b.querySelector("p");
+      if(h3)h3.textContent="빠르게 확인할 것";
+      if(p)p.textContent="현재 상황에서 가장 먼저 확인할 기준을 적어주세요.";
+    }else b.remove();
+  });
+
+  const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+  await putFile(item.href,encodeBase64Utf8(newHtml),"",`Create problem page: ${item.href}`);
+}
+$("addProblemRootBtn")?.addEventListener("click",()=>{
+  const title="새 문제 구분";
+  problemRootState.items.push({title,href:slugifyProblemFile(title+"-"+Date.now()),cta:"세부 문제 보기 →"});
+  renderProblemRootEditor();
+});
+$("removeProblemRootBtn")?.addEventListener("click",()=>{
+  if(problemRootState.items.length>1)problemRootState.items.pop();
+  renderProblemRootEditor();
+});
+$("saveProblemRootBtn")?.addEventListener("click",async()=>{
+  if(!problemRootState.sha)return;
+  const btn=$("saveProblemRootBtn");btn.disabled=true;btn.textContent="저장 중…";
+  setProblemRootStatus("1단계 구조와 필요한 중간 페이지를 저장하는 중입니다…","info");
+  try{
+    const doc=new DOMParser().parseFromString(problemRootState.html,"text/html");
+    const grid=doc.querySelector(".problem-grid");
+    if(!grid)throw new Error("problems.html의 문제 목록 영역을 찾지 못했습니다.");
+
+    const existingFiles=new Set(rootItemsFromDoc(doc).map(x=>x.href));
+    grid.innerHTML="";
+    problemRootState.items.forEach((item,i)=>{
+      const a=doc.createElement("a");
+      a.className="problem-card problem-link";
+      a.setAttribute("href",item.href);
+      a.innerHTML=`<span>${String(i+1).padStart(2,"0")}</span><strong>${escapeHtml(item.title)}</strong><em>${escapeHtml(item.cta||"세부 문제 보기 →")}</em>`;
+      grid.appendChild(a);
+    });
+
+    for(const item of problemRootState.items){
+      if(!existingFiles.has(item.href)){
+        try{ await getFile(item.href); }
+        catch(e){
+          if(String(e.message).startsWith("404")) await createIntermediateProblemPage(item);
+          else throw e;
+        }
+      }
+    }
+
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const result=await putFile("problems.html",encodeBase64Utf8(newHtml),problemRootState.sha,"Update problem root structure");
+    problemRootState.sha=result.content.sha;
+    problemRootState.html=newHtml;
+    syncProblemSelectFromRoot();
+    setProblemRootStatus("✓ 저장 완료 — 큰 문제 구분과 새 중간 페이지가 정상 반영되었습니다.","saved");
+  }catch(e){
+    setProblemRootStatus("저장 실패: "+e.message,"err");
+  }finally{
+    btn.disabled=false;btn.textContent="1단계 구조 저장";
+  }
+});
+
 /* ---------- 문제별 해결 관리 ---------- */
+
+function decorateProblemCardLinks(){
+  const mount=$("problemCardsEditor");
+  if(!mount)return;
+  const data=getRepeaterData("problemCardsEditor");
+  mount.querySelectorAll(".rep-item").forEach((row,i)=>{
+    let box=row.querySelector(".problem-link-editor");
+    if(!box){
+      box=document.createElement("div");
+      box.className="problem-link-editor";
+      row.appendChild(box);
+    }
+    const current=data[i]?.href||"";
+    box.innerHTML=`
+      <label class="admin-label">연결 상세페이지</label>
+      <select class="admin-select linked-page-select">${businessPageOptions(current)}</select>
+      <button type="button" class="admin-btn light linked-edit-btn">연결 상세페이지 편집</button>
+    `;
+    const sel=box.querySelector(".linked-page-select");
+    sel.addEventListener("change",()=>{
+      const d=getRepeaterData("problemCardsEditor");
+      if(d[i])d[i].href=sel.value;
+      mount.dataset.items=JSON.stringify(d);
+      renderProblemPreview();
+    });
+    box.querySelector(".linked-edit-btn").addEventListener("click",()=>openLinkedBusinessPage(sel.value));
+  });
+}
+
 function renderProblemPreview(){
   const m=$("problemPreview");if(!m)return;
+  setTimeout(()=>{ if($("problemCardsEditor") && !$("problemCardsEditor").querySelector(".problem-link-editor")) decorateProblemCardLinks(); },0);
   const title=$("pbTitle")?.value.trim()||"문제별 해결";
   const hero=$("pbHeroSummary")?.value.trim()||"";
   const st=$("pbSectionTitle")?.value.trim()||"";
@@ -612,7 +1063,8 @@ $("loadProblemBtn").addEventListener("click",async()=>{
     })),[
       {key:"title",label:"카드 제목"},
       {key:"body",label:"카드 설명",type:"textarea",height:70}
-    ],renderProblemPreview);
+    ],()=>{renderProblemPreview();decorateProblemCardLinks();});
+    decorateProblemCardLinks();
 
     const quickHead=sections[2]?.querySelector(".section-head");
     $("pbQuickTitle").value=qText(quickHead||doc,"h2");
@@ -637,8 +1089,8 @@ $("problemSelect").addEventListener("change",()=>{
   $("saveProblemBtn").disabled=true;$("problemEditNote").textContent="페이지를 다시 불러오세요";
   setProblemStatus("선택이 바뀌었습니다. ‘문제 페이지 불러오기’를 눌러주세요.","info");
 });
-if($("addProblemCardBtn")) $("addProblemCardBtn").addEventListener("click",()=>addRepeaterItem("problemCardsEditor",{title:"",body:"",href:""},renderProblemPreview));
-if($("removeProblemCardBtn")) $("removeProblemCardBtn").addEventListener("click",()=>removeLastRepeaterItem("problemCardsEditor",renderProblemPreview));
+if($("addProblemCardBtn")) $("addProblemCardBtn").addEventListener("click",()=>{addRepeaterItem("problemCardsEditor",{title:"",body:"",href:"startup-idea-validation.html"},renderProblemPreview);decorateProblemCardLinks();});
+if($("removeProblemCardBtn")) $("removeProblemCardBtn").addEventListener("click",()=>{removeLastRepeaterItem("problemCardsEditor",renderProblemPreview);decorateProblemCardLinks();});
 if($("addQuickCheckBtn")) $("addQuickCheckBtn").addEventListener("click",()=>addRepeaterItem("quickChecksEditor",{title:"",body:""},renderProblemPreview));
 if($("removeQuickCheckBtn")) $("removeQuickCheckBtn").addEventListener("click",()=>removeLastRepeaterItem("quickChecksEditor",renderProblemPreview));
 
