@@ -36,7 +36,10 @@
           "상표·도메인·계약 같은 되돌리기 어려운 일을 뒤로 미루는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "office-contract",
+    "subcategoryLabel": "사무실 계약",
+    "subcategoryPage": "startup-office-contract.html"
   },
   {
     "id": "startup-cost-cash-buffer",
@@ -75,7 +78,10 @@
           "상표·도메인·계약 같은 되돌리기 어려운 일을 뒤로 미루는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "startup-cost",
+    "subcategoryLabel": "초기비용 계산",
+    "subcategoryPage": "startup-startup-cost.html"
   },
   {
     "id": "pricing-not-only-cost",
@@ -114,7 +120,10 @@
           "무료 체험 반응을 실제 구매의향으로 오해하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "pricing",
+    "subcategoryLabel": "가격 결정",
+    "subcategoryPage": "product-pricing.html"
   },
   {
     "id": "oem-quote-moq",
@@ -153,7 +162,10 @@
           "무료 체험 반응을 실제 구매의향으로 오해하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "oem",
+    "subcategoryLabel": "OEM 견적 확인",
+    "subcategoryPage": "product-oem.html"
   },
   {
     "id": "brand-positioning-one-line",
@@ -192,7 +204,10 @@
           "내부에서 좋아하는 표현을 고객도 이해할 것이라고 생각하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "positioning",
+    "subcategoryLabel": "포지셔닝",
+    "subcategoryPage": "brand-positioning.html"
   },
   {
     "id": "brand-message-customer-language",
@@ -231,7 +246,10 @@
           "내부에서 좋아하는 표현을 고객도 이해할 것이라고 생각하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "message",
+    "subcategoryLabel": "브랜드 메시지",
+    "subcategoryPage": "brand-message.html"
   },
   {
     "id": "ads-check-before-spend",
@@ -270,7 +288,10 @@
           "광고비를 늘리기 전에 전환과 이익구조를 확인하지 않는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "ads",
+    "subcategoryLabel": "광고 성과",
+    "subcategoryPage": "marketing-ads.html"
   },
   {
     "id": "content-from-customer-questions",
@@ -309,7 +330,10 @@
           "광고비를 늘리기 전에 전환과 이익구조를 확인하지 않는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "content",
+    "subcategoryLabel": "콘텐츠 기획",
+    "subcategoryPage": "marketing-content.html"
   },
   {
     "id": "channel-first-choice",
@@ -348,7 +372,10 @@
           "입점 매장 수를 판매성과로 착각하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "channel-choice",
+    "subcategoryLabel": "판매채널 선택",
+    "subcategoryPage": "sales-channel-choice.html"
   },
   {
     "id": "offline-margin-check",
@@ -387,7 +414,10 @@
           "입점 매장 수를 판매성과로 착각하는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "offline",
+    "subcategoryLabel": "오프라인 입점",
+    "subcategoryPage": "sales-offline.html"
   },
   {
     "id": "subscription-fixed-cost",
@@ -426,7 +456,10 @@
           "외주사 계정에 회사 핵심자산을 모두 맡기는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "expense",
+    "subcategoryLabel": "비용 관리",
+    "subcategoryPage": "operation-expense.html"
   },
   {
     "id": "outsourcing-account-ownership",
@@ -465,7 +498,10 @@
           "외주사 계정에 회사 핵심자산을 모두 맡기는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "outsourcing",
+    "subcategoryLabel": "외주 관리",
+    "subcategoryPage": "operation-outsourcing.html"
   },
   {
     "id": "3pl-total-cost",
@@ -504,7 +540,10 @@
           "이관·반품 같은 예외업무의 책임기준을 정하지 않는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "3pl",
+    "subcategoryLabel": "3PL 선택",
+    "subcategoryPage": "logistics-3pl.html"
   },
   {
     "id": "inventory-months",
@@ -543,7 +582,10 @@
           "이관·반품 같은 예외업무의 책임기준을 정하지 않는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "inventory",
+    "subcategoryLabel": "재고 관리",
+    "subcategoryPage": "logistics-inventory.html"
   },
   {
     "id": "sales-decomposition",
@@ -582,7 +624,10 @@
           "분석 결과를 행동과 연결하지 않고 보고서에서 끝내는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "sales-data",
+    "subcategoryLabel": "매출 데이터",
+    "subcategoryPage": "data-ai-sales-data.html"
   },
   {
     "id": "ai-repeat-work-first",
@@ -621,6 +666,9 @@
           "분석 결과를 행동과 연결하지 않고 보고서에서 끝내는 것"
         ]
       }
-    ]
+    ],
+    "subcategory": "ai-work",
+    "subcategoryLabel": "AI 업무 활용",
+    "subcategoryPage": "data-ai-ai-work.html"
   }
 ]

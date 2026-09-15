@@ -56,9 +56,9 @@
   <div class="admin-top">
     <div class="admin-title">
       <h1>BIZZIP 관리자</h1>
-      <p>콘텐츠를 추가하거나 기존 글을 수정해 GitHub에 바로 반영합니다.</p>
+      <p>콘텐츠를 사업실무의 세부 메뉴에 연결해 추가·수정하고 GitHub에 바로 반영합니다.</p>
     </div>
-    <div class="admin-badge">ADMIN v1</div>
+    <div class="admin-badge">ADMIN v2</div>
   </div>
 
   <div class="admin-grid">
@@ -109,6 +109,10 @@
           <option value="logistics">물류와 재고</option>
           <option value="data-ai">데이터와 AI</option>
         </select>
+
+        <label class="admin-label" for="subcategory">세부 메뉴</label>
+        <select id="subcategory" class="admin-select"></select>
+        <div class="helper">새 글은 반드시 위 사업실무의 세부 메뉴 하나에 연결합니다. 저장하면 해당 세부 페이지와 상위 카테고리의 최신 콘텐츠에 함께 표시됩니다.</div>
 
         <label class="admin-label" for="summary">요약</label>
         <textarea id="summary" class="admin-textarea" style="min-height:90px" placeholder="목록 카드에 표시될 1~2문장 요약"></textarea>
