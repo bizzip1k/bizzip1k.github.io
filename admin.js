@@ -13,6 +13,12 @@ const $=id=>document.getElementById(id);
 function setStatus(message,type="info"){
   const el=$("status"); el.textContent=message; el.className=`status show ${type}`;
 }
+function setPageStatus(message,type="info"){
+  const el=$("pageSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
 function todayLocal(){
   const d=new Date(), local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
   return local.toISOString().slice(0,10);
@@ -135,6 +141,8 @@ function qText(root,sel){ const el=root.querySelector(sel);return el?el.textCont
 $("loadPageBtn").addEventListener("click",async()=>{
   const cat=$("pageCategory").value,sub=$("pageSubcategory").value,path=TAXONOMY[cat].subs[sub].page;
   setStatus(`${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label} 페이지를 불러오는 중입니다…`,"info");
+  setPageStatus("페이지를 불러오는 중입니다…","info");
+  $("savePageBtn").disabled=true;
   try{
     const data=await getFile(path),html=decodeBase64Utf8(data.content); currentPage={path,sha:data.sha,html};
     const doc=new DOMParser().parseFromString(html,"text/html"),article=doc.querySelector("article.article"); if(!article)throw new Error("수정 가능한 본문 영역을 찾지 못했습니다.");
@@ -144,11 +152,25 @@ $("loadPageBtn").addEventListener("click",async()=>{
     const steps=Array.from(article.querySelectorAll(".step-card"));
     for(let i=0;i<4;i++){ $("fpStep"+(i+1)+"Title").value=qText(steps[i]||article,"strong"); $("fpStep"+(i+1)+"Body").value=qText(steps[i]||article,"p"); }
     $("fpExample").value=qText(article,".example-box p"); $("fpMistakes").value=textList(article.querySelector(".mistake-box ul")); $("fpFinishTitle").value=qText(article,".finish-box strong"); $("fpFinishBody").value=qText(article,".finish-box p");
-    $("savePageBtn").disabled=false; $("pageEditNote").textContent=`수정 중: ${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label}`; setStatus("페이지를 불러왔습니다.","ok");
-  }catch(e){ $("savePageBtn").disabled=true;setStatus("페이지를 불러오지 못했습니다: "+e.message,"err"); }
+    $("savePageBtn").disabled=false;
+    $("pageEditNote").textContent=`수정 중: ${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label}`;
+    setStatus("페이지를 불러왔습니다.","ok");
+    setPageStatus("페이지를 불러왔습니다. 이제 수정 후 ‘페이지 저장’을 누르세요.","ok");
+  }catch(e){
+    $("savePageBtn").disabled=true;
+    setStatus("페이지를 불러오지 못했습니다: "+e.message,"err");
+    setPageStatus("페이지를 불러오지 못했습니다: "+e.message,"err");
+  }
 });
 $("savePageBtn").addEventListener("click",async()=>{
-  if(!currentPage.path)return;
+  if(!currentPage.path){
+    setPageStatus("먼저 왼쪽에서 페이지를 선택하고 ‘페이지 불러오기’를 눌러주세요.","err");
+    return;
+  }
+  const saveBtn=$("savePageBtn");
+  saveBtn.disabled=true;
+  saveBtn.textContent="저장 중…";
+  setPageStatus("GitHub에 저장하는 중입니다…","info");
   try{
     const doc=new DOMParser().parseFromString(currentPage.html,"text/html"),article=doc.querySelector("article.article");
     const heroTitle=doc.querySelector(".page-hero h1"),heroSummary=doc.querySelector(".page-hero h1 + p"); if(heroTitle)heroTitle.textContent=$("fpTitle").value.trim();if(heroSummary)heroSummary.textContent=$("fpHeroSummary").value.trim();
@@ -159,8 +181,17 @@ $("savePageBtn").addEventListener("click",async()=>{
     const ex=article.querySelector(".example-box p");if(ex)ex.textContent=$("fpExample").value.trim();setList(article.querySelector(".mistake-box ul"),$("fpMistakes").value);
     const ft=article.querySelector(".finish-box strong"),fb=article.querySelector(".finish-box p");if(ft)ft.textContent=$("fpFinishTitle").value.trim();if(fb)fb.textContent=$("fpFinishBody").value.trim();
     const html="<!doctype html>\n"+doc.documentElement.outerHTML,r=await putFile(currentPage.path,encodeBase64Utf8(html),currentPage.sha,`Update business page: ${currentPage.path}`);
-    currentPage.sha=r.content.sha;currentPage.html=html;setStatus("사업실무 페이지를 저장했습니다.","ok");
-  }catch(e){setStatus("페이지 저장에 실패했습니다: "+e.message,"err");}
+    currentPage.sha=r.content.sha;
+    currentPage.html=html;
+    setStatus("사업실무 페이지를 저장했습니다.","ok");
+    setPageStatus("✓ 저장 완료 — GitHub에 정상 저장되었습니다. 사이트 반영에는 잠시 시간이 걸릴 수 있습니다.","saved");
+  }catch(e){
+    setStatus("페이지 저장에 실패했습니다: "+e.message,"err");
+    setPageStatus("저장 실패: "+e.message,"err");
+  }finally{
+    saveBtn.disabled=false;
+    saveBtn.textContent="페이지 저장";
+  }
 });
 
 /* 첨부파일 */
@@ -194,3 +225,11 @@ window.removeAttachment=async i=>{
 };
 
 populateTaxonomy();newPost();
+
+
+$("pageSubcategory").addEventListener("change",()=>{
+  const s=$("pageSaveStatus");
+  if(s){s.className="status";s.textContent="";}
+  $("savePageBtn").disabled=true;
+  $("pageEditNote").textContent="페이지를 다시 불러오세요";
+});
