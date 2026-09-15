@@ -32,6 +32,17 @@ body{background:#f4f9fa;color:#102b46}
 .helper{font-size:12px;line-height:1.55;color:#7c8a92;margin-top:7px}
 .item-list{display:flex;flex-direction:column;gap:8px;max-height:650px;overflow:auto;padding-right:3px}
 .item{border:1px solid #e0eaed;border-radius:11px;padding:11px;background:#fbfdfd}
+
+.item-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.item-actions .admin-btn{
+  min-height:34px;
+  padding:7px 10px;
+  font-size:12px;
+  line-height:1;
+  box-sizing:border-box;
+  white-space:nowrap;
+}
+
 .item strong{display:block;font-size:13px;margin-bottom:4px}.item-meta{font-size:11px;color:#7e8d95;margin-bottom:8px}.item-actions{display:flex;gap:6px}.item-actions button{padding:6px 8px;font-size:11px}
 .form-row{display:grid;grid-template-columns:1fr 180px;gap:10px}
 .form-actions{display:flex;gap:9px;align-items:center;margin-top:15px}
@@ -48,7 +59,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.5.1</div>
+    <div class="admin-badge">ADMIN v3.5.2</div>
   </div>
 
   <div class="connect-card">
@@ -317,6 +328,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.5.1"></script>
+<script src="admin.js?v=3.5.2"></script>
 </body>
 </html>
