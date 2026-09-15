@@ -167,13 +167,23 @@ body{background:#f4f9fa;color:#102b46}
 }
 
 @media(max-width:900px){.connect-card{grid-template-columns:1fr}.admin-grid{grid-template-columns:1fr}.form-row,.fixed-fields{grid-template-columns:1fr}.fixed-fields .wide{grid-column:auto}}
+
+.repeater-wrap{display:flex;flex-direction:column;gap:10px}
+.repeater-item{border:1px solid #dfe9ec;border-radius:12px;padding:12px;background:#fbfdfd}
+.repeater-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.repeater-title{font-size:12px;font-weight:800;color:#345566}
+.repeater-actions{display:flex;gap:6px}
+.repeater-actions .admin-btn{min-height:30px;padding:6px 9px;font-size:12px}
+.repeater-footer{display:flex;gap:8px;margin-top:10px}
+.mini-help{font-size:11px;color:#7a8a92}
+
 </style>
 </head>
 <body>
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.6</div>
+    <div class="admin-badge">ADMIN v3.7</div>
   </div>
 
   <div class="connect-card">
@@ -250,10 +260,16 @@ body{background:#f4f9fa;color:#102b46}
           <div class="wide"><label class="admin-label">왜 이 내용을 먼저 봐야 할까요?</label><textarea id="fpIntro" class="admin-textarea" style="min-height:85px"></textarea></div>
           <div class="wide"><label class="admin-label">실무에서 먼저 보는 기준 (한 줄에 한 항목)</label><textarea id="fpCriteria" class="admin-textarea" style="min-height:110px"></textarea></div>
           <div class="wide"><label class="admin-label">바로 해볼 일</label><textarea id="fpAction" class="admin-textarea" style="min-height:85px"></textarea></div>
-          <div><label class="admin-label">STEP 1 제목</label><input id="fpStep1Title" class="admin-input"></div><div><label class="admin-label">STEP 1 설명</label><input id="fpStep1Body" class="admin-input"></div>
-          <div><label class="admin-label">STEP 2 제목</label><input id="fpStep2Title" class="admin-input"></div><div><label class="admin-label">STEP 2 설명</label><input id="fpStep2Body" class="admin-input"></div>
-          <div><label class="admin-label">STEP 3 제목</label><input id="fpStep3Title" class="admin-input"></div><div><label class="admin-label">STEP 3 설명</label><input id="fpStep3Body" class="admin-input"></div>
-          <div><label class="admin-label">STEP 4 제목</label><input id="fpStep4Title" class="admin-input"></div><div><label class="admin-label">STEP 4 설명</label><input id="fpStep4Body" class="admin-input"></div>
+          
+          <div class="wide">
+            <label class="admin-label">실행 순서</label>
+            <div id="businessSteps" class="repeater-wrap"></div>
+            <div class="repeater-footer">
+              <button id="addBusinessStepBtn" type="button" class="admin-btn light">+ STEP 추가</button>
+              <button id="removeBusinessStepBtn" type="button" class="admin-btn light">− 마지막 STEP 삭제</button>
+            </div>
+            <div class="mini-help">STEP은 1개 이상 유지되며 필요에 따라 자유롭게 늘리거나 줄일 수 있습니다.</div>
+          </div>
           <div class="wide"><label class="admin-label">현장 예시</label><textarea id="fpExample" class="admin-textarea" style="min-height:85px"></textarea></div>
           <div class="wide"><label class="admin-label">자주 하는 실수 (한 줄에 한 항목)</label><textarea id="fpMistakes" class="admin-textarea" style="min-height:110px"></textarea></div>
           <div class="wide"><label class="admin-label">마무리 제목</label><input id="fpFinishTitle" class="admin-input"></div>
@@ -459,6 +475,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.6"></script>
+<script src="admin.js?v=3.7"></script>
 </body>
 </html>

@@ -176,8 +176,11 @@ $("loadPageBtn").addEventListener("click",async()=>{
     $("fpTitle").value=qText(doc,".page-hero h1"); $("fpHeroSummary").value=qText(doc,".page-hero h1 + p"); $("fpIntro").value=qText(article,".detail-intro");
     const h2s=Array.from(article.querySelectorAll(":scope > h2")), criteriaH=h2s.find(h=>h.textContent.trim()==="실무에서 먼저 보는 기준");
     $("fpCriteria").value=textList(criteriaH?.nextElementSibling); $("fpAction").value=qText(article,".practice-box p");
-    const steps=Array.from(article.querySelectorAll(".step-card"));
-    for(let i=0;i<4;i++){ $("fpStep"+(i+1)+"Title").value=qText(steps[i]||article,"strong"); $("fpStep"+(i+1)+"Body").value=qText(steps[i]||article,"p"); }
+    const steps=Array.from(article.querySelectorAll(".step-card")).map(step=>({
+      title:qText(step,"strong").replace(/^STEP\s*\d+[.·:]?\s*/i,""),
+      body:qText(step,"p")
+    }));
+    setBusinessSteps(steps.length ? steps : [{title:"",body:""}]);
     $("fpExample").value=qText(article,".example-box p"); $("fpMistakes").value=textList(article.querySelector(".mistake-box ul")); $("fpFinishTitle").value=qText(article,".finish-box strong"); $("fpFinishBody").value=qText(article,".finish-box p");
     $("savePageBtn").disabled=false;
     $("pageEditNote").textContent=`수정 중: ${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label}`;
@@ -205,7 +208,7 @@ $("savePageBtn").addEventListener("click",async()=>{
     const intro=article.querySelector(".detail-intro");if(intro)intro.textContent=$("fpIntro").value.trim();
     const h2s=Array.from(article.querySelectorAll(":scope > h2")),criteriaH=h2s.find(h=>h.textContent.trim()==="실무에서 먼저 보는 기준");setList(criteriaH?.nextElementSibling,$("fpCriteria").value);
     const action=article.querySelector(".practice-box p");if(action)action.textContent=$("fpAction").value.trim();
-    const steps=Array.from(article.querySelectorAll(".step-card")); for(let i=0;i<4;i++){if(!steps[i])continue;const st=steps[i].querySelector("strong"),sp=steps[i].querySelector("p");if(st)st.textContent=$("fpStep"+(i+1)+"Title").value.trim();if(sp)sp.textContent=$("fpStep"+(i+1)+"Body").value.trim();}
+    syncBusinessStepsToArticle(article);
     const ex=article.querySelector(".example-box p");if(ex)ex.textContent=$("fpExample").value.trim();setList(article.querySelector(".mistake-box ul"),$("fpMistakes").value);
     const ft=article.querySelector(".finish-box strong"),fb=article.querySelector(".finish-box p");if(ft)ft.textContent=$("fpFinishTitle").value.trim();if(fb)fb.textContent=$("fpFinishBody").value.trim();
     const html="<!doctype html>\n"+doc.documentElement.outerHTML,r=await putFile(currentPage.path,encodeBase64Utf8(html),currentPage.sha,`Update business page: ${currentPage.path}`);
@@ -673,6 +676,103 @@ $("saveAboutBtn").addEventListener("click",async()=>{
 });
 
 
+
+/* ---------- 반복형 항목 공통: 사업실무 STEP ---------- */
+let businessStepsData=[{title:"",body:""}];
+
+function getBusinessSteps(){
+  const items=Array.from(document.querySelectorAll("#businessSteps .repeater-item"));
+  if(!items.length)return businessStepsData;
+  return items.map(item=>({
+    title:item.querySelector(".step-title-input")?.value.trim()||"",
+    body:item.querySelector(".step-body-input")?.value.trim()||""
+  }));
+}
+
+function setBusinessSteps(steps){
+  businessStepsData=(steps&&steps.length?steps:[{title:"",body:""}]).map(s=>({title:s.title||"",body:s.body||""}));
+  renderBusinessSteps();
+}
+
+function renderBusinessSteps(){
+  const mount=$("businessSteps");
+  if(!mount)return;
+  mount.innerHTML=businessStepsData.map((s,i)=>`
+    <div class="repeater-item" data-index="${i}">
+      <div class="repeater-head">
+        <span class="repeater-title">STEP ${i+1}</span>
+        <div class="repeater-actions">
+          <button type="button" class="admin-btn light move-step-up" ${i===0?"disabled":""}>↑</button>
+          <button type="button" class="admin-btn light move-step-down" ${i===businessStepsData.length-1?"disabled":""}>↓</button>
+          <button type="button" class="admin-btn danger delete-step" ${businessStepsData.length===1?"disabled":""}>삭제</button>
+        </div>
+      </div>
+      <label class="admin-label">제목</label>
+      <input class="admin-input step-title-input" value="${escapeHtml(s.title)}">
+      <label class="admin-label">설명</label>
+      <textarea class="admin-textarea step-body-input" style="min-height:75px">${escapeHtml(s.body)}</textarea>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",()=>{
+    businessStepsData=getBusinessSteps();
+    renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".delete-step").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(businessStepsData.length>1)businessStepsData.splice(idx,1);
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".move-step-up").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(idx>0)[businessStepsData[idx-1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx-1]];
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".move-step-down").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(idx<businessStepsData.length-1)[businessStepsData[idx+1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx+1]];
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+}
+
+function syncBusinessStepsToArticle(article){
+  const steps=getBusinessSteps();
+  let existing=Array.from(article.querySelectorAll(".step-card"));
+  if(!existing.length)return;
+
+  const parent=existing[0].parentElement;
+  const template=existing[0].cloneNode(true);
+  existing.forEach(el=>el.remove());
+
+  steps.forEach((s,i)=>{
+    const node=template.cloneNode(true);
+    const st=node.querySelector("strong");
+    const sp=node.querySelector("p");
+    if(st)st.textContent=`STEP ${i+1}. ${s.title}`;
+    if(sp)sp.textContent=s.body;
+    parent.appendChild(node);
+  });
+}
+
+document.addEventListener("click",e=>{
+  if(e.target?.id==="addBusinessStepBtn"){
+    businessStepsData=getBusinessSteps();
+    businessStepsData.push({title:"",body:""});
+    renderBusinessSteps();renderBusinessPreview();
+  }
+  if(e.target?.id==="removeBusinessStepBtn"){
+    businessStepsData=getBusinessSteps();
+    if(businessStepsData.length>1)businessStepsData.pop();
+    renderBusinessSteps();renderBusinessPreview();
+  }
+});
+
 /* ---------- 사업실무 실시간 미리보기 ---------- */
 function previewLines(text){
   return text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
@@ -694,10 +794,7 @@ function renderBusinessPreview(){
   const finishTitle=$("fpFinishTitle")?.value.trim()||"";
   const finishBody=$("fpFinishBody")?.value.trim()||"";
 
-  const steps=[1,2,3,4].map(i=>({
-    title:$("fpStep"+i+"Title")?.value.trim()||"",
-    body:$("fpStep"+i+"Body")?.value.trim()||""
-  }));
+  const steps=getBusinessSteps();
 
   let bodyHtml="";
   if(intro) bodyHtml+=`<h2>왜 이 내용을 먼저 봐야 할까요?</h2><p>${previewEsc(intro)}</p>`;
@@ -736,8 +833,6 @@ function renderBusinessPreview(){
 
 [
   "fpTitle","fpHeroSummary","fpIntro","fpCriteria","fpAction",
-  "fpStep1Title","fpStep1Body","fpStep2Title","fpStep2Body",
-  "fpStep3Title","fpStep3Body","fpStep4Title","fpStep4Body",
   "fpExample","fpMistakes","fpFinishTitle","fpFinishBody"
 ].forEach(id=>{
   const el=$(id);
@@ -801,3 +896,5 @@ $("pageSubcategory").addEventListener("change",()=>{
   $("savePageBtn").disabled=true;
   $("pageEditNote").textContent="페이지를 다시 불러오세요";
 });
+
+setBusinessSteps([{title:"",body:""}]);
