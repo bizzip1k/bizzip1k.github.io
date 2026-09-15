@@ -399,50 +399,72 @@ $("saveResourceBtn").addEventListener("click",async()=>{
 
 
 /* ---------- 문제별 해결 관리 ---------- */
-function pFindH2(article,text){
-  return Array.from(article.querySelectorAll(":scope > h2")).find(h=>h.textContent.trim()===text);
+function problemCardsToText(cards){
+  return cards.map(card=>{
+    const title=card.querySelector("h3")?.textContent.trim()||"";
+    const body=card.querySelector("p")?.textContent.trim()||"";
+    return `${title} | ${body}`;
+  }).join("\n");
 }
-function pNextText(el){
-  const n=el?.nextElementSibling;
-  return n ? n.textContent.trim() : "";
-}
-function pSetNextText(el,text){
-  const n=el?.nextElementSibling;
-  if(n)n.textContent=text;
+
+function applyProblemCards(cards,text){
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  cards.forEach((card,i)=>{
+    if(!lines[i])return;
+    const parts=lines[i].split("|");
+    const title=(parts.shift()||"").trim();
+    const body=parts.join("|").trim();
+    const h3=card.querySelector("h3");
+    const p=card.querySelector("p");
+    if(h3 && title)h3.textContent=title;
+    if(p && body)p.textContent=body;
+  });
 }
 
 $("loadProblemBtn").addEventListener("click",async()=>{
   const path=$("problemSelect").value;
   $("saveProblemBtn").disabled=true;
   setProblemStatus("문제 페이지를 불러오는 중입니다…","info");
+
   try{
     const data=await getFile(path);
     const html=decodeBase64Utf8(data.content);
     const doc=new DOMParser().parseFromString(html,"text/html");
-    const article=doc.querySelector("article.article");
-    if(!article)throw new Error("문제 페이지 본문 영역을 찾지 못했습니다.");
+
+    const hero=doc.querySelector(".page-hero");
+    const sections=doc.querySelectorAll("main > section");
+    const problemGrid=doc.querySelector(".problem-subgrid");
+    const cards=Array.from(doc.querySelectorAll(".problem-subcard"));
+    const featurePair=doc.querySelector(".feature-pair");
+    const featureBoxes=Array.from(doc.querySelectorAll(".feature-box"));
+
+    if(!hero || !problemGrid || !cards.length || !featurePair || featureBoxes.length<2){
+      throw new Error("현재 문제 페이지 구조를 인식하지 못했습니다.");
+    }
 
     currentProblem={path,sha:data.sha,html};
+
     $("pbTitle").value=qText(doc,".page-hero h1");
     $("pbHeroSummary").value=qText(doc,".page-hero h1 + p");
 
-    const introH=pFindH2(article,"이 문제를 그냥 두면 어떻게 될까요?");
-    const checkH=pFindH2(article,"먼저 확인할 것");
-    const processH=pFindH2(article,"실무에서는 이렇게 진행합니다");
-    const cautionH=pFindH2(article,"판단할 때 주의할 점");
+    const firstHead=sections[1]?.querySelector(".section-head");
+    $("pbSectionTitle").value=qText(firstHead||doc,"h2");
+    $("pbSectionSummary").value=qText(firstHead||doc,"p");
+    $("pbCards").value=problemCardsToText(cards);
 
-    $("pbIntro").value=pNextText(introH);
-    $("pbChecklist").value=textList(checkH?.nextElementSibling);
-    $("pbProcess").value=pNextText(processH);
-    $("pbCautions").value=textList(cautionH?.nextElementSibling);
+    const quickHead=sections[2]?.querySelector(".section-head");
+    $("pbQuickTitle").value=qText(quickHead||doc,"h2");
+    $("pbQuickSummary").value=qText(quickHead||doc,"p");
 
-    const boxes=article.querySelectorAll(".small-cta,.finish-box");
-    const lastBox=boxes.length?boxes[boxes.length-1]:null;
-    $("pbFinish").value=lastBox ? lastBox.textContent.trim() : "";
+    $("pbQuick1Title").value=qText(featureBoxes[0],"h3");
+    $("pbQuick1Body").value=qText(featureBoxes[0],"p");
+    $("pbQuick2Title").value=qText(featureBoxes[1],"h3");
+    $("pbQuick2Body").value=qText(featureBoxes[1],"p");
 
     $("saveProblemBtn").disabled=false;
     $("problemEditNote").textContent=`수정 중: ${$("problemSelect").selectedOptions[0].textContent}`;
     setProblemStatus("문제 페이지를 불러왔습니다. 수정 후 저장하세요.","ok");
+
   }catch(e){
     setProblemStatus("문제 페이지를 불러오지 못했습니다: "+e.message,"err");
   }
@@ -455,45 +477,61 @@ $("problemSelect").addEventListener("change",()=>{
 });
 
 $("saveProblemBtn").addEventListener("click",async()=>{
-  if(!currentProblem.path)return setProblemStatus("먼저 문제 페이지를 불러와주세요.","err");
+  if(!currentProblem.path){
+    setProblemStatus("먼저 문제 페이지를 불러와주세요.","err");
+    return;
+  }
+
   const btn=$("saveProblemBtn");
-  btn.disabled=true; btn.textContent="저장 중…";
+  btn.disabled=true;
+  btn.textContent="저장 중…";
   setProblemStatus("GitHub에 저장하는 중입니다…","info");
+
   try{
     const doc=new DOMParser().parseFromString(currentProblem.html,"text/html");
-    const article=doc.querySelector("article.article");
-    if(!article)throw new Error("문제 페이지 본문 영역을 찾지 못했습니다.");
+    const sections=doc.querySelectorAll("main > section");
+    const cards=Array.from(doc.querySelectorAll(".problem-subcard"));
+    const featureBoxes=Array.from(doc.querySelectorAll(".feature-box"));
 
     const heroTitle=doc.querySelector(".page-hero h1");
     const heroSummary=doc.querySelector(".page-hero h1 + p");
     if(heroTitle)heroTitle.textContent=$("pbTitle").value.trim();
     if(heroSummary)heroSummary.textContent=$("pbHeroSummary").value.trim();
 
-    const introH=pFindH2(article,"이 문제를 그냥 두면 어떻게 될까요?");
-    const checkH=pFindH2(article,"먼저 확인할 것");
-    const processH=pFindH2(article,"실무에서는 이렇게 진행합니다");
-    const cautionH=pFindH2(article,"판단할 때 주의할 점");
+    const firstHead=sections[1]?.querySelector(".section-head");
+    if(firstHead?.querySelector("h2"))firstHead.querySelector("h2").textContent=$("pbSectionTitle").value.trim();
+    if(firstHead?.querySelector("p"))firstHead.querySelector("p").textContent=$("pbSectionSummary").value.trim();
 
-    pSetNextText(introH,$("pbIntro").value.trim());
-    setList(checkH?.nextElementSibling,$("pbChecklist").value);
-    pSetNextText(processH,$("pbProcess").value.trim());
-    setList(cautionH?.nextElementSibling,$("pbCautions").value);
+    applyProblemCards(cards,$("pbCards").value);
 
-    const boxes=article.querySelectorAll(".small-cta,.finish-box");
-    const lastBox=boxes.length?boxes[boxes.length-1]:null;
-    if(lastBox)lastBox.textContent=$("pbFinish").value.trim();
+    const quickHead=sections[2]?.querySelector(".section-head");
+    if(quickHead?.querySelector("h2"))quickHead.querySelector("h2").textContent=$("pbQuickTitle").value.trim();
+    if(quickHead?.querySelector("p"))quickHead.querySelector("p").textContent=$("pbQuickSummary").value.trim();
+
+    if(featureBoxes[0]?.querySelector("h3"))featureBoxes[0].querySelector("h3").textContent=$("pbQuick1Title").value.trim();
+    if(featureBoxes[0]?.querySelector("p"))featureBoxes[0].querySelector("p").textContent=$("pbQuick1Body").value.trim();
+    if(featureBoxes[1]?.querySelector("h3"))featureBoxes[1].querySelector("h3").textContent=$("pbQuick2Title").value.trim();
+    if(featureBoxes[1]?.querySelector("p"))featureBoxes[1].querySelector("p").textContent=$("pbQuick2Body").value.trim();
 
     const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile(currentProblem.path,encodeBase64Utf8(newHtml),currentProblem.sha,`Update problem page: ${currentProblem.path}`);
+    const result=await putFile(
+      currentProblem.path,
+      encodeBase64Utf8(newHtml),
+      currentProblem.sha,
+      `Update problem page: ${currentProblem.path}`
+    );
+
     currentProblem.sha=result.content.sha;
     currentProblem.html=newHtml;
 
     setStatus("문제별 해결 페이지를 저장했습니다.","ok");
     setProblemStatus("✓ 저장 완료 — 문제 페이지가 GitHub에 정상 저장되었습니다.","saved");
+
   }catch(e){
     setProblemStatus("저장 실패: "+e.message,"err");
   }finally{
-    btn.disabled=false; btn.textContent="문제 페이지 저장";
+    btn.disabled=false;
+    btn.textContent="문제 페이지 저장";
   }
 });
 

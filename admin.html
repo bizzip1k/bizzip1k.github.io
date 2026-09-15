@@ -48,7 +48,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.4</div>
+    <div class="admin-badge">ADMIN v3.4.1</div>
   </div>
 
   <div class="connect-card">
@@ -203,6 +203,7 @@ body{background:#f4f9fa;color:#102b46}
   </section>
 
 
+  
   <section id="panel-problems" class="panel">
     <div class="admin-grid">
       <aside class="admin-card">
@@ -217,20 +218,40 @@ body{background:#f4f9fa;color:#102b46}
           <option value="problem-documents.html">계약, 문서, 양식이 필요한데 어디서 구할지 모르겠다</option>
         </select>
         <button id="loadProblemBtn" class="admin-btn primary" style="width:100%;margin-top:12px" disabled>문제 페이지 불러오기</button>
-        <div class="helper">6개 문제별 해결 중간페이지의 설명을 직접 수정합니다. 연결된 상세페이지 구조는 그대로 유지됩니다.</div>
+        <div class="helper">
+          현재 실제 문제 페이지의 구조에 맞춰 제목, 안내문, 관련 문제 카드와 QUICK CHECK 내용을 수정합니다.
+        </div>
       </aside>
+
       <div class="admin-card">
         <h2>문제 페이지 수정</h2>
-        <div class="notice">페이지 제목, 설명, 문제 진단 내용과 해결 방향을 수정할 수 있습니다. 기존 레이아웃과 연결 메뉴는 유지합니다.</div>
+        <div class="notice">
+          문제 페이지의 현재 구조를 그대로 유지하면서 문구만 수정합니다.
+          연결되는 상세페이지 주소는 변경하지 않습니다.
+        </div>
+
         <div class="fixed-fields">
           <div><label class="admin-label">페이지 제목</label><input id="pbTitle" class="admin-input"></div>
           <div><label class="admin-label">상단 한줄 설명</label><input id="pbHeroSummary" class="admin-input"></div>
-          <div class="wide"><label class="admin-label">문제 상황 설명</label><textarea id="pbIntro" class="admin-textarea" style="min-height:100px"></textarea></div>
-          <div class="wide"><label class="admin-label">먼저 확인할 것 (한 줄에 한 항목)</label><textarea id="pbChecklist" class="admin-textarea" style="min-height:120px"></textarea></div>
-          <div class="wide"><label class="admin-label">실무에서는 이렇게 진행합니다</label><textarea id="pbProcess" class="admin-textarea" style="min-height:110px"></textarea></div>
-          <div class="wide"><label class="admin-label">판단할 때 주의할 점 (한 줄에 한 항목)</label><textarea id="pbCautions" class="admin-textarea" style="min-height:120px"></textarea></div>
-          <div class="wide"><label class="admin-label">마무리 설명</label><textarea id="pbFinish" class="admin-textarea" style="min-height:90px"></textarea></div>
+
+          <div><label class="admin-label">관련 문제 영역 제목</label><input id="pbSectionTitle" class="admin-input"></div>
+          <div><label class="admin-label">관련 문제 영역 설명</label><input id="pbSectionSummary" class="admin-input"></div>
+
+          <div class="wide"><label class="admin-label">관련 문제 카드</label>
+            <div class="guide">각 줄을 <strong>카드제목 | 카드설명</strong> 형식으로 입력하세요. 기존 카드의 연결 주소는 그대로 유지됩니다.</div>
+            <textarea id="pbCards" class="admin-textarea" style="min-height:150px"></textarea>
+          </div>
+
+          <div><label class="admin-label">QUICK CHECK 영역 제목</label><input id="pbQuickTitle" class="admin-input"></div>
+          <div><label class="admin-label">QUICK CHECK 영역 설명</label><input id="pbQuickSummary" class="admin-input"></div>
+
+          <div><label class="admin-label">QUICK CHECK 1 제목</label><input id="pbQuick1Title" class="admin-input"></div>
+          <div><label class="admin-label">QUICK CHECK 1 설명</label><input id="pbQuick1Body" class="admin-input"></div>
+
+          <div><label class="admin-label">QUICK CHECK 2 제목</label><input id="pbQuick2Title" class="admin-input"></div>
+          <div><label class="admin-label">QUICK CHECK 2 설명</label><input id="pbQuick2Body" class="admin-input"></div>
         </div>
+
         <div class="form-actions">
           <button id="saveProblemBtn" class="admin-btn teal" disabled>문제 페이지 저장</button>
           <span id="problemEditNote" class="edit-note">페이지를 먼저 불러오세요</span>
@@ -258,6 +279,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.4"></script>
+<script src="admin.js?v=3.4.1"></script>
 </body>
 </html>
