@@ -288,6 +288,7 @@ $("loadResourceBtn").addEventListener("click",async()=>{
 
     const current=currentResource.downloadPath;
     $("rsCurrentFile").textContent=current ? current.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
+    setResourceDownloadButton(current);
     $("rsFileName").value=current ? current.replace("downloads/","") : "";
     $("rsFileInput").value="";
     $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
@@ -390,6 +391,7 @@ $("saveResourceBtn").addEventListener("click",async()=>{
     currentResource.downloadPath=finalDownloadPath;
 
     $("rsCurrentFile").textContent=finalDownloadPath ? finalDownloadPath.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
+    setResourceDownloadButton(finalDownloadPath);
     $("rsFileInput").value="";
     $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
 
@@ -674,9 +676,27 @@ async function loadFiles(){
   try{const data=await githubRequest(ghPath(CONFIG.downloadsDir)+`?ref=${CONFIG.branch}`);files=(Array.isArray(data)?data:[]).filter(x=>x.type==="file");}
   catch(e){if(String(e.message).startsWith("404"))files=[];else throw e;} renderFileList();
 }
+
+function siteDownloadUrl(name){
+  return `downloads/${encodeURIComponent(name).replaceAll("%2F","/")}`;
+}
+function setResourceDownloadButton(path){
+  const btn=$("rsDownloadBtn");
+  if(!btn)return;
+  if(!path){
+    btn.style.display="none";
+    btn.removeAttribute("href");
+    return;
+  }
+  const name=path.replace(/^downloads\//,"");
+  btn.href=siteDownloadUrl(name);
+  btn.setAttribute("download",name);
+  btn.style.display="inline-flex";
+}
+
 function humanSize(n){if(n<1024)return n+" B";if(n<1024*1024)return(n/1024).toFixed(1)+" KB";return(n/1024/1024).toFixed(1)+" MB";}
 function renderFileList(){
-  $("fileList").innerHTML=files.length?files.map((f,i)=>`<div class="item"><strong>${escapeHtml(f.name)}</strong><div class="item-meta">${humanSize(f.size||0)} · downloads/</div><div class="item-actions"><button class="admin-btn light" onclick="prepareReplace(${i})">교체</button><button class="admin-btn danger" onclick="removeAttachment(${i})">삭제</button></div></div>`).join(""):'<div class="helper">등록된 첨부파일이 없습니다.</div>';
+  $("fileList").innerHTML=files.length?files.map((f,i)=>`<div class="item"><strong>${escapeHtml(f.name)}</strong><div class="item-meta">${humanSize(f.size||0)} · downloads/</div><div class="item-actions"><a class="admin-btn light" href="${siteDownloadUrl(f.name)}" download="${escapeHtml(f.name)}">다운로드</a><button class="admin-btn light" onclick="prepareReplace(${i})">교체</button><button class="admin-btn danger" onclick="removeAttachment(${i})">삭제</button></div></div>`).join(""):'<div class="helper">등록된 첨부파일이 없습니다.</div>';
 }
 $("fileInput").addEventListener("change",()=>{
   const f=$("fileInput").files[0];if(!f){$("selectedFileInfo").textContent="파일을 선택해주세요.";$("uploadFileBtn").disabled=true;return;}
