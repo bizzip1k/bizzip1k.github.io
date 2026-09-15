@@ -68,7 +68,11 @@ $("connectBtn").addEventListener("click",async()=>{
   setStatus("GitHub에 연결하는 중입니다…","info");
   try{
     await Promise.all([loadPosts(),loadFiles()]);
-    $("loadPageBtn").disabled=false; $("uploadFileBtn").disabled=!$("fileInput").files.length;
+    const loadPageBtn=$("loadPageBtn");
+    const uploadFileBtn=$("uploadFileBtn");
+    const fileInput=$("fileInput");
+    if(loadPageBtn) loadPageBtn.disabled=false;
+    if(uploadFileBtn) uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
     setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
   }catch(e){ setStatus("연결하지 못했습니다: "+e.message,"err"); }
 });
@@ -76,7 +80,7 @@ $("connectBtn").addEventListener("click",async()=>{
 /* 콘텐츠 */
 async function loadPosts(){
   const data=await getFile(CONFIG.postsPath); postsSha=data.sha; posts=JSON.parse(decodeBase64Utf8(data.content));
-  posts.sort((a,b)=>String(b.date).localeCompare(String(a.date))); renderPostList(); $("savePostBtn").disabled=false;
+  posts.sort((a,b)=>String(b.date).localeCompare(String(a.date))); renderPostList(); const saveBtn=$("savePostBtn"); if(saveBtn) saveBtn.disabled=false;
 }
 function renderPostList(){
   $("postList").innerHTML=posts.length?posts.map((p,i)=>`
