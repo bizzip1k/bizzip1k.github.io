@@ -1,2106 +1,318 @@
-const CONFIG = {
-  owner:"bizzip1k",
-  repo:"bizzip1k.github.io",
-  branch:"main",
-  postsPath:"posts.json",
-  downloadsDir:"downloads"
-};
-const TAXONOMY = {"startup": {"label": "창업 준비", "subs": {"idea-validation": {"label": "사업 아이디어 검증", "page": "startup-idea-validation.html"}, "market-check": {"label": "시장성 확인", "page": "startup-market-check.html"}, "business-registration": {"label": "사업자등록", "page": "startup-business-registration.html"}, "trademark": {"label": "상표 출원", "page": "startup-trademark.html"}, "domain": {"label": "도메인 확보", "page": "startup-domain.html"}, "office-contract": {"label": "사무실 계약", "page": "startup-office-contract.html"}, "startup-cost": {"label": "초기비용 계산", "page": "startup-startup-cost.html"}, "startup-checklist": {"label": "사업 시작 체크리스트", "page": "startup-startup-checklist.html"}}}, "product": {"label": "상품과 서비스", "subs": {"product-planning": {"label": "상품기획", "page": "product-product-planning.html"}, "costing": {"label": "원가 계산", "page": "product-costing.html"}, "pricing": {"label": "가격 결정", "page": "product-pricing.html"}, "oem": {"label": "OEM 견적 확인", "page": "product-oem.html"}, "package": {"label": "패키지", "page": "product-package.html"}, "launch-test": {"label": "출시 전 검증", "page": "product-launch-test.html"}}}, "brand": {"label": "브랜드", "subs": {"brand-name": {"label": "브랜드명", "page": "brand-brand-name.html"}, "positioning": {"label": "포지셔닝", "page": "brand-positioning.html"}, "message": {"label": "브랜드 메시지", "page": "brand-message.html"}, "visual": {"label": "비주얼 기준", "page": "brand-visual.html"}, "brand-check": {"label": "브랜드 점검", "page": "brand-brand-check.html"}}}, "marketing": {"label": "마케팅", "subs": {"search": {"label": "검색 노출", "page": "marketing-search.html"}, "ads": {"label": "광고 성과", "page": "marketing-ads.html"}, "content": {"label": "콘텐츠 기획", "page": "marketing-content.html"}, "promotion": {"label": "프로모션", "page": "marketing-promotion.html"}, "conversion": {"label": "전환율", "page": "marketing-conversion.html"}}}, "sales": {"label": "판매와 유통", "subs": {"channel-choice": {"label": "판매채널 선택", "page": "sales-channel-choice.html"}, "naver": {"label": "네이버 판매", "page": "sales-naver.html"}, "coupang": {"label": "쿠팡 판매", "page": "sales-coupang.html"}, "offline": {"label": "오프라인 입점", "page": "sales-offline.html"}, "proposal": {"label": "입점 제안서", "page": "sales-proposal.html"}}}, "operation": {"label": "회사 운영", "subs": {"contract": {"label": "계약 확인", "page": "operation-contract.html"}, "expense": {"label": "비용 관리", "page": "operation-expense.html"}, "outsourcing": {"label": "외주 관리", "page": "operation-outsourcing.html"}, "workflow": {"label": "업무 정리", "page": "operation-workflow.html"}, "document": {"label": "문서 관리", "page": "operation-document.html"}}}, "logistics": {"label": "물류와 재고", "subs": {"3pl": {"label": "3PL 선택", "page": "logistics-3pl.html"}, "inventory": {"label": "재고 관리", "page": "logistics-inventory.html"}, "packing": {"label": "포장비", "page": "logistics-packing.html"}, "returns": {"label": "반품 관리", "page": "logistics-returns.html"}, "warehouse-move": {"label": "물류 이관", "page": "logistics-warehouse-move.html"}}}, "data-ai": {"label": "데이터와 AI", "subs": {"sales-data": {"label": "매출 데이터", "page": "data-ai-sales-data.html"}, "customer-data": {"label": "고객 데이터", "page": "data-ai-customer-data.html"}, "free-data": {"label": "무료 데이터", "page": "data-ai-free-data.html"}, "ai-work": {"label": "AI 업무 활용", "page": "data-ai-ai-work.html"}, "automation": {"label": "업무 자동화", "page": "data-ai-automation.html"}}}};
-
-let token="", posts=[], postsSha="", siteMenuState={sha:"",html:"",items:[]}, landingState={path:"",sha:"",html:"",kind:"",cards:[]}, businessHierarchy={sha:"",html:"",categories:[],current:null}, currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, currentAbout={path:"about.html",sha:"",html:""}, currentContact={path:"contact.html",sha:"",html:""}, files=[];
+const CONFIG={owner:"bizzip1k",repo:"bizzip1k.github.io",branch:"main",posts:"posts.json",downloads:"downloads"};
 const $=id=>document.getElementById(id);
+let token="";
+const state={
+  structure:{sha:"",html:"",menus:[],sections:[]},
+  business:{landingSha:"",landingHtml:"",categories:[],selectedCat:-1,cat:{sha:"",html:"",topics:[]},detail:{sha:"",html:"",path:"",steps:[]}},
+  problems:{landingSha:"",landingHtml:"",roots:[],selectedRoot:-1,page:{sha:"",html:"",subs:[],path:""}},
+  contents:{landingSha:"",landingHtml:"",postsSha:"",posts:[],editIndex:-1},
+  resources:{landingSha:"",landingHtml:"",cards:[],selected:-1,detail:{sha:"",html:"",path:""}},
+  about:{sha:"",html:"",consulting:[],brands:[],books:[]},
+  contact:{sha:"",html:"",types:[]},
+  files:[]
+};
 
-function setStatus(message,type="info"){
-  const el=$("status"); el.textContent=message; el.className=`status show ${type}`;
-}
-function setPageStatus(message,type="info"){
-  const el=$("pageSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-function setResourceStatus(message,type="info"){
-  const el=$("resourceSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
+function status(id,msg,type="info"){const el=$(id);if(!el)return;el.textContent=msg;el.className=`status show ${type}`}
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function lines(s=""){return String(s).split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}
+function b64decode(s){const bin=atob((s||"").replace(/\n/g,""));const a=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder().decode(a)}
+function b64encode(s){const a=new TextEncoder().encode(s);let bin="";for(let i=0;i<a.length;i+=0x8000)bin+=String.fromCharCode(...a.subarray(i,i+0x8000));return btoa(bin)}
+function today(){const d=new Date(Date.now()-new Date().getTimezoneOffset()*60000);return d.toISOString().slice(0,10)}
+function docOf(html){return new DOMParser().parseFromString(html,"text/html")}
+function htmlOf(doc){return "<!doctype html>\n"+doc.documentElement.outerHTML}
+function txt(root,sel){return root?.querySelector(sel)?.textContent?.trim()||""}
+function setTxt(root,sel,val){const x=root?.querySelector(sel);if(x)x.textContent=val}
+function githubHeaders(){return{"Accept":"application/vnd.github+json","Authorization":`Bearer ${token}`,"X-GitHub-Api-Version":"2022-11-28"}}
+async function api(path,opt={}){const r=await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}?ref=${CONFIG.branch}`,{...opt,headers:{...githubHeaders(),...(opt.headers||{})}});if(!r.ok){const t=await r.text();throw new Error(`${r.status} ${t.slice(0,180)}`)}return r.json()}
+async function getFile(path){return api(path)}
+async function putFile(path,text,sha,message){return api(path,{method:"PUT",body:JSON.stringify({message,content:b64encode(text),sha:sha||undefined,branch:CONFIG.branch})})}
+async function deleteFile(path,sha,message){return api(path,{method:"DELETE",body:JSON.stringify({message,sha,branch:CONFIG.branch})})}
+async function putBytes(path,bytes,sha,message){let bin="";for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return api(path,{method:"PUT",body:JSON.stringify({message,content:btoa(bin),sha:sha||undefined,branch:CONFIG.branch})})}
 
-function setProblemRootStatus(message,type="info"){
-  const el=$("problemRootStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-function setProblemStatus(message,type="info"){
-  const el=$("problemSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-function setAboutStatus(message,type="info"){
-  const el=$("aboutSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-function setContactStatus(message,type="info"){
-  const el=$("contactSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-
-function setSiteMenuStatus(message,type="info"){
-  const el=$("siteMenuStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-function setBusinessHierarchyStatus(message,type="info"){
-  const el=$("businessHierarchyStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-function setLandingStatus(message,type="info"){
-  const el=$("landingSaveStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-function setBusinessCategoryStatus(message,type="info"){
-  const el=$("businessCategoryStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.className=`status show ${type}`;
-}
-
-function todayLocal(){
-  const d=new Date(), local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
-  return local.toISOString().slice(0,10);
-}
-function decodeBase64Utf8(base64){
-  const binary=atob(base64.replace(/\n/g,""));
-  const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
-}
-function bytesToBase64(bytes){
-  let binary="", chunk=0x8000;
-  for(let i=0;i<bytes.length;i+=chunk) binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
-  return btoa(binary);
-}
-function encodeBase64Utf8(text){ return bytesToBase64(new TextEncoder().encode(text)); }
-function escapeHtml(s){ return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
-
-/* ---------- v3.8.1 Generic repeater helpers ---------- */
-function repEsc(v){ return escapeHtml(v||""); }
-
-function makeRepeater(mountId, items, fields, onChange){
-  const mount=$(mountId);
-  if(!mount)return;
-
-  const initial=(items && items.length) ? items : [{}];
-  mount.dataset.items=JSON.stringify(initial);
-
-  const render=()=>{
-    const data=JSON.parse(mount.dataset.items||"[]");
-
-    mount.innerHTML=data.map((item,i)=>`
-      <div class="rep-item" data-index="${i}">
-        <div class="rep-head">
-          <strong>${i+1}번 항목</strong>
-          <div class="rep-actions">
-            <button type="button" class="admin-btn light rep-up" ${i===0?"disabled":""}>↑</button>
-            <button type="button" class="admin-btn light rep-down" ${i===data.length-1?"disabled":""}>↓</button>
-            <button type="button" class="admin-btn danger rep-delete" ${data.length===1?"disabled":""}>삭제</button>
-          </div>
-        </div>
-        ${fields.map(f=>{
-          const val=item[f.key] ?? "";
-          return f.type==="textarea"
-            ? `<label class="admin-label">${f.label}</label>
-               <textarea class="admin-textarea rep-field" data-key="${f.key}" style="min-height:${f.height||70}px">${repEsc(val)}</textarea>`
-            : `<label class="admin-label">${f.label}</label>
-               <input class="admin-input rep-field" data-key="${f.key}" value="${repEsc(val)}">`;
-        }).join("")}
-      </div>
-    `).join("");
-
-    mount.querySelectorAll(".rep-field").forEach(el=>{
-      el.addEventListener("input",()=>{
-        const row=el.closest(".rep-item");
-        const idx=Number(row.dataset.index);
-        const data=JSON.parse(mount.dataset.items||"[]");
-        if(!data[idx])data[idx]={};
-        data[idx][el.dataset.key]=el.value;
-        mount.dataset.items=JSON.stringify(data);
-        if(onChange)onChange();
-      });
-    });
-
-    mount.querySelectorAll(".rep-delete").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const idx=Number(btn.closest(".rep-item").dataset.index);
-        const data=JSON.parse(mount.dataset.items||"[]");
-        if(data.length>1)data.splice(idx,1);
-        mount.dataset.items=JSON.stringify(data);
-        render();
-        if(onChange)onChange();
-      });
-    });
-
-    mount.querySelectorAll(".rep-up").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const idx=Number(btn.closest(".rep-item").dataset.index);
-        const data=JSON.parse(mount.dataset.items||"[]");
-        if(idx>0)[data[idx-1],data[idx]]=[data[idx],data[idx-1]];
-        mount.dataset.items=JSON.stringify(data);
-        render();
-        if(onChange)onChange();
-      });
-    });
-
-    mount.querySelectorAll(".rep-down").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const idx=Number(btn.closest(".rep-item").dataset.index);
-        const data=JSON.parse(mount.dataset.items||"[]");
-        if(idx<data.length-1)[data[idx+1],data[idx]]=[data[idx],data[idx+1]];
-        mount.dataset.items=JSON.stringify(data);
-        render();
-        if(onChange)onChange();
-      });
-    });
-  };
-
-  mount._rerender=render;
-  render();
-}
-
-function getRepeaterData(id){
-  const mount=$(id);
-  if(!mount)return [];
-  try{
-    return JSON.parse(mount.dataset.items||"[]");
-  }catch(e){
-    return [];
-  }
-}
-
-function addRepeaterItem(id,item,onChange){
-  const mount=$(id);
-  if(!mount)return;
-  const data=getRepeaterData(id);
-  data.push(item||{});
-  mount.dataset.items=JSON.stringify(data);
-  if(mount._rerender)mount._rerender();
-  if(onChange)onChange();
-}
-
-function removeLastRepeaterItem(id,onChange){
-  const mount=$(id);
-  if(!mount)return;
-  const data=getRepeaterData(id);
-  if(data.length>1)data.pop();
-  mount.dataset.items=JSON.stringify(data);
-  if(mount._rerender)mount._rerender();
-  if(onChange)onChange();
-}
-
-function ghPath(path){ return `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`; }
-
-async function githubRequest(url,options={}){
-  const headers={"Accept":"application/vnd.github+json","Authorization":`Bearer ${token}`,"X-GitHub-Api-Version":"2022-11-28",...(options.headers||{})};
-  const res=await fetch(url,{...options,headers});
-  if(!res.ok){ let detail=""; try{detail=(await res.json()).message||""}catch{} throw new Error(`${res.status} ${detail}`.trim()); }
-  return await res.json();
-}
-async function getFile(path){ return await githubRequest(ghPath(path)+`?ref=${CONFIG.branch}`); }
-async function putFile(path,contentBase64,sha,message){
-  const payload={message,content:contentBase64,branch:CONFIG.branch}; if(sha)payload.sha=sha;
-  return await githubRequest(ghPath(path),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-}
-async function deleteFile(path,sha,message){
-  return await githubRequest(ghPath(path),{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,sha,branch:CONFIG.branch})});
-}
-
-function populateTaxonomy(){
-  const cats=Object.entries(TAXONOMY).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("");
-  $("category").innerHTML=cats; $("pageCategory").innerHTML=cats;
-  fillSubcategories("category","subcategory"); fillSubcategories("pageCategory","pageSubcategory");
-}
-function fillSubcategories(catId,subId,selected=""){
-  const cat=$(catId).value, subs=TAXONOMY[cat]?.subs||{};
-  $(subId).innerHTML=Object.entries(subs).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("");
-  if(selected && subs[selected])$(subId).value=selected;
-}
-
-
-function openAdminTab(name){
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-  const tab=document.querySelector(`.tab-btn[data-tab="${name}"]`);
-  const panel=$(`panel-${name}`);
-  if(tab)tab.classList.add("active");
-  if(panel)panel.classList.add("active");
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>openPanel(b.dataset.panel)));
+function openPanel(name){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.panel===name));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===`panel-${name}`));
   window.scrollTo({top:0,behavior:"smooth"});
 }
-document.querySelectorAll(".structure-open").forEach(btn=>btn.addEventListener("click",()=>openAdminTab(btn.dataset.target)));
-
-
-document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active"); $(`panel-${btn.dataset.tab}`).classList.add("active");
-}));
+function bindInputs(ids,fn){ids.forEach(id=>$(id)?.addEventListener("input",fn))}
 
 $("connectBtn").addEventListener("click",async()=>{
-  token=$("token").value.trim();
-  if(!token)return setStatus("GitHub token을 입력해주세요.","err");
-
-  setStatus("GitHub에 연결하는 중입니다…","info");
-
-  try{
-    // 1) Core data first. If these work, connection itself is valid.
-    await Promise.all([loadPosts(),loadFiles()]);
-
-    // 2) Enable every independent editor BEFORE optional hierarchy initializers.
-    const ids=[
-      "loadPageBtn","loadResourceBtn","loadProblemBtn",
-      "loadAboutBtn","loadContactBtn","reloadBusinessHierarchyBtn"
-    ];
-    ids.forEach(id=>{
-      const el=$(id);
-      if(el)el.disabled=false;
-    });
-
-    const uploadFileBtn=$("uploadFileBtn");
-    const fileInput=$("fileInput");
-    if(uploadFileBtn)uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
-
-    // 3) Optional hierarchy initializers are isolated.
-    // One failure must never disable the other admin menus.
-    const initErrors=[];
-
-    if(typeof loadProblemRootStructure==="function"){
-      try{ await loadProblemRootStructure(); }
-      catch(e){ initErrors.push("문제별 해결 구조: "+e.message); }
-    }
-
-    if(typeof loadBusinessHierarchy==="function"){
-      try{ await loadBusinessHierarchy(); }
-      catch(e){ initErrors.push("사업실무 구조: "+e.message); }
-    }
-
-    if(initErrors.length){
-      setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다. 일부 구조 기능은 별도 점검이 필요합니다.`,"ok");
-      console.warn(initErrors.join(" | "));
-    }else{
-      await loadSiteMenuStructure();
-      setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
-    }
-
-  }catch(e){
-    setStatus("연결하지 못했습니다: "+e.message,"err");
-  }
+  token=$("token").value.trim();if(!token)return status("globalStatus","GitHub token을 입력해주세요.","err");
+  status("globalStatus","GitHub에 연결하고 각 메뉴를 독립적으로 불러오는 중입니다…","info");
+  const loaders=[
+    ["사이트 구조",loadStructure],["사업실무",loadBusiness],["문제별 해결",loadProblems],
+    ["콘텐츠",loadContents],["실무자료",loadResources],["BIZZIP 소개",loadAbout],["문의",loadContact],["첨부파일",loadFiles]
+  ];
+  const errors=[];
+  for(const [name,fn] of loaders){try{await fn()}catch(e){console.error(name,e);errors.push(`${name}: ${e.message}`)}}
+  if(errors.length)status("globalStatus",`연결되었습니다. ${8-errors.length}개 메뉴 정상 / ${errors.length}개 메뉴 점검 필요. 한 메뉴의 오류는 다른 메뉴에 영향을 주지 않습니다.`,"ok");
+  else status("globalStatus","연결되었습니다. 모든 관리자 메뉴를 정상적으로 불러왔습니다.","ok");
 });
 
-
-
-/* ---------- v4.1.2 사업실무 1단계 → 2단계 분야 페이지 로더 ---------- */
-const BUSINESS_CATEGORY_FILES = {
-  "startup.html":"창업 준비",
-  "product.html":"상품과 서비스",
-  "brand.html":"브랜드",
-  "marketing.html":"마케팅",
-  "sales.html":"판매와 유통",
-  "operation.html":"회사 운영",
-  "logistics.html":"물류와 재고",
-  "data-ai.html":"데이터와 AI"
+/* =========================
+   SITE STRUCTURE / HOME
+========================= */
+async function loadStructure(){
+  const d=await getFile("index.html"),html=b64decode(d.content),doc=docOf(html);
+  state.structure.sha=d.sha;state.structure.html=html;
+  $("homeEyebrow").value=txt(doc,".hero .eyebrow");
+  $("homeTitle").value=txt(doc,".hero h1");
+  $("homeSummary").value=txt(doc,".hero p");
+  const nav=doc.querySelector(".menu");
+  state.structure.menus=Array.from(nav?.querySelectorAll("a")||[]).map(a=>({label:a.textContent.trim(),href:a.getAttribute("href")||""}));
+  const secs=Array.from(doc.querySelectorAll("main > section"));
+  state.structure.sections=secs.map((s,i)=>({id:i,title:i===0?"메인 HERO":txt(s,".section-head h2")||`섹션 ${i+1}`,html:s.outerHTML,visible:true}));
+  renderTopMenus();renderHomeSections();renderStructurePreview();$("saveStructure").disabled=false;
+}
+function renderTopMenus(){
+  $("topMenuCards").innerHTML=state.structure.menus.map((m,i)=>`<div class="h-card" data-i="${i}">
+    <input class="input tm-label" value="${esc(m.label)}"><input class="input tm-href" value="${esc(m.href)}">
+    <div class="h-actions"><button class="btn light mini tm-left">←</button><button class="btn light mini tm-right">→</button><button class="btn danger mini tm-del">삭제</button></div></div>`).join("");
+  $("topMenuCards").querySelectorAll(".h-card").forEach(row=>{
+    const i=+row.dataset.i;const sync=()=>{state.structure.menus[i].label=row.querySelector(".tm-label").value;state.structure.menus[i].href=row.querySelector(".tm-href").value;renderStructurePreview()};
+    row.querySelectorAll("input").forEach(x=>x.addEventListener("input",sync));
+    row.querySelector(".tm-left").onclick=()=>move(state.structure.menus,i,-1,renderTopMenus,renderStructurePreview);
+    row.querySelector(".tm-right").onclick=()=>move(state.structure.menus,i,1,renderTopMenus,renderStructurePreview);
+    row.querySelector(".tm-del").onclick=()=>{state.structure.menus.splice(i,1);renderTopMenus();renderStructurePreview()};
+  });
+}
+$("addTopMenu").onclick=()=>{state.structure.menus.push({label:"새 메뉴",href:"new-page.html"});renderTopMenus();renderStructurePreview()};
+function renderHomeSections(){
+  $("homeSectionCards").innerHTML=state.structure.sections.map((s,i)=>`<div class="h-card"><strong>${esc(s.title)}</strong><div class="h-actions" style="margin-top:8px"><button class="btn light mini sec-left" data-i="${i}">←</button><button class="btn light mini sec-right" data-i="${i}">→</button><label class="hint"><input type="checkbox" class="sec-vis" data-i="${i}" ${s.visible?"checked":""}> 표시</label></div></div>`).join("");
+  document.querySelectorAll(".sec-left").forEach(b=>b.onclick=()=>move(state.structure.sections,+b.dataset.i,-1,renderHomeSections,renderStructurePreview));
+  document.querySelectorAll(".sec-right").forEach(b=>b.onclick=()=>move(state.structure.sections,+b.dataset.i,1,renderHomeSections,renderStructurePreview));
+  document.querySelectorAll(".sec-vis").forEach(b=>b.onchange=()=>{state.structure.sections[+b.dataset.i].visible=b.checked;renderStructurePreview()});
+}
+function renderStructurePreview(){
+  const visible=state.structure.sections.filter(x=>x.visible);
+  $("structurePreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">${esc($("homeEyebrow").value)}</div><h1>${esc($("homeTitle").value).replace(/\n/g,"<br>")}</h1><p>${esc($("homeSummary").value)}</p></div>
+  <div class="pv-section"><strong>상단 메뉴</strong><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${state.structure.menus.map(x=>`<span class="btn light mini">${esc(x.label)}</span>`).join("")}</div></div>
+  ${visible.filter(x=>x.title!=="메인 HERO").map(x=>`<div class="pv-section"><strong>${esc(x.title)}</strong><p class="hint">홈 랜딩 섹션</p></div>`).join("")}`;
+}
+bindInputs(["homeEyebrow","homeTitle","homeSummary"],renderStructurePreview);
+$("saveStructure").onclick=async()=>{
+  try{
+    const doc=docOf(state.structure.html);
+    setTxt(doc,".hero .eyebrow",$("homeEyebrow").value);setTxt(doc,".hero h1",$("homeTitle").value);setTxt(doc,".hero p",$("homeSummary").value);
+    const nav=doc.querySelector(".menu");if(nav){nav.innerHTML="";state.structure.menus.forEach(m=>{const a=doc.createElement("a");a.href=m.href;a.textContent=m.label;nav.appendChild(a)})}
+    const main=doc.querySelector("main"),existing=Array.from(main.children);
+    const hero=state.structure.sections.find(x=>x.title==="메인 HERO");
+    const order=state.structure.sections.filter(x=>x.visible);
+    main.innerHTML="";
+    order.forEach(s=>{if(s.title==="메인 HERO"){const sec=docOf(hero.html).querySelector("section");setTxt(sec,".eyebrow",$("homeEyebrow").value);setTxt(sec,"h1",$("homeTitle").value);setTxt(sec,"p",$("homeSummary").value);main.appendChild(doc.importNode(sec,true))}
+      else{const sec=docOf(s.html).querySelector("section");main.appendChild(doc.importNode(sec,true))}});
+    const out=htmlOf(doc),r=await putFile("index.html",out,state.structure.sha,"Update BIZZIP home structure");
+    state.structure.sha=r.content.sha;state.structure.html=out;status("structureStatus","✓ 홈 랜딩페이지 구조를 저장했습니다.","ok");
+  }catch(e){status("structureStatus","저장 실패: "+e.message,"err")}
 };
 
-async function loadBusinessHierarchy(){
-  const nav=$("businessCategoryNav"); if(!nav)return;
-  nav.innerHTML='<div class="helper">사업실무 분야를 불러오는 중입니다…</div>';
-  try{
-    const data=await getFile("business.html");
-    const h=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(h,"text/html");
-    let categories=Array.from(doc.querySelectorAll('a[href$=".html"]')).map(a=>({
-      href:a.getAttribute("href")||"",
-      label:(a.querySelector("h3")||a.querySelector("strong")||a).textContent.trim()
-    })).filter(x=>BUSINESS_CATEGORY_FILES[x.href]);
-    const seen=new Set(); categories=categories.filter(x=>!seen.has(x.href)&&seen.add(x.href));
-    if(!categories.length)categories=Object.entries(BUSINESS_CATEGORY_FILES).map(([href,label])=>({href,label}));
-    businessHierarchy={sha:data.sha,html:h,categories,current:null};
-    renderBusinessCategoryNav();
-    $("saveBusinessHierarchyBtn").disabled=false;
-  }catch(e){
-    nav.innerHTML='<div class="helper">사업실무 분야를 불러오지 못했습니다.</div>';
-    setBusinessHierarchyStatus("사업실무 구조를 불러오지 못했습니다: "+e.message,"err");
-  }
+/* =========================
+   BUSINESS
+========================= */
+async function loadBusiness(){
+  const d=await getFile("business.html"),html=b64decode(d.content),doc=docOf(html);
+  state.business.landingSha=d.sha;state.business.landingHtml=html;
+  $("bizLandingTitle").value=txt(doc,".page-hero h1");$("bizLandingSummary").value=txt(doc,".page-hero h1 + p");
+  state.business.categories=Array.from(doc.querySelectorAll(".grid .card")).map(a=>({title:txt(a,"h3"),summary:txt(a,"p"),href:a.getAttribute("href")||""}));
+  renderBizCategories();renderBusinessPreview();$("saveBizLanding").disabled=false;
+  if(state.business.categories.length)await selectBizCategory(0);
 }
-
-function renderBusinessCategoryNav(){
-  const mount=$("businessCategoryNav"); if(!mount)return;
-  const cats=businessHierarchy.categories||[];
-  mount.innerHTML=cats.map((c,i)=>`
-    <div class="hier-card" data-index="${i}" style="margin-bottom:8px">
-      <input class="admin-input bc-root-title" value="${escapeHtml(c.label||"")}" style="margin-bottom:7px">
-      <input class="admin-input bc-root-href" value="${escapeHtml(c.href||"")}" placeholder="예: startup.html">
-      <div class="hier-actions" style="margin-top:7px">
-        <button type="button" class="admin-btn light bc-root-open">2단계 편집</button>
-        <button type="button" class="admin-btn light bc-root-up" ${i===0?"disabled":""}>↑</button>
-        <button type="button" class="admin-btn light bc-root-down" ${i===cats.length-1?"disabled":""}>↓</button>
-        <button type="button" class="admin-btn danger bc-root-delete" ${cats.length===1?"disabled":""}>삭제</button>
-      </div>
-    </div>`).join("");
-
-  mount.querySelectorAll(".hier-card").forEach(row=>{
-    const i=Number(row.dataset.index);
-    const sync=()=>{businessHierarchy.categories[i].label=row.querySelector(".bc-root-title").value;businessHierarchy.categories[i].href=row.querySelector(".bc-root-href").value;};
-    row.querySelectorAll("input").forEach(el=>el.addEventListener("input",sync));
-    row.querySelector(".bc-root-open")?.addEventListener("click",()=>{sync();loadBusinessCategoryPage(businessHierarchy.categories[i].href);});
-    row.querySelector(".bc-root-up")?.addEventListener("click",()=>{sync();if(i>0)[businessHierarchy.categories[i-1],businessHierarchy.categories[i]]=[businessHierarchy.categories[i],businessHierarchy.categories[i-1]];renderBusinessCategoryNav();});
-    row.querySelector(".bc-root-down")?.addEventListener("click",()=>{sync();if(i<cats.length-1)[businessHierarchy.categories[i+1],businessHierarchy.categories[i]]=[businessHierarchy.categories[i],businessHierarchy.categories[i+1]];renderBusinessCategoryNav();});
-    row.querySelector(".bc-root-delete")?.addEventListener("click",()=>{if(cats.length>1)businessHierarchy.categories.splice(i,1);renderBusinessCategoryNav();});
+function renderBizCategories(){
+  $("bizCategoryCards").innerHTML=state.business.categories.map((c,i)=>`<div class="h-card ${i===state.business.selectedCat?"active":""}" data-i="${i}">
+  <input class="input bc-title" value="${esc(c.title)}"><input class="input bc-href" value="${esc(c.href)}"><textarea class="textarea bc-summary" style="min-height:58px">${esc(c.summary)}</textarea>
+  <div class="h-actions"><button class="btn dark mini bc-edit">2단계</button><button class="btn light mini bc-left">←</button><button class="btn light mini bc-right">→</button><button class="btn danger mini bc-del">삭제</button></div></div>`).join("");
+  $("bizCategoryCards").querySelectorAll(".h-card").forEach(row=>{
+    const i=+row.dataset.i, sync=()=>{const c=state.business.categories[i];c.title=row.querySelector(".bc-title").value;c.href=row.querySelector(".bc-href").value;c.summary=row.querySelector(".bc-summary").value;renderBusinessPreview()};
+    row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));
+    row.querySelector(".bc-edit").onclick=()=>{sync();selectBizCategory(i)};
+    row.querySelector(".bc-left").onclick=()=>move(state.business.categories,i,-1,renderBizCategories,renderBusinessPreview);
+    row.querySelector(".bc-right").onclick=()=>move(state.business.categories,i,1,renderBizCategories,renderBusinessPreview);
+    row.querySelector(".bc-del").onclick=()=>{state.business.categories.splice(i,1);state.business.selectedCat=-1;renderBizCategories();$("bizTopicCards").innerHTML="";renderBusinessPreview()};
   });
 }
-
-$("addBusinessCategoryBtn")?.addEventListener("click",()=>{businessHierarchy.categories.push({label:"새 분야",href:`business-${Date.now()}.html`});renderBusinessCategoryNav();});
-$("removeBusinessCategoryBtn")?.addEventListener("click",()=>{if(businessHierarchy.categories.length>1)businessHierarchy.categories.pop();renderBusinessCategoryNav();});
-
-$("saveBusinessHierarchyBtn")?.addEventListener("click",async()=>{
-  if(!businessHierarchy.sha || !businessHierarchy.html)return setBusinessHierarchyStatus("먼저 사업실무 구조를 불러와주세요.","err");
-  const btn=$("saveBusinessHierarchyBtn");btn.disabled=true;btn.textContent="저장 중…";
+$("addBizCategory").onclick=()=>{state.business.categories.push({title:"새 분야",summary:"",href:`business-${Date.now()}.html`});renderBizCategories();renderBusinessPreview()};
+async function selectBizCategory(i){
+  state.business.selectedCat=i;renderBizCategories();const c=state.business.categories[i];
   try{
-    const doc=new DOMParser().parseFromString(businessHierarchy.html,"text/html");
-    const cards=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>Object.keys(BUSINESS_CATEGORY_FILES).includes(a.getAttribute("href")||""));
-    if(!cards.length)throw new Error("분야 카드 영역을 찾지 못했습니다.");
-    const parent=cards[0].parentElement,template=cards[0].cloneNode(true);
-    cards.forEach(x=>x.remove());
-    businessHierarchy.categories.forEach((c,i)=>{
-      const node=template.cloneNode(true);node.setAttribute("href",c.href);
-      const num=node.querySelector(".num"),h=node.querySelector("h3")||node.querySelector("strong");
-      if(num)num.textContent=String(i+1).padStart(2,"0");if(h)h.textContent=c.label;
-      parent.appendChild(node);
-    });
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const r=await putFile("business.html",encodeBase64Utf8(newHtml),businessHierarchy.sha,"Update business category structure");
-    businessHierarchy.sha=r.content.sha;businessHierarchy.html=newHtml;
-    setBusinessHierarchyStatus("✓ 저장 완료 — 1단계 분야 구조가 저장되었습니다.","saved");
-  }catch(e){setBusinessHierarchyStatus("저장 실패: "+e.message,"err");}
-  finally{btn.disabled=false;btn.textContent="1단계 분야 저장";}
-});
-
-async function loadBusinessCategoryPage(path){
-  if(!path)return;
-
-  setBusinessCategoryStatus(`${path} 분야 페이지를 불러오는 중입니다…`,"info");
-  $("saveBusinessCategoryBtn").disabled=true;
-
-  try{
-    const data=await getFile(path);
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-
-    const heroTitle=doc.querySelector(".page-hero h1");
-    const heroSummary=doc.querySelector(".page-hero h1 + p");
-
-    $("bcTitle").value=heroTitle ? heroTitle.textContent.trim() : (BUSINESS_CATEGORY_FILES[path]||"");
-    $("bcSummary").value=heroSummary ? heroSummary.textContent.trim() : "";
-
-    // Find section head near the topic list.
-    let sectionTitle="", sectionSummary="";
-    const sectionHeads=Array.from(doc.querySelectorAll(".section-head"));
-    if(sectionHeads.length){
-      const h=sectionHeads[sectionHeads.length-1];
-      sectionTitle=qText(h,"h2");
-      sectionSummary=qText(h,"p");
-    }
-    $("bcSectionTitle").value=sectionTitle;
-    $("bcSectionSummary").value=sectionSummary;
-
-    // Find topic cards regardless of exact class naming.
-    let topicCards=Array.from(doc.querySelectorAll("a.topic-card"));
-    if(!topicCards.length){
-      topicCards=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>{
-        const href=a.getAttribute("href")||"";
-        return href!==path && href!=="business.html" && !Object.keys(BUSINESS_CATEGORY_FILES).includes(href);
-      });
-    }
-
-    businessHierarchy.current={
-      path,
-      sha:data.sha,
-      html,
-      topics:topicCards.map(a=>({
-        title:qText(a,"h3")||qText(a,"strong")||a.textContent.trim(),
-        body:qText(a,"p"),
-        href:a.getAttribute("href")||"",
-        kicker:qText(a,".kicker"),
-        cta:qText(a,".more")||qText(a,"em")
-      }))
-    };
-
-    renderBusinessTopicsEditor();
-    $("businessCategoryHint").textContent=`현재 수정 중: ${$("bcTitle").value || BUSINESS_CATEGORY_FILES[path] || path}`;
-    $("businessCategoryEditNote").textContent=`${$("bcTitle").value || path} 수정 중`;
-    $("saveBusinessCategoryBtn").disabled=false;
-    setBusinessCategoryStatus("분야 페이지를 불러왔습니다. 세부주제도 아래에서 수정할 수 있습니다.","ok");
-
-  }catch(e){
-    setBusinessCategoryStatus("분야 페이지를 불러오지 못했습니다: "+e.message,"err");
-  }
+    const d=await getFile(c.href),html=b64decode(d.content),doc=docOf(html);state.business.cat={sha:d.sha,html,topics:Array.from(doc.querySelectorAll(".topic-card")).map(a=>({title:txt(a,"h3"),summary:txt(a,"p"),href:a.getAttribute("href")||""}))};
+    $("bizCatTitle").value=txt(doc,".page-hero h1");$("bizCatSummary").value=txt(doc,".page-hero h1 + p");$("bizCatSectionTitle").value=txt(doc,".section-head h2");$("bizCatSectionSummary").value=txt(doc,".section-head p");
+    renderBizTopics();$("saveBizCategory").disabled=false;renderBusinessPreview();
+  }catch(e){state.business.cat={sha:"",html:"",topics:[]};renderBizTopics();status("businessStatus",`분야 페이지 ${c.href}를 찾지 못했습니다. 새 분야라면 저장 시 생성할 수 있도록 파일명을 확인하세요.`,"info")}
 }
-
-function renderBusinessTopicsEditor(){
-  const mount=$("businessTopicsEditor");
-  if(!mount)return;
-  const topics=businessHierarchy.current?.topics||[];
-
-  if(!topics.length){
-    mount.innerHTML='<div class="helper">현재 세부주제를 찾지 못했습니다.</div>';
-    return;
-  }
-
-  mount.innerHTML=topics.map((t,i)=>`
-    <div class="hier-card" data-index="${i}">
-      <div class="hier-card-head">
-        <strong>${i+1}번 세부주제</strong>
-        <div class="hier-actions">
-          <button type="button" class="admin-btn light bt-up" ${i===0?"disabled":""}>↑</button>
-          <button type="button" class="admin-btn light bt-down" ${i===topics.length-1?"disabled":""}>↓</button>
-          <button type="button" class="admin-btn light bt-open">상세페이지 편집</button>
-          <button type="button" class="admin-btn danger bt-delete" ${topics.length===1?"disabled":""}>삭제</button>
-        </div>
-      </div>
-      <div class="inline-two">
-        <div>
-          <label class="admin-label">세부주제 제목</label>
-          <input class="admin-input bt-title" value="${escapeHtml(t.title||"")}">
-        </div>
-        <div>
-          <label class="admin-label">상세페이지 파일</label>
-          <input class="admin-input bt-href" value="${escapeHtml(t.href||"")}">
-        </div>
-      </div>
-      <label class="admin-label">설명</label>
-      <textarea class="admin-textarea bt-body" style="min-height:70px">${escapeHtml(t.body||"")}</textarea>
-    </div>
-  `).join("");
-
-  mount.querySelectorAll(".hier-card").forEach(row=>{
-    const idx=Number(row.dataset.index);
-    const sync=()=>{
-      const t=businessHierarchy.current.topics[idx];
-      t.title=row.querySelector(".bt-title")?.value||"";
-      t.href=row.querySelector(".bt-href")?.value||"";
-      t.body=row.querySelector(".bt-body")?.value||"";
-    };
-
-    row.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",sync));
-
-    row.querySelector(".bt-up")?.addEventListener("click",()=>{
-      sync();
-      if(idx>0){
-        [businessHierarchy.current.topics[idx-1],businessHierarchy.current.topics[idx]]=
-        [businessHierarchy.current.topics[idx],businessHierarchy.current.topics[idx-1]];
-      }
-      renderBusinessTopicsEditor();
-    });
-
-    row.querySelector(".bt-down")?.addEventListener("click",()=>{
-      sync();
-      if(idx<businessHierarchy.current.topics.length-1){
-        [businessHierarchy.current.topics[idx+1],businessHierarchy.current.topics[idx]]=
-        [businessHierarchy.current.topics[idx],businessHierarchy.current.topics[idx+1]];
-      }
-      renderBusinessTopicsEditor();
-    });
-
-    row.querySelector(".bt-delete")?.addEventListener("click",()=>{
-      if(businessHierarchy.current.topics.length>1){
-        businessHierarchy.current.topics.splice(idx,1);
-        renderBusinessTopicsEditor();
-      }
-    });
-
-    row.querySelector(".bt-open")?.addEventListener("click",()=>{
-      const href=businessHierarchy.current.topics[idx].href;
-      const found=findBusinessPageByHref(href);
-      if(!found){
-        setBusinessCategoryStatus("연결된 상세페이지를 관리자 기본 목록에서 찾지 못했습니다.","err");
-        return;
-      }
-      $("pageCategory").value=found.catKey;
-      fillSubcategories("pageCategory","pageSubcategory",found.subKey);
-      $("loadPageBtn").click();
-      document.querySelector("#panel-business .admin-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
-    });
-  });
+function renderBizTopics(){
+  $("bizTopicCards").innerHTML=(state.business.cat.topics||[]).map((t,i)=>`<div class="h-card" data-i="${i}"><input class="input bt-title" value="${esc(t.title)}"><input class="input bt-href" value="${esc(t.href)}"><textarea class="textarea bt-summary" style="min-height:58px">${esc(t.summary)}</textarea><div class="h-actions"><button class="btn dark mini bt-detail">상세 편집</button><button class="btn light mini bt-left">←</button><button class="btn light mini bt-right">→</button><button class="btn danger mini bt-del">삭제</button></div></div>`).join("");
+  $("bizTopicCards").querySelectorAll(".h-card").forEach(row=>{
+    const i=+row.dataset.i,sync=()=>{const t=state.business.cat.topics[i];t.title=row.querySelector(".bt-title").value;t.href=row.querySelector(".bt-href").value;t.summary=row.querySelector(".bt-summary").value;renderBusinessPreview()};
+    row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));
+    row.querySelector(".bt-detail").onclick=()=>{sync();loadBizDetail(state.business.cat.topics[i].href)};
+    row.querySelector(".bt-left").onclick=()=>move(state.business.cat.topics,i,-1,renderBizTopics,renderBusinessPreview);
+    row.querySelector(".bt-right").onclick=()=>move(state.business.cat.topics,i,1,renderBizTopics,renderBusinessPreview);
+    row.querySelector(".bt-del").onclick=()=>{state.business.cat.topics.splice(i,1);renderBizTopics();renderBusinessPreview()};
+  })
 }
-
-$("addBusinessTopicBtn")?.addEventListener("click",()=>{
-  if(!businessHierarchy.current)return;
-  businessHierarchy.current.topics.push({
-    title:"새 세부주제",
-    body:"",
-    href:"",
-    kicker:"",
-    cta:""
-  });
-  renderBusinessTopicsEditor();
-});
-
-$("removeBusinessTopicBtn")?.addEventListener("click",()=>{
-  if(businessHierarchy.current?.topics.length>1){
-    businessHierarchy.current.topics.pop();
-    renderBusinessTopicsEditor();
-  }
-});
-
-$("saveBusinessCategoryBtn")?.addEventListener("click",async()=>{
-  if(!businessHierarchy.current)return;
-  const btn=$("saveBusinessCategoryBtn");
-  btn.disabled=true;
-  btn.textContent="저장 중…";
-
-  try{
-    const cur=businessHierarchy.current;
-    const doc=new DOMParser().parseFromString(cur.html,"text/html");
-
-    const h1=doc.querySelector(".page-hero h1");
-    const p=doc.querySelector(".page-hero h1 + p");
-    if(h1)h1.textContent=$("bcTitle").value.trim();
-    if(p)p.textContent=$("bcSummary").value.trim();
-
-    const sectionHeads=Array.from(doc.querySelectorAll(".section-head"));
-    if(sectionHeads.length){
-      const h=sectionHeads[sectionHeads.length-1];
-      if(h.querySelector("h2"))h.querySelector("h2").textContent=$("bcSectionTitle").value.trim();
-      if(h.querySelector("p"))h.querySelector("p").textContent=$("bcSectionSummary").value.trim();
-    }
-
-    const oldCards=Array.from(doc.querySelectorAll("a.topic-card"));
-    if(oldCards.length){
-      const parent=oldCards[0].parentElement;
-      const template=oldCards[0].cloneNode(true);
-      oldCards.forEach(x=>x.remove());
-
-      cur.topics.forEach(t=>{
-        const node=template.cloneNode(true);
-        const h3=node.querySelector("h3")||node.querySelector("strong");
-        const bp=node.querySelector("p");
-        if(h3)h3.textContent=t.title||"";
-        if(bp)bp.textContent=t.body||"";
-        if(t.href)node.setAttribute("href",t.href);
-        parent.appendChild(node);
-      });
-    }
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile(cur.path,encodeBase64Utf8(newHtml),cur.sha,`Update business category: ${cur.path}`);
-    cur.sha=result.content.sha;
-    cur.html=newHtml;
-
-    setBusinessCategoryStatus("✓ 저장 완료 — 분야 페이지와 세부주제가 정상 저장되었습니다.","saved");
-
-  }catch(e){
-    setBusinessCategoryStatus("저장 실패: "+e.message,"err");
-  }finally{
-    btn.disabled=false;
-    btn.textContent="분야 페이지 저장";
-  }
-});
-
-$("reloadBusinessHierarchyBtn")?.addEventListener("click",loadBusinessHierarchy);
-
-
-/* 콘텐츠 */
-async function loadPosts(){
-  const data=await getFile(CONFIG.postsPath); postsSha=data.sha; posts=JSON.parse(decodeBase64Utf8(data.content));
-  posts.sort((a,b)=>String(b.date).localeCompare(String(a.date))); renderPostList(); const saveBtn=$("savePostBtn"); if(saveBtn) saveBtn.disabled=false;
-}
-function renderPostList(){
-  $("postList").innerHTML=posts.length?posts.map((p,i)=>`
-    <div class="item"><strong>${escapeHtml(p.title)}</strong>
-    <div class="item-meta">${escapeHtml(p.date)} · ${escapeHtml(p.categoryLabel)}${p.subcategoryLabel?" → "+escapeHtml(p.subcategoryLabel):""}</div>
-    <div class="item-actions"><button class="admin-btn light" onclick="editPost(${i})">수정</button><button class="admin-btn danger" onclick="removePost(${i})">삭제</button></div></div>`).join(""):'<div class="helper">등록된 콘텐츠가 없습니다.</div>';
-}
-function sectionsToText(sections=[]){
-  const out=[]; sections.forEach(sec=>{ if(sec.heading)out.push("## "+sec.heading); (sec.paragraphs||[]).forEach(p=>{out.push(p);out.push("")}); (sec.bullets||[]).forEach(b=>out.push("- "+b)); out.push(""); });
-  return out.join("\n").replace(/\n{3,}/g,"\n\n").trim();
-}
-function textToSections(text){
-  const lines=text.split(/\r?\n/), sections=[]; let current={heading:"본문",paragraphs:[],bullets:[]},buffer=[];
-  const flush=()=>{const p=buffer.join(" ").trim();if(p)current.paragraphs.push(p);buffer=[];};
-  const push=()=>{flush();if(current.heading||current.paragraphs.length||current.bullets.length)sections.push(current);};
-  for(const raw of lines){ const line=raw.trim();
-    if(line.startsWith("## ")){if(current.paragraphs.length||current.bullets.length||current.heading!=="본문")push();current={heading:line.slice(3).trim(),paragraphs:[],bullets:[]};}
-    else if(line.startsWith("- ")){flush();current.bullets.push(line.slice(2).trim());}
-    else if(!line)flush(); else buffer.push(line);
-  } push(); return sections.filter(s=>s.paragraphs.length||s.bullets.length||(s.heading&&s.heading!=="본문"));
-}
-function newPost(){
-  $("postId").value="";$("title").value="";$("date").value=todayLocal();$("category").value="startup";fillSubcategories("category","subcategory");$("summary").value="";$("body").value="";$("editNote").textContent="새 글 작성";
-}
-window.editPost=i=>{
-  const p=posts[i]; $("postId").value=p.id||"";$("title").value=p.title||"";$("date").value=p.date||todayLocal();$("category").value=p.category||"startup";fillSubcategories("category","subcategory",p.subcategory||"");$("summary").value=p.summary||"";$("body").value=sectionsToText(p.sections||[]);$("editNote").textContent="기존 글 수정 중";
-};
-window.removePost=async i=>{
-  const p=posts[i]; if(!confirm(`"${p.title}" 글을 삭제할까요?`))return;
-  const next=posts.filter((_,idx)=>idx!==i);
-  try{const r=await putFile(CONFIG.postsPath,encodeBase64Utf8(JSON.stringify(next,null,2)),postsSha,`Delete post: ${p.title}`);postsSha=r.content.sha;posts=next;renderPostList();newPost();setStatus("콘텐츠를 삭제했습니다.","ok");}
-  catch(e){setStatus("삭제하지 못했습니다: "+e.message,"err");}
-};
-$("newBtn").addEventListener("click",newPost);
-$("category").addEventListener("change",()=>fillSubcategories("category","subcategory"));
-$("savePostBtn").addEventListener("click",async()=>{
-  const title=$("title").value.trim(),date=$("date").value,cat=$("category").value,sub=$("subcategory").value,summary=$("summary").value.trim(),body=$("body").value.trim();
-  if(!title||!date||!summary||!body||!sub)return setStatus("제목, 발행일, 세부 메뉴, 요약, 본문을 모두 입력해주세요.","err");
-  const subInfo=TAXONOMY[cat].subs[sub],id=$("postId").value||`bizzip-${Date.now()}`;
-  const post={id,title,date,category:cat,categoryLabel:TAXONOMY[cat].label,subcategory:sub,subcategoryLabel:subInfo.label,subcategoryPage:subInfo.page,summary,sections:textToSections(body)};
-  const idx=posts.findIndex(p=>p.id===id); if(idx>=0)posts[idx]=post;else posts.push(post); posts.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-  try{const r=await putFile(CONFIG.postsPath,encodeBase64Utf8(JSON.stringify(posts,null,2)),postsSha,`${idx>=0?"Update":"Add"} post: ${title}`);postsSha=r.content.sha;renderPostList();newPost();setStatus("콘텐츠를 저장했습니다.","ok");}
-  catch(e){setStatus("저장하지 못했습니다: "+e.message,"err");}
-});
-
-/* 사업실무 페이지 */
-$("pageCategory").addEventListener("change",()=>fillSubcategories("pageCategory","pageSubcategory"));
-function textList(el){ return Array.from(el?.querySelectorAll("li")||[]).map(li=>li.textContent.trim()).join("\n"); }
-function setList(ul,text){ if(!ul)return; const items=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean); ul.innerHTML=items.map(s=>`<li>${escapeHtml(s)}</li>`).join(""); }
-function qText(root,sel){ const el=root.querySelector(sel);return el?el.textContent.trim():""; }
-
-$("loadPageBtn").addEventListener("click",async()=>{
-  const cat=$("pageCategory").value,sub=$("pageSubcategory").value,path=TAXONOMY[cat].subs[sub].page;
-  setStatus(`${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label} 페이지를 불러오는 중입니다…`,"info");
-  setPageStatus("페이지를 불러오는 중입니다…","info");
-  $("savePageBtn").disabled=true;
-  try{
-    const data=await getFile(path),html=decodeBase64Utf8(data.content); currentPage={path,sha:data.sha,html};
-    const doc=new DOMParser().parseFromString(html,"text/html"),article=doc.querySelector("article.article"); if(!article)throw new Error("수정 가능한 본문 영역을 찾지 못했습니다.");
-    $("fpTitle").value=qText(doc,".page-hero h1"); $("fpHeroSummary").value=qText(doc,".page-hero h1 + p"); $("fpIntro").value=qText(article,".detail-intro");
-    const h2s=Array.from(article.querySelectorAll(":scope > h2")), criteriaH=h2s.find(h=>h.textContent.trim()==="실무에서 먼저 보는 기준");
-    $("fpCriteria").value=textList(criteriaH?.nextElementSibling); $("fpAction").value=qText(article,".practice-box p");
-    const steps=Array.from(article.querySelectorAll(".step-card")).map(step=>({
-      title:qText(step,"strong").replace(/^STEP\s*\d+[.·:]?\s*/i,""),
-      body:qText(step,"p")
-    }));
-    setBusinessSteps(steps.length ? steps : [{title:"",body:""}]);
-    $("fpExample").value=qText(article,".example-box p"); $("fpMistakes").value=textList(article.querySelector(".mistake-box ul")); $("fpFinishTitle").value=qText(article,".finish-box strong"); $("fpFinishBody").value=qText(article,".finish-box p");
-    $("savePageBtn").disabled=false;
-    $("pageEditNote").textContent=`수정 중: ${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label}`;
-    setStatus("페이지를 불러왔습니다.","ok");
-    setPageStatus("페이지를 불러왔습니다. 이제 수정 후 ‘페이지 저장’을 누르세요.","ok");
-    renderBusinessPreview();
-  }catch(e){
-    $("savePageBtn").disabled=true;
-    setStatus("페이지를 불러오지 못했습니다: "+e.message,"err");
-    setPageStatus("페이지를 불러오지 못했습니다: "+e.message,"err");
-  }
-});
-$("savePageBtn").addEventListener("click",async()=>{
-  if(!currentPage.path){
-    setPageStatus("먼저 왼쪽에서 페이지를 선택하고 ‘페이지 불러오기’를 눌러주세요.","err");
-    return;
-  }
-  const saveBtn=$("savePageBtn");
-  saveBtn.disabled=true;
-  saveBtn.textContent="저장 중…";
-  setPageStatus("GitHub에 저장하는 중입니다…","info");
-  try{
-    const doc=new DOMParser().parseFromString(currentPage.html,"text/html"),article=doc.querySelector("article.article");
-    const heroTitle=doc.querySelector(".page-hero h1"),heroSummary=doc.querySelector(".page-hero h1 + p"); if(heroTitle)heroTitle.textContent=$("fpTitle").value.trim();if(heroSummary)heroSummary.textContent=$("fpHeroSummary").value.trim();
-    const intro=article.querySelector(".detail-intro");if(intro)intro.textContent=$("fpIntro").value.trim();
-    const h2s=Array.from(article.querySelectorAll(":scope > h2")),criteriaH=h2s.find(h=>h.textContent.trim()==="실무에서 먼저 보는 기준");setList(criteriaH?.nextElementSibling,$("fpCriteria").value);
-    const action=article.querySelector(".practice-box p");if(action)action.textContent=$("fpAction").value.trim();
-    syncBusinessStepsToArticle(article);
-    const ex=article.querySelector(".example-box p");if(ex)ex.textContent=$("fpExample").value.trim();setList(article.querySelector(".mistake-box ul"),$("fpMistakes").value);
-    const ft=article.querySelector(".finish-box strong"),fb=article.querySelector(".finish-box p");if(ft)ft.textContent=$("fpFinishTitle").value.trim();if(fb)fb.textContent=$("fpFinishBody").value.trim();
-    const html="<!doctype html>\n"+doc.documentElement.outerHTML,r=await putFile(currentPage.path,encodeBase64Utf8(html),currentPage.sha,`Update business page: ${currentPage.path}`);
-    currentPage.sha=r.content.sha;
-    currentPage.html=html;
-    setStatus("사업실무 페이지를 저장했습니다.","ok");
-    setPageStatus("✓ 저장 완료 — GitHub에 정상 저장되었습니다. 사이트 반영에는 잠시 시간이 걸릴 수 있습니다.","saved");
-  }catch(e){
-    setStatus("페이지 저장에 실패했습니다: "+e.message,"err");
-    setPageStatus("저장 실패: "+e.message,"err");
-  }finally{
-    saveBtn.disabled=false;
-    saveBtn.textContent="페이지 저장";
-  }
-});
-
-
-/* ---------- 실무자료 관리 ---------- */
-
-function renderResourcePreview(){
-  const m=$("resourcePreview"); if(!m)return;
-  const title=$("rsTitle")?.value.trim()||"실무자료";
-  const hero=$("rsHeroSummary")?.value.trim()||"";
-  const usage=previewLines($("rsUsage")?.value||"");
-  const tip=$("rsTip")?.value.trim()||"";
-  const ex=$("rsExample")?.value.trim()||"";
-  const steps=previewLines($("rsSteps")?.value||"");
-  const ft=$("rsFinishTitle")?.value.trim()||"";
-  const fb=$("rsFinishBody")?.value.trim()||"";
-  m.innerHTML=`<div class="live-hero"><div class="live-eyebrow">PRACTICAL RESOURCE</div><h1>${previewEsc(title)}</h1><p>${previewEsc(hero)}</p></div>
-  <div class="live-body">
-  ${usage.length?`<h2>이 자료는 이렇게 씁니다</h2><ul>${usage.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`:""}
-  ${tip?`<h2>사용 팁</h2><div class="live-box"><p>${previewEsc(tip)}</p></div>`:""}
-  ${ex?`<h2>현장 예시</h2><div class="live-box"><p>${previewEsc(ex)}</p></div>`:""}
-  ${steps.length?`<h2>실제로 사용하는 순서</h2>${steps.map((x,i)=>`<div class="live-card"><strong>${i+1}. ${previewEsc(x)}</strong></div>`).join("")}`:""}
-  ${(ft||fb)?`<div class="live-box"><strong>${previewEsc(ft)}</strong><p>${previewEsc(fb)}</p></div>`:""}
-  </div>`;
-}
-["rsTitle","rsHeroSummary","rsUsage","rsTip","rsExample","rsSteps","rsFinishTitle","rsFinishBody"].forEach(id=>{
-  const el=$(id);if(el)el.addEventListener("input",renderResourcePreview);
-});
-
-function listTextFrom(el){
-  return Array.from(el?.querySelectorAll("li")||[]).map(li=>li.textContent.trim()).join("\n");
-}
-function fillListElement(el,text){
-  if(!el)return;
-  const items=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  el.innerHTML=items.map(s=>`<li>${escapeHtml(s)}</li>`).join("");
-}
-function currentDownloadFromDoc(doc){
-  const a=doc.querySelector('a[href^="downloads/"]');
-  return a ? a.getAttribute("href") : "";
-}
-function ensureDownloadButton(doc,path){
-  const article=doc.querySelector("article.article");
-  if(!article)return;
-  let a=article.querySelector('a[href^="downloads/"]');
-  let wrapper=a?.parentElement;
-
-  if(!path){
-    if(wrapper && wrapper.querySelector('a[href^="downloads/"]')) wrapper.remove();
-    return;
-  }
-
-  if(!a){
-    wrapper=doc.createElement("div");
-    wrapper.setAttribute("style","margin-top:24px");
-    a=doc.createElement("a");
-    a.className="btn primary";
-    a.setAttribute("download","");
-    a.textContent="샘플 파일 내려받기";
-    wrapper.appendChild(a);
-    article.appendChild(wrapper);
-  }
-  a.setAttribute("href",path);
-}
-
-$("loadResourceBtn").addEventListener("click",async()=>{
-  const path=$("resourceSelect").value;
-  $("saveResourceBtn").disabled=true;
-  setResourceStatus("실무자료를 불러오는 중입니다…","info");
-  try{
-    const data=await getFile(path);
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    const article=doc.querySelector("article.article");
-    if(!article)throw new Error("실무자료 본문 영역을 찾지 못했습니다.");
-
-    currentResource={path,sha:data.sha,html,downloadPath:currentDownloadFromDoc(doc)};
-
-    $("rsTitle").value=qText(doc,".page-hero h1");
-    $("rsHeroSummary").value=qText(doc,".page-hero h1 + p");
-
-    const h2s=Array.from(article.querySelectorAll(":scope > h2"));
-    const usageH=h2s.find(h=>h.textContent.trim()==="이 자료는 이렇게 씁니다");
-    const stepsH=h2s.find(h=>h.textContent.trim()==="실제로 사용하는 순서");
-
-    $("rsUsage").value=listTextFrom(usageH?.nextElementSibling);
-    $("rsTip").value=qText(article,".practice-box p");
-    $("rsExample").value=qText(article,".example-box p");
-    $("rsSteps").value=listTextFrom(stepsH?.nextElementSibling);
-    $("rsFinishTitle").value=qText(article,".finish-box strong");
-    $("rsFinishBody").value=qText(article,".finish-box p");
-
-    const current=currentResource.downloadPath;
-    $("rsCurrentFile").textContent=current ? current.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
-    setResourceDownloadButton(current);
-    $("rsFileName").value=current ? current.replace("downloads/","") : "";
-    $("rsFileInput").value="";
-    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
-
-    $("saveResourceBtn").disabled=false;
-    $("resourceEditNote").textContent=`수정 중: ${$("resourceSelect").selectedOptions[0].textContent}`;
-    setResourceStatus("실무자료를 불러왔습니다. 수정 후 ‘실무자료 저장’을 누르세요.","ok");
-    renderResourcePreview();
-  }catch(e){
-    $("saveResourceBtn").disabled=true;
-    setResourceStatus("실무자료를 불러오지 못했습니다: "+e.message,"err");
-  }
-});
-
-$("resourceSelect").addEventListener("change",()=>{
-  $("saveResourceBtn").disabled=true;
-  $("resourceEditNote").textContent="자료를 다시 불러오세요";
-  setResourceStatus("선택이 바뀌었습니다. ‘자료 불러오기’를 눌러주세요.","info");
-});
-
-$("rsFileInput").addEventListener("change",()=>{
-  const f=$("rsFileInput").files[0];
-  if(!f){
-    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
-    return;
-  }
-  $("rsFileName").value=f.name;
-  $("rsSelectedFileInfo").textContent=`선택됨: ${f.name} · ${humanSize(f.size)}`;
-});
-
-$("saveResourceBtn").addEventListener("click",async()=>{
-  if(!currentResource.path){
-    setResourceStatus("먼저 실무자료를 불러와주세요.","err");
-    return;
-  }
-
-  const btn=$("saveResourceBtn");
-  btn.disabled=true;
-  btn.textContent="저장 중…";
-  setResourceStatus("실무자료와 첨부파일을 저장하는 중입니다…","info");
-
-  try{
-    const doc=new DOMParser().parseFromString(currentResource.html,"text/html");
-    const article=doc.querySelector("article.article");
-    if(!article)throw new Error("실무자료 본문 영역을 찾지 못했습니다.");
-
-    const heroTitle=doc.querySelector(".page-hero h1");
-    const heroSummary=doc.querySelector(".page-hero h1 + p");
-    if(heroTitle)heroTitle.textContent=$("rsTitle").value.trim();
-    if(heroSummary)heroSummary.textContent=$("rsHeroSummary").value.trim();
-
-    const h2s=Array.from(article.querySelectorAll(":scope > h2"));
-    const usageH=h2s.find(h=>h.textContent.trim()==="이 자료는 이렇게 씁니다");
-    const stepsH=h2s.find(h=>h.textContent.trim()==="실제로 사용하는 순서");
-    fillListElement(usageH?.nextElementSibling,$("rsUsage").value);
-
-    const tip=article.querySelector(".practice-box p");
-    if(tip)tip.textContent=$("rsTip").value.trim();
-
-    const ex=article.querySelector(".example-box p");
-    if(ex)ex.textContent=$("rsExample").value.trim();
-
-    fillListElement(stepsH?.nextElementSibling,$("rsSteps").value);
-
-    const ft=article.querySelector(".finish-box strong");
-    const fb=article.querySelector(".finish-box p");
-    if(ft)ft.textContent=$("rsFinishTitle").value.trim();
-    if(fb)fb.textContent=$("rsFinishBody").value.trim();
-
-    let finalDownloadPath=currentResource.downloadPath;
-    const newFile=$("rsFileInput").files[0];
-    let fileName=$("rsFileName").value.trim();
-
-    if(newFile){
-      if(!fileName)fileName=newFile.name;
-      if(fileName.includes("/")||fileName.includes("\\"))throw new Error("첨부파일명에는 / 또는 \\\\ 문자를 사용할 수 없습니다.");
-
-      const uploadPath=`${CONFIG.downloadsDir}/${fileName}`;
-      let existingSha="";
-      try{
-        const existing=await getFile(uploadPath);
-        existingSha=existing.sha;
-      }catch(e){
-        if(!String(e.message).startsWith("404"))throw e;
-      }
-
-      const bytes=new Uint8Array(await newFile.arrayBuffer());
-      await putFile(uploadPath,bytesToBase64(bytes),existingSha,`${existingSha?"Replace":"Add"} resource attachment: ${fileName}`);
-      finalDownloadPath=uploadPath;
-    }else if(fileName){
-      finalDownloadPath=`${CONFIG.downloadsDir}/${fileName}`;
-    }
-
-    ensureDownloadButton(doc,finalDownloadPath);
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile(currentResource.path,encodeBase64Utf8(newHtml),currentResource.sha,`Update resource page: ${currentResource.path}`);
-
-    currentResource.sha=result.content.sha;
-    currentResource.html=newHtml;
-    currentResource.downloadPath=finalDownloadPath;
-
-    $("rsCurrentFile").textContent=finalDownloadPath ? finalDownloadPath.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
-    setResourceDownloadButton(finalDownloadPath);
-    $("rsFileInput").value="";
-    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
-
-    await loadFiles();
-
-    setStatus("실무자료를 저장했습니다.","ok");
-    setResourceStatus("✓ 저장 완료 — 페이지 내용과 다운로드 파일 연결이 GitHub에 정상 저장되었습니다.","saved");
-  }catch(e){
-    setStatus("실무자료 저장에 실패했습니다: "+e.message,"err");
-    setResourceStatus("저장 실패: "+e.message,"err");
-  }finally{
-    btn.disabled=false;
-    btn.textContent="실무자료 저장";
-  }
-});
-
-
-
-function findBusinessPageByHref(href){
-  for(const [catKey,cat] of Object.entries(TAXONOMY)){
-    for(const [subKey,sub] of Object.entries(cat.subs||{})){
-      if(sub.page===href)return {catKey,subKey,label:`${cat.label} → ${sub.label}`};
-    }
-  }
-  return null;
-}
-function businessPageOptions(selected){
-  const opts=[];
-  for(const [catKey,cat] of Object.entries(TAXONOMY)){
-    for(const [subKey,sub] of Object.entries(cat.subs||{})){
-      opts.push(`<option value="${sub.page}" ${selected===sub.page?"selected":""}>${cat.label} → ${sub.label}</option>`);
-    }
-  }
-  return opts.join("");
-}
-function openLinkedBusinessPage(href){
-  const found=findBusinessPageByHref(href);
-  if(!found){
-    setProblemStatus("연결된 상세페이지를 사업실무에서 찾지 못했습니다.","err");
-    return;
-  }
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-  const tab=document.querySelector('.tab-btn[data-tab="business"]');
-  if(tab)tab.classList.add("active");
-  const panel=$("panel-business");
-  if(panel)panel.classList.add("active");
-  $("pageCategory").value=found.catKey;
-  fillSubcategories("pageCategory","pageSubcategory",found.subKey);
-  setTimeout(()=>{ $("loadPageBtn").click(); },50);
-}
-
-
-
-
-/* ---------- v4.2 사이트 전체 구조 관리 ---------- */
-const DEFAULT_SITE_MENUS=[
-  {label:"사업실무",href:"business.html",tab:"business"},
-  {label:"문제별 해결",href:"problems.html",tab:"problems"},
-  {label:"콘텐츠",href:"contents.html",tab:"posts"},
-  {label:"실무자료",href:"resources.html",tab:"resources"},
-  {label:"BIZZIP 소개",href:"about.html",tab:"about"},
-  {label:"문의",href:"contact.html",tab:"contact"}
-];
-
-function getMenuFromIndex(doc){
-  const known=new Set(DEFAULT_SITE_MENUS.map(x=>x.href));
-  const anchors=Array.from(doc.querySelectorAll("header nav a, nav a"));
-  const out=[],seen=new Set();
-  anchors.forEach(a=>{
-    const href=a.getAttribute("href")||"";
-    if(!href || href==="index.html" || href.startsWith("http") || seen.has(href))return;
-    if(!known.has(href))return;
-    seen.add(href);
-    out.push({label:a.textContent.trim()||href,href,tab:(DEFAULT_SITE_MENUS.find(x=>x.href===href)?.tab)||""});
-  });
-  return out.length?out:DEFAULT_SITE_MENUS.map(x=>({...x}));
-}
-
-function renderSiteMenuEditor(){
-  const mount=$("siteMenuEditor"); if(!mount)return;
-  mount.innerHTML=(siteMenuState.items||[]).map((item,i)=>`
-    <div class="hier-card" data-index="${i}">
-      <div class="hier-card-head">
-        <strong>${i+1}번 메인 메뉴</strong>
-        <div class="hier-actions">
-          <button type="button" class="admin-btn light sm-up" ${i===0?"disabled":""}>↑</button>
-          <button type="button" class="admin-btn light sm-down" ${i===siteMenuState.items.length-1?"disabled":""}>↓</button>
-          <button type="button" class="admin-btn light sm-landing">랜딩 수정</button>
-          <button type="button" class="admin-btn danger sm-delete" ${siteMenuState.items.length===1?"disabled":""}>삭제</button>
-        </div>
-      </div>
-      <div class="inline-two">
-        <div><label class="admin-label">메뉴명</label><input class="admin-input sm-label" value="${escapeHtml(item.label||"")}"></div>
-        <div><label class="admin-label">랜딩페이지 파일</label><input class="admin-input sm-href" value="${escapeHtml(item.href||"")}"></div>
-      </div>
-      <label class="admin-label">관리 탭 연결값</label>
-      <input class="admin-input sm-tab" value="${escapeHtml(item.tab||"")}" placeholder="business / problems / posts / resources / about / contact">
-    </div>
-  `).join("");
-
-  mount.querySelectorAll(".hier-card").forEach(row=>{
-    const i=Number(row.dataset.index);
-    const sync=()=>{
-      const x=siteMenuState.items[i];
-      x.label=row.querySelector(".sm-label").value;
-      x.href=row.querySelector(".sm-href").value;
-      x.tab=row.querySelector(".sm-tab").value;
-    };
-    row.querySelectorAll("input").forEach(el=>el.addEventListener("input",sync));
-    row.querySelector(".sm-up")?.addEventListener("click",()=>{sync();if(i>0)[siteMenuState.items[i-1],siteMenuState.items[i]]=[siteMenuState.items[i],siteMenuState.items[i-1]];renderSiteMenuEditor();});
-    row.querySelector(".sm-down")?.addEventListener("click",()=>{sync();if(i<siteMenuState.items.length-1)[siteMenuState.items[i+1],siteMenuState.items[i]]=[siteMenuState.items[i],siteMenuState.items[i+1]];renderSiteMenuEditor();});
-    row.querySelector(".sm-delete")?.addEventListener("click",()=>{if(siteMenuState.items.length>1)siteMenuState.items.splice(i,1);renderSiteMenuEditor();});
-    row.querySelector(".sm-landing")?.addEventListener("click",()=>loadLandingFromStructure(siteMenuState.items[i]));
-  });
-}
-
-async function loadSiteMenuStructure(){
-  try{
-    const data=await getFile("index.html");
-    const h=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(h,"text/html");
-    siteMenuState={sha:data.sha,html:h,items:getMenuFromIndex(doc)};
-    renderSiteMenuEditor();
-    $("saveSiteMenuBtn").disabled=false;
-    setSiteMenuStatus(`현재 메인 메뉴 ${siteMenuState.items.length}개를 불러왔습니다.`,"ok");
-  }catch(e){
-    siteMenuState={sha:"",html:"",items:DEFAULT_SITE_MENUS.map(x=>({...x}))};
-    renderSiteMenuEditor();
-    setSiteMenuStatus("기본 메뉴 구조를 표시했습니다. GitHub 연결 상태를 확인해주세요.","info");
-  }
-}
-
-async function loadLandingFromStructure(item){
-  if(!item?.href)return;
-  const kind= item.href==="business.html"?"business":
-              item.href==="problems.html"?"problems":
-              item.href==="resources.html"?"resources":
-              item.href==="contents.html"?"contents":
-              item.href==="about.html"?"about":
-              item.href==="contact.html"?"contact":"generic";
-  try{
-    const data=await getFile(item.href);
-    const h=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(h,"text/html");
-    landingState={path:item.href,sha:data.sha,html:h,kind,cards:extractLandingCards(doc,kind)};
-    $("ldTitle").value=qText(doc,".page-hero h1");
-    $("ldSummary").value=qText(doc,".page-hero h1 + p");
-    $("ldEyebrow").value=qText(doc,".page-hero .eyebrow");
-    $("landingEditorHint").textContent=`현재 수정 중: ${item.label}`;
-    $("landingEditNote").textContent=`${item.href} 수정 중`;
-    $("saveLandingBtn").disabled=false;
-    renderLandingCards();
-    document.querySelector(".landing-editor")?.scrollIntoView({behavior:"smooth",block:"start"});
-  }catch(e){setSiteMenuStatus("랜딩페이지를 불러오지 못했습니다: "+e.message,"err");}
-}
-
-$("addSiteMenuBtn")?.addEventListener("click",()=>{siteMenuState.items.push({label:"새 메뉴",href:`page-${Date.now()}.html`,tab:""});renderSiteMenuEditor();});
-$("removeSiteMenuBtn")?.addEventListener("click",()=>{if(siteMenuState.items.length>1)siteMenuState.items.pop();renderSiteMenuEditor();});
-
-$("saveSiteMenuBtn")?.addEventListener("click",async()=>{
-  if(!siteMenuState.sha || !siteMenuState.html)return setSiteMenuStatus("먼저 사이트 구조를 불러와주세요.","err");
-  const btn=$("saveSiteMenuBtn");btn.disabled=true;btn.textContent="저장 중…";
-  try{
-    const doc=new DOMParser().parseFromString(siteMenuState.html,"text/html");
-    const nav=doc.querySelector("header nav, nav");
-    if(!nav)throw new Error("메인 네비게이션을 찾지 못했습니다.");
-    Array.from(nav.querySelectorAll("a")).filter(a=>(a.getAttribute("href")||"")!=="index.html").forEach(a=>a.remove());
-    siteMenuState.items.forEach(item=>{
-      const a=doc.createElement("a");a.href=item.href;a.textContent=item.label;nav.appendChild(a);
-    });
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const r=await putFile("index.html",encodeBase64Utf8(newHtml),siteMenuState.sha,"Update main menu structure");
-    siteMenuState.sha=r.content.sha;siteMenuState.html=newHtml;
-    setSiteMenuStatus("✓ 저장 완료 — 메인 사이트 구조가 저장되었습니다.","saved");
-  }catch(e){setSiteMenuStatus("저장 실패: "+e.message,"err");}
-  finally{btn.disabled=false;btn.textContent="전체 구조 저장";}
-});
-
-/* ---------- 사이트 랜딩페이지 통합 관리 ---------- */
-function extractLandingCards(doc,kind){
-  if(kind==="business"){
-    return Array.from(doc.querySelectorAll(".grid > a.card")).map(a=>({
-      title:qText(a,"h3"), body:qText(a,"p"), href:a.getAttribute("href")||"",
-      meta:qText(a,".num")
-    }));
-  }
-  if(kind==="problems"){
-    return Array.from(doc.querySelectorAll(".problem-grid > a.problem-card")).map(a=>({
-      title:qText(a,"strong"), body:"", href:a.getAttribute("href")||"",
-      meta:qText(a,"span"), cta:qText(a,"em")
-    }));
-  }
-  if(kind==="resources"){
-    return Array.from(doc.querySelectorAll(".resource-grid > a.resource-card")).map(a=>({
-      title:qText(a,"h3"), body:qText(a,"p"), href:a.getAttribute("href")||"",
-      meta:qText(a,".resource-meta b"), cta:qText(a,".download-link")
-    }));
-  }
-  return [];
-}
-function renderLandingCards(){
-  const area=$("landingCardsArea");
-  if(!area)return;
-  const kind=landingState.kind;
-  if(!["business","problems","resources"].includes(kind)){
-    area.innerHTML='<div class="helper">이 랜딩페이지는 제목과 설명만 수정합니다. 하위 내용은 해당 관리 메뉴에서 수정하세요.</div>';
-    return;
-  }
-  area.innerHTML=`
-    <label class="admin-label">랜딩 카드 목록</label>
-    <div id="landingCardsEditor" class="hier-list"></div>
-    <div class="rep-footer">
-      <button id="addLandingCardBtn" type="button" class="admin-btn light">+ 카드 추가</button>
-      <button id="removeLandingCardBtn" type="button" class="admin-btn light">− 마지막 카드 삭제</button>
-    </div>
-  `;
-  const mount=$("landingCardsEditor");
-  mount.innerHTML=landingState.cards.map((c,i)=>`
-    <div class="hier-card" data-index="${i}">
-      <div class="hier-card-head">
-        <strong>${i+1}번 카드</strong>
-        <div class="hier-actions">
-          <button type="button" class="admin-btn light ld-up" ${i===0?"disabled":""}>↑</button>
-          <button type="button" class="admin-btn light ld-down" ${i===landingState.cards.length-1?"disabled":""}>↓</button>
-          ${c.href?`<button type="button" class="admin-btn light ld-open">하위 편집</button>`:""}
-          <button type="button" class="admin-btn danger ld-delete" ${landingState.cards.length===1?"disabled":""}>삭제</button>
-        </div>
-      </div>
-      <div class="inline-two">
-        <div><label class="admin-label">카드 제목</label><input class="admin-input ld-title" value="${escapeHtml(c.title||"")}"></div>
-        <div><label class="admin-label">연결 파일</label><input class="admin-input ld-href" value="${escapeHtml(c.href||"")}"></div>
-      </div>
-      ${kind!=="problems"?`<label class="admin-label">카드 설명</label><textarea class="admin-textarea ld-body" style="min-height:70px">${escapeHtml(c.body||"")}</textarea>`:""}
-      <div class="inline-two">
-        <div><label class="admin-label">${kind==="business"?"번호":"표시정보"}</label><input class="admin-input ld-meta" value="${escapeHtml(c.meta||"")}"></div>
-        <div><label class="admin-label">버튼 문구</label><input class="admin-input ld-cta" value="${escapeHtml(c.cta||"")}"></div>
-      </div>
-    </div>
-  `).join("");
-
-  mount.querySelectorAll(".hier-card").forEach(row=>{
-    const i=Number(row.dataset.index);
-    const sync=()=>{
-      landingState.cards[i]={
-        ...landingState.cards[i],
-        title:row.querySelector(".ld-title")?.value||"",
-        href:row.querySelector(".ld-href")?.value||"",
-        body:row.querySelector(".ld-body")?.value||"",
-        meta:row.querySelector(".ld-meta")?.value||"",
-        cta:row.querySelector(".ld-cta")?.value||""
-      };
-    };
-    row.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",sync));
-    row.querySelector(".ld-up")?.addEventListener("click",()=>{sync(); if(i>0)[landingState.cards[i-1],landingState.cards[i]]=[landingState.cards[i],landingState.cards[i-1]];renderLandingCards();});
-    row.querySelector(".ld-down")?.addEventListener("click",()=>{sync(); if(i<landingState.cards.length-1)[landingState.cards[i+1],landingState.cards[i]]=[landingState.cards[i],landingState.cards[i+1]];renderLandingCards();});
-    row.querySelector(".ld-delete")?.addEventListener("click",()=>{if(landingState.cards.length>1)landingState.cards.splice(i,1);renderLandingCards();});
-    row.querySelector(".ld-open")?.addEventListener("click",()=>openLandingChild(landingState.kind,landingState.cards[i]));
-  });
-
-  $("addLandingCardBtn")?.addEventListener("click",()=>{
-    landingState.cards.push({title:"새 항목",body:"",href:"",meta:"",cta:""});
-    renderLandingCards();
-  });
-  $("removeLandingCardBtn")?.addEventListener("click",()=>{
-    if(landingState.cards.length>1)landingState.cards.pop();
-    renderLandingCards();
-  });
-}
-function openLandingChild(kind,card){
-  if(kind==="business"){
-    openAdminTab("business");
-    setTimeout(()=>loadBusinessCategoryPage(card.href),50);
-  }else if(kind==="problems"){
-    openAdminTab("problems");
-    const sel=$("problemSelect");
-    if(sel){
-      if(!Array.from(sel.options).some(o=>o.value===card.href)){
-        const opt=document.createElement("option");opt.value=card.href;opt.textContent=card.title;sel.appendChild(opt);
-      }
-      sel.value=card.href;
-      setTimeout(()=>$("loadProblemBtn")?.click(),50);
-    }
-  }else if(kind==="resources"){
-    openAdminTab("resources");
-    if($("resourceSelect")){
-      $("resourceSelect").value=card.href;
-      setTimeout(()=>$("loadResourceBtn")?.click(),50);
-    }
-  }
-}
-document.querySelectorAll(".landing-load").forEach(btn=>btn.addEventListener("click",async()=>{
-  if(!token)return setLandingStatus("먼저 GitHub에 연결해주세요.","err");
-  const path=btn.dataset.page,kind=btn.dataset.kind;
-  setLandingStatus(`${path}를 불러오는 중입니다…`,"info");
-  try{
-    const data=await getFile(path);
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    landingState={path,sha:data.sha,html,kind,cards:extractLandingCards(doc,kind)};
-    $("ldTitle").value=qText(doc,".page-hero h1");
-    $("ldSummary").value=qText(doc,".page-hero h1 + p");
-    $("ldEyebrow").value=qText(doc,".page-hero .eyebrow");
-    $("landingEditorHint").textContent=`현재 수정 중: ${btn.closest(".structure-card")?.querySelector("h3")?.textContent||path}`;
-    $("landingEditNote").textContent=`${path} 수정 중`;
-    $("saveLandingBtn").disabled=false;
-    renderLandingCards();
-    setLandingStatus("랜딩페이지를 불러왔습니다.","ok");
-    document.querySelector(".landing-editor")?.scrollIntoView({behavior:"smooth",block:"start"});
-  }catch(e){setLandingStatus("랜딩페이지를 불러오지 못했습니다: "+e.message,"err");}
-}));
-$("saveLandingBtn")?.addEventListener("click",async()=>{
-  if(!landingState.sha)return setLandingStatus("먼저 랜딩페이지를 불러오세요.","err");
-  const btn=$("saveLandingBtn");btn.disabled=true;btn.textContent="저장 중…";
-  try{
-    const doc=new DOMParser().parseFromString(landingState.html,"text/html");
-    const h1=doc.querySelector(".page-hero h1"),p=doc.querySelector(".page-hero h1 + p"),eye=doc.querySelector(".page-hero .eyebrow");
-    if(h1)h1.textContent=$("ldTitle").value.trim();
-    if(p)p.textContent=$("ldSummary").value.trim();
-    if(eye)eye.textContent=$("ldEyebrow").value.trim();
-
-    if(landingState.kind==="business"){
-      const grid=doc.querySelector(".grid"); if(grid){grid.innerHTML="";landingState.cards.forEach((c,i)=>{const a=doc.createElement("a");a.className="card";a.href=c.href;a.innerHTML=`<div class="num">${escapeHtml(c.meta||String(i+1).padStart(2,"0"))}</div><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.body)}</p>`;grid.appendChild(a);});}
-    }else if(landingState.kind==="problems"){
-      const grid=doc.querySelector(".problem-grid"); if(grid){grid.innerHTML="";landingState.cards.forEach((c,i)=>{const a=doc.createElement("a");a.className="problem-card problem-link";a.href=c.href;a.innerHTML=`<span>${escapeHtml(c.meta||String(i+1).padStart(2,"0"))}</span><strong>${escapeHtml(c.title)}</strong><em>${escapeHtml(c.cta||"세부 문제 보기 →")}</em>`;grid.appendChild(a);});}
-    }else if(landingState.kind==="resources"){
-      const grid=doc.querySelector(".resource-grid"); if(grid){grid.innerHTML="";landingState.cards.forEach(c=>{const a=doc.createElement("a");a.className="resource-card resource-card-link";a.href=c.href;a.innerHTML=`<div class="resource-meta"><span class="tag">PRACTICAL</span><b>${escapeHtml(c.meta||"GUIDE")}</b></div><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.body)}</p><span class="download-link">${escapeHtml(c.cta||"내용 보기 →")}</span>`;grid.appendChild(a);});}
-    }
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile(landingState.path,encodeBase64Utf8(newHtml),landingState.sha,`Update landing page: ${landingState.path}`);
-    landingState.sha=result.content.sha;landingState.html=newHtml;
-    setLandingStatus("✓ 저장 완료 — 랜딩페이지가 정상 저장되었습니다.","saved");
-    if(landingState.kind==="business")loadBusinessHierarchy();
-    if(landingState.kind==="problems")loadProblemRootStructure();
-  }catch(e){setLandingStatus("저장 실패: "+e.message,"err");}
-  finally{btn.disabled=false;btn.textContent="랜딩페이지 저장";}
-});
-
-/* ---------- 문제별 해결 1단계 구조 관리 ---------- */
-function rootItemsFromDoc(doc){
-  return Array.from(doc.querySelectorAll(".problem-grid .problem-card")).map(a=>({
-    title:a.querySelector("strong")?.textContent.trim()||"",
-    href:a.getAttribute("href")||"",
-    cta:a.querySelector("em")?.textContent.trim()||"세부 문제 보기 →"
-  }));
-}
-function slugifyProblemFile(title){
-  const base=(title||"new-problem").toLowerCase()
-    .replace(/[^a-z0-9가-힣]+/g,"-")
-    .replace(/^-+|-+$/g,"")
-    .slice(0,34);
-  return `problem-${base||Date.now()}.html`;
-}
-function renderProblemRootEditor(){
-  const mount=$("problemRootEditor");
-  if(!mount)return;
-  const data=problemRootState.items||[];
-  mount.innerHTML=data.map((item,i)=>`
-    <div class="problem-root-item" data-index="${i}">
-      <div class="row">
-        <div>
-          <label class="admin-label">큰 문제 제목</label>
-          <input class="admin-input root-title" value="${escapeHtml(item.title||"")}">
-        </div>
-        <div>
-          <label class="admin-label">중간 페이지 파일명</label>
-          <input class="admin-input root-href" value="${escapeHtml(item.href||"")}">
-        </div>
-      </div>
-      <label class="admin-label">카드 버튼 문구</label>
-      <input class="admin-input root-cta" value="${escapeHtml(item.cta||"세부 문제 보기 →")}">
-      <div class="controls">
-        <button type="button" class="admin-btn light root-up" ${i===0?"disabled":""}>↑</button>
-        <button type="button" class="admin-btn light root-down" ${i===data.length-1?"disabled":""}>↓</button>
-        <button type="button" class="admin-btn light root-open">이 구분 편집</button>
-        <button type="button" class="admin-btn danger root-delete" ${data.length===1?"disabled":""}>삭제</button>
-      </div>
-    </div>
-  `).join("");
-
-  mount.querySelectorAll(".problem-root-item").forEach(row=>{
-    const i=Number(row.dataset.index);
-    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{
-      problemRootState.items[i]={
-        title:row.querySelector(".root-title").value,
-        href:row.querySelector(".root-href").value,
-        cta:row.querySelector(".root-cta").value
-      };
-    }));
-    row.querySelector(".root-up")?.addEventListener("click",()=>{
-      if(i>0)[problemRootState.items[i-1],problemRootState.items[i]]=[problemRootState.items[i],problemRootState.items[i-1]];
-      renderProblemRootEditor();
-    });
-    row.querySelector(".root-down")?.addEventListener("click",()=>{
-      if(i<problemRootState.items.length-1)[problemRootState.items[i+1],problemRootState.items[i]]=[problemRootState.items[i],problemRootState.items[i+1]];
-      renderProblemRootEditor();
-    });
-    row.querySelector(".root-delete")?.addEventListener("click",()=>{
-      if(problemRootState.items.length>1)problemRootState.items.splice(i,1);
-      renderProblemRootEditor();
-    });
-    row.querySelector(".root-open")?.addEventListener("click",()=>{
-      const href=problemRootState.items[i].href;
-      if(!href)return;
-      const sel=$("problemSelect");
-      if(!Array.from(sel.options).some(o=>o.value===href)){
-        const opt=document.createElement("option");opt.value=href;opt.textContent=problemRootState.items[i].title;sel.appendChild(opt);
-      }
-      sel.value=href;
-      $("loadProblemBtn").click();
-      document.getElementById("problemSelect")?.scrollIntoView({behavior:"smooth",block:"start"});
-    });
-  });
-}
-async function loadProblemRootStructure(){
-  setProblemRootStatus("문제별 해결 1단계 구조를 불러오는 중입니다…","info");
-  try{
-    const data=await getFile("problems.html");
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    problemRootState={sha:data.sha,html,items:rootItemsFromDoc(doc)};
-    renderProblemRootEditor();
-    syncProblemSelectFromRoot();
-    $("saveProblemRootBtn").disabled=false;
-    setProblemRootStatus(`현재 ${problemRootState.items.length}개의 큰 문제 구분이 있습니다.`,"ok");
-  }catch(e){
-    setProblemRootStatus("1단계 구조를 불러오지 못했습니다: "+e.message,"err");
-  }
-}
-function syncProblemSelectFromRoot(){
-  const sel=$("problemSelect");
-  if(!sel)return;
-  const current=sel.value;
-  sel.innerHTML=(problemRootState.items||[]).map(x=>`<option value="${escapeHtml(x.href)}">${escapeHtml(x.title)}</option>`).join("");
-  if(Array.from(sel.options).some(o=>o.value===current))sel.value=current;
-}
-async function createIntermediateProblemPage(item){
-  let templateData;
-  try{
-    templateData=await getFile("problem-start.html");
-  }catch(e){ throw new Error("새 문제 페이지용 기본 템플릿을 불러오지 못했습니다."); }
-
-  const doc=new DOMParser().parseFromString(decodeBase64Utf8(templateData.content),"text/html");
-  const title=doc.querySelector(".page-hero h1");
-  const summary=doc.querySelector(".page-hero h1 + p");
-  const breadcrumb=doc.querySelector(".breadcrumb");
-  const titleTag=doc.querySelector("title");
-  if(title)title.textContent=item.title||"새 문제";
-  if(summary)summary.textContent="이 문제를 해결하기 위해 필요한 세부 주제를 정리합니다.";
-  if(breadcrumb)breadcrumb.innerHTML=`<a href="index.html">홈</a> / <a href="problems.html">문제별 해결</a> / ${escapeHtml(item.title||"새 문제")}`;
-  if(titleTag)titleTag.textContent=`${item.title||"새 문제"} | BIZZIP`;
-
-  const cards=Array.from(doc.querySelectorAll(".problem-subcard"));
-  cards.forEach((c,i)=>{
-    if(i===0){
-      const h3=c.querySelector("h3"),p=c.querySelector("p");
-      if(h3)h3.textContent="새 관련 문제";
-      if(p)p.textContent="이 카드의 제목, 설명, 연결 페이지를 관리자에서 수정하세요.";
-      c.setAttribute("href","startup-idea-validation.html");
-    }else c.remove();
-  });
-  const boxes=Array.from(doc.querySelectorAll(".feature-box"));
-  boxes.forEach((b,i)=>{
-    if(i===0){
-      const h3=b.querySelector("h3"),p=b.querySelector("p");
-      if(h3)h3.textContent="빠르게 확인할 것";
-      if(p)p.textContent="현재 상황에서 가장 먼저 확인할 기준을 적어주세요.";
-    }else b.remove();
-  });
-
-  const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-  await putFile(item.href,encodeBase64Utf8(newHtml),"",`Create problem page: ${item.href}`);
-}
-$("addProblemRootBtn")?.addEventListener("click",()=>{
-  const title="새 문제 구분";
-  problemRootState.items.push({title,href:slugifyProblemFile(title+"-"+Date.now()),cta:"세부 문제 보기 →"});
-  renderProblemRootEditor();
-});
-$("removeProblemRootBtn")?.addEventListener("click",()=>{
-  if(problemRootState.items.length>1)problemRootState.items.pop();
-  renderProblemRootEditor();
-});
-$("saveProblemRootBtn")?.addEventListener("click",async()=>{
-  if(!problemRootState.sha)return;
-  const btn=$("saveProblemRootBtn");btn.disabled=true;btn.textContent="저장 중…";
-  setProblemRootStatus("1단계 구조와 필요한 중간 페이지를 저장하는 중입니다…","info");
-  try{
-    const doc=new DOMParser().parseFromString(problemRootState.html,"text/html");
-    const grid=doc.querySelector(".problem-grid");
-    if(!grid)throw new Error("problems.html의 문제 목록 영역을 찾지 못했습니다.");
-
-    const existingFiles=new Set(rootItemsFromDoc(doc).map(x=>x.href));
-    grid.innerHTML="";
-    problemRootState.items.forEach((item,i)=>{
-      const a=doc.createElement("a");
-      a.className="problem-card problem-link";
-      a.setAttribute("href",item.href);
-      a.innerHTML=`<span>${String(i+1).padStart(2,"0")}</span><strong>${escapeHtml(item.title)}</strong><em>${escapeHtml(item.cta||"세부 문제 보기 →")}</em>`;
-      grid.appendChild(a);
-    });
-
-    for(const item of problemRootState.items){
-      if(!existingFiles.has(item.href)){
-        try{ await getFile(item.href); }
-        catch(e){
-          if(String(e.message).startsWith("404")) await createIntermediateProblemPage(item);
-          else throw e;
-        }
-      }
-    }
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile("problems.html",encodeBase64Utf8(newHtml),problemRootState.sha,"Update problem root structure");
-    problemRootState.sha=result.content.sha;
-    problemRootState.html=newHtml;
-    syncProblemSelectFromRoot();
-    setProblemRootStatus("✓ 저장 완료 — 큰 문제 구분과 새 중간 페이지가 정상 반영되었습니다.","saved");
-  }catch(e){
-    setProblemRootStatus("저장 실패: "+e.message,"err");
-  }finally{
-    btn.disabled=false;btn.textContent="1단계 구조 저장";
-  }
-});
-
-/* ---------- 문제별 해결 관리 ---------- */
-
-function decorateProblemCardLinks(){
-  const mount=$("problemCardsEditor");
-  if(!mount)return;
-  const data=getRepeaterData("problemCardsEditor");
-  mount.querySelectorAll(".rep-item").forEach((row,i)=>{
-    let box=row.querySelector(".problem-link-editor");
-    if(!box){
-      box=document.createElement("div");
-      box.className="problem-link-editor";
-      row.appendChild(box);
-    }
-    const current=data[i]?.href||"";
-    box.innerHTML=`
-      <label class="admin-label">연결 상세페이지</label>
-      <select class="admin-select linked-page-select">${businessPageOptions(current)}</select>
-      <button type="button" class="admin-btn light linked-edit-btn">연결 상세페이지 편집</button>
-    `;
-    const sel=box.querySelector(".linked-page-select");
-    sel.addEventListener("change",()=>{
-      const d=getRepeaterData("problemCardsEditor");
-      if(d[i])d[i].href=sel.value;
-      mount.dataset.items=JSON.stringify(d);
-      renderProblemPreview();
-    });
-    box.querySelector(".linked-edit-btn").addEventListener("click",()=>openLinkedBusinessPage(sel.value));
-  });
-}
-
-function renderProblemPreview(){
-  const m=$("problemPreview");if(!m)return;
-  setTimeout(()=>{ if($("problemCardsEditor") && !$("problemCardsEditor").querySelector(".problem-link-editor")) decorateProblemCardLinks(); },0);
-  const title=$("pbTitle")?.value.trim()||"문제별 해결";
-  const hero=$("pbHeroSummary")?.value.trim()||"";
-  const st=$("pbSectionTitle")?.value.trim()||"";
-  const ss=$("pbSectionSummary")?.value.trim()||"";
-  const cards=getRepeaterData("problemCardsEditor");
-  const qt=$("pbQuickTitle")?.value.trim()||"";
-  const qs=$("pbQuickSummary")?.value.trim()||"";
-  const checks=getRepeaterData("quickChecksEditor");
-  m.innerHTML=`<div class="live-hero"><div class="live-eyebrow">PROBLEM SOLVING</div><h1>${previewEsc(title)}</h1><p>${previewEsc(hero)}</p></div>
-  <div class="live-body">
-    ${st?`<h2>${previewEsc(st)}</h2>`:""}${ss?`<p>${previewEsc(ss)}</p>`:""}
-    ${cards.map(c=>`<div class="live-card"><strong>${previewEsc(c.title)}</strong><p>${previewEsc(c.body)}</p></div>`).join("")}
-    ${qt?`<h2>${previewEsc(qt)}</h2>`:""}${qs?`<p>${previewEsc(qs)}</p>`:""}
-    ${checks.map(c=>`<div class="live-card"><strong>${previewEsc(c.title)}</strong><p>${previewEsc(c.body)}</p></div>`).join("")}
-  </div>`;
-}
-["pbTitle","pbHeroSummary","pbSectionTitle","pbSectionSummary","pbQuickTitle","pbQuickSummary"].forEach(id=>{
-  const el=$(id);if(el)el.addEventListener("input",renderProblemPreview);
-});
-
-$("loadProblemBtn").addEventListener("click",async()=>{
-  const path=$("problemSelect").value;
-  $("saveProblemBtn").disabled=true;
-  setProblemStatus("문제 페이지를 불러오는 중입니다…","info");
-  try{
-    const data=await getFile(path);
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    const hero=doc.querySelector(".page-hero");
-    const sections=doc.querySelectorAll("main > section");
-    const cards=Array.from(doc.querySelectorAll(".problem-subcard"));
-    const featureBoxes=Array.from(doc.querySelectorAll(".feature-box"));
-    if(!hero || !cards.length || !featureBoxes.length)throw new Error("현재 문제 페이지 구조를 인식하지 못했습니다.");
-
-    currentProblem={path,sha:data.sha,html};
-    $("pbTitle").value=qText(doc,".page-hero h1");
-    $("pbHeroSummary").value=qText(doc,".page-hero h1 + p");
-
-    const firstHead=sections[1]?.querySelector(".section-head");
-    $("pbSectionTitle").value=qText(firstHead||doc,"h2");
-    $("pbSectionSummary").value=qText(firstHead||doc,"p");
-
-    makeRepeater("problemCardsEditor",cards.map(c=>({
-      title:qText(c,"h3"),body:qText(c,"p"),href:c.getAttribute("href")||""
-    })),[
-      {key:"title",label:"카드 제목"},
-      {key:"body",label:"카드 설명",type:"textarea",height:70}
-    ],()=>{renderProblemPreview();decorateProblemCardLinks();});
-    decorateProblemCardLinks();
-
-    const quickHead=sections[2]?.querySelector(".section-head");
-    $("pbQuickTitle").value=qText(quickHead||doc,"h2");
-    $("pbQuickSummary").value=qText(quickHead||doc,"p");
-
-    makeRepeater("quickChecksEditor",featureBoxes.map(c=>({
-      title:qText(c,"h3"),body:qText(c,"p")
-    })),[
-      {key:"title",label:"QUICK CHECK 제목"},
-      {key:"body",label:"QUICK CHECK 설명",type:"textarea",height:70}
-    ],renderProblemPreview);
-
-    $("saveProblemBtn").disabled=false;
-    $("problemEditNote").textContent=`수정 중: ${$("problemSelect").selectedOptions[0].textContent}`;
-    setProblemStatus("문제 페이지를 불러왔습니다. 수정 후 저장하세요.","ok");
-    renderProblemPreview();
-  }catch(e){
-    setProblemStatus("문제 페이지를 불러오지 못했습니다: "+e.message,"err");
-  }
-});
-$("problemSelect").addEventListener("change",()=>{
-  $("saveProblemBtn").disabled=true;$("problemEditNote").textContent="페이지를 다시 불러오세요";
-  setProblemStatus("선택이 바뀌었습니다. ‘문제 페이지 불러오기’를 눌러주세요.","info");
-});
-if($("addProblemCardBtn")) $("addProblemCardBtn").addEventListener("click",()=>{addRepeaterItem("problemCardsEditor",{title:"",body:"",href:"startup-idea-validation.html"},renderProblemPreview);decorateProblemCardLinks();});
-if($("removeProblemCardBtn")) $("removeProblemCardBtn").addEventListener("click",()=>{removeLastRepeaterItem("problemCardsEditor",renderProblemPreview);decorateProblemCardLinks();});
-if($("addQuickCheckBtn")) $("addQuickCheckBtn").addEventListener("click",()=>addRepeaterItem("quickChecksEditor",{title:"",body:""},renderProblemPreview));
-if($("removeQuickCheckBtn")) $("removeQuickCheckBtn").addEventListener("click",()=>removeLastRepeaterItem("quickChecksEditor",renderProblemPreview));
-
-$("saveProblemBtn").addEventListener("click",async()=>{
-  if(!currentProblem.path)return setProblemStatus("먼저 문제 페이지를 불러와주세요.","err");
-  const btn=$("saveProblemBtn");btn.disabled=true;btn.textContent="저장 중…";
-  setProblemStatus("GitHub에 저장하는 중입니다…","info");
-  try{
-    const doc=new DOMParser().parseFromString(currentProblem.html,"text/html");
-    const sections=doc.querySelectorAll("main > section");
-    const heroTitle=doc.querySelector(".page-hero h1");
-    const heroSummary=doc.querySelector(".page-hero h1 + p");
-    if(heroTitle)heroTitle.textContent=$("pbTitle").value.trim();
-    if(heroSummary)heroSummary.textContent=$("pbHeroSummary").value.trim();
-
-    const firstHead=sections[1]?.querySelector(".section-head");
-    if(firstHead?.querySelector("h2"))firstHead.querySelector("h2").textContent=$("pbSectionTitle").value.trim();
-    if(firstHead?.querySelector("p"))firstHead.querySelector("p").textContent=$("pbSectionSummary").value.trim();
-
-    const grid=doc.querySelector(".problem-subgrid");
-    const existingCards=Array.from(doc.querySelectorAll(".problem-subcard"));
-    if(grid && existingCards.length){
-      const template=existingCards[0].cloneNode(true);
-      existingCards.forEach(x=>x.remove());
-      getRepeaterData("problemCardsEditor").forEach((c,i)=>{
-        const node=template.cloneNode(true);
-        const h3=node.querySelector("h3"),p=node.querySelector("p");
-        if(h3)h3.textContent=c.title||"";
-        if(p)p.textContent=c.body||"";
-        const href=c.href || "";
-        if(href)node.setAttribute("href",href); else node.removeAttribute("href");
-        grid.appendChild(node);
-      });
-    }
-
-    const quickHead=sections[2]?.querySelector(".section-head");
-    if(quickHead?.querySelector("h2"))quickHead.querySelector("h2").textContent=$("pbQuickTitle").value.trim();
-    if(quickHead?.querySelector("p"))quickHead.querySelector("p").textContent=$("pbQuickSummary").value.trim();
-
-    const pair=doc.querySelector(".feature-pair");
-    const featureBoxes=Array.from(doc.querySelectorAll(".feature-box"));
-    if(pair && featureBoxes.length){
-      const template=featureBoxes[0].cloneNode(true);
-      featureBoxes.forEach(x=>x.remove());
-      getRepeaterData("quickChecksEditor").forEach(c=>{
-        const node=template.cloneNode(true);
-        const h3=node.querySelector("h3"),p=node.querySelector("p");
-        if(h3)h3.textContent=c.title||"";
-        if(p)p.textContent=c.body||"";
-        pair.appendChild(node);
-      });
-    }
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile(currentProblem.path,encodeBase64Utf8(newHtml),currentProblem.sha,`Update problem page: ${currentProblem.path}`);
-    currentProblem.sha=result.content.sha;currentProblem.html=newHtml;
-    setStatus("문제별 해결 페이지를 저장했습니다.","ok");
-    setProblemStatus("✓ 저장 완료 — 문제 페이지가 GitHub에 정상 저장되었습니다.","saved");
-  }catch(e){
-    setProblemStatus("저장 실패: "+e.message,"err");
-  }finally{
-    btn.disabled=false;btn.textContent="문제 페이지 저장";
-  }
-});
-
-/* ---------- BIZZIP 소개 관리 ---------- */
-function renderAboutPreview(){
-  const m=$("aboutPreview");if(!m)return;
-  const title=$("abTitle")?.value.trim()||"BIZZIP 소개";
-  const hero=$("abHeroSummary")?.value.trim()||"";
-  const opTitle=$("abOperatorTitle")?.value.trim()||"";
-  const opBody=$("abOperatorBody")?.value.trim()||"";
-  const opList=previewLines($("abOperatorList")?.value||"");
-  const cons=getRepeaterData("consultingEditor");
-  const brands=getRepeaterData("brandProjectsEditor");
-  const books=getRepeaterData("booksEditor");
-  m.innerHTML=`<div class="live-hero"><div class="live-eyebrow">ABOUT BIZZIP</div><h1>${previewEsc(title)}</h1><p>${previewEsc(hero)}</p></div>
-  <div class="live-body">
-    ${opTitle?`<h2>${previewEsc(opTitle)}</h2>`:""}${opBody?`<p>${previewEsc(opBody)}</p>`:""}
-    ${opList.length?`<ul>${opList.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`:""}
-    ${cons.length?`<h2>2026 컨설팅 프로젝트</h2>${cons.map(c=>`<div class="live-card"><strong>${previewEsc(c.name)} ${c.period?`/ ${previewEsc(c.period)}`:""}</strong><p>${previewEsc(c.topic)} ${c.desc?`- ${previewEsc(c.desc)}`:""}</p></div>`).join("")}`:""}
-    ${brands.length?`<h2>주요 브랜드 프로젝트</h2>${brands.map(c=>`<div class="live-card"><strong>${previewEsc(c.name)} ${c.year?`/ ${previewEsc(c.year)}`:""}</strong><p>${previewEsc(c.topic)} ${c.desc?`- ${previewEsc(c.desc)}`:""}</p></div>`).join("")}`:""}
-    ${books.length?`<h2>출판서적</h2>${books.map(c=>`<div class="live-card"><strong>${previewEsc(c.title)} ${c.year?`/ ${previewEsc(c.year)}`:""}</strong><p>${previewEsc(c.desc)}</p></div>`).join("")}`:""}
-  </div>`;
-}
-["abTitle","abHeroSummary","abOperatorTitle","abOperatorBody","abOperatorList"].forEach(id=>{
-  const el=$(id);if(el)el.addEventListener("input",renderAboutPreview);
-});
-$("addConsultingBtn").addEventListener("click",()=>addRepeaterItem("consultingEditor",{period:"",name:"",topic:"",desc:""},renderAboutPreview));
-$("removeConsultingBtn").addEventListener("click",()=>removeLastRepeaterItem("consultingEditor",renderAboutPreview));
-$("addBrandProjectBtn").addEventListener("click",()=>addRepeaterItem("brandProjectsEditor",{year:"",name:"",topic:"",desc:""},renderAboutPreview));
-$("removeBrandProjectBtn").addEventListener("click",()=>removeLastRepeaterItem("brandProjectsEditor",renderAboutPreview));
-$("addBookBtn").addEventListener("click",()=>addRepeaterItem("booksEditor",{year:"",title:"",desc:"",href:""},renderAboutPreview));
-$("removeBookBtn").addEventListener("click",()=>removeLastRepeaterItem("booksEditor",renderAboutPreview));
-
-$("loadAboutBtn").addEventListener("click",async()=>{
-  $("saveAboutBtn").disabled=true;setAboutStatus("BIZZIP 소개 페이지를 불러오는 중입니다…","info");
-  try{
-    const data=await getFile("about.html");
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    currentAbout={path:"about.html",sha:data.sha,html};
-    $("abTitle").value=qText(doc,".page-hero h1");
-    $("abHeroSummary").value=qText(doc,".page-hero h1 + p");
-    $("abOperatorTitle").value=qText(doc,".about-equal .panel h2");
-    $("abOperatorBody").value=qText(doc,".about-equal .panel > p");
-    $("abOperatorList").value=Array.from(doc.querySelectorAll(".about-equal .panel .list > div")).map(x=>x.textContent.trim()).join("\n");
-
-    const sections=Array.from(doc.querySelectorAll(".about-section"));
-    const cons=Array.from(sections[0]?.querySelectorAll(".project-card")||[]).map(c=>({
-      period:qText(c,".year"),name:qText(c,"h3"),
-      topic:qText(c,"p strong"),
-      desc:(qText(c,"p")||"").replace(qText(c,"p strong")||"","").trim()
-    }));
-    const brands=Array.from(sections[1]?.querySelectorAll(".project-card")||[]).map(c=>({
-      year:qText(c,".year"),name:qText(c,"h3"),
-      topic:qText(c,"p strong"),
-      desc:(qText(c,"p")||"").replace(qText(c,"p strong")||"","").trim()
-    }));
-    const books=Array.from(sections[2]?.querySelectorAll(".book-card")||[]).map(c=>({
-      year:qText(c,".year"),title:qText(c,"h3"),desc:qText(c,"p"),href:c.getAttribute("href")||""
-    }));
-
-    makeRepeater("consultingEditor",cons.length?cons:[{period:"",name:"",topic:"",desc:""}],[
-      {key:"period",label:"기간"},{key:"name",label:"회사명"},{key:"topic",label:"주제"},{key:"desc",label:"설명",type:"textarea",height:70}
-    ],renderAboutPreview);
-    makeRepeater("brandProjectsEditor",brands.length?brands:[{year:"",name:"",topic:"",desc:""}],[
-      {key:"year",label:"연도"},{key:"name",label:"브랜드명"},{key:"topic",label:"주제"},{key:"desc",label:"설명",type:"textarea",height:70}
-    ],renderAboutPreview);
-    makeRepeater("booksEditor",books.length?books:[{year:"",title:"",desc:"",href:""}],[
-      {key:"year",label:"연도"},{key:"title",label:"도서명"},{key:"desc",label:"설명",type:"textarea",height:70},{key:"href",label:"링크"}
-    ],renderAboutPreview);
-
-    $("saveAboutBtn").disabled=false;$("aboutEditNote").textContent="BIZZIP 소개 수정 중";
-    setAboutStatus("소개 페이지를 불러왔습니다. 수정 후 저장하세요.","ok");
-    renderAboutPreview();
-  }catch(e){setAboutStatus("소개 페이지를 불러오지 못했습니다: "+e.message,"err");}
-});
-
-$("saveAboutBtn").addEventListener("click",async()=>{
-  if(!currentAbout.sha)return setAboutStatus("먼저 소개 페이지를 불러와주세요.","err");
-  const btn=$("saveAboutBtn");btn.disabled=true;btn.textContent="저장 중…";setAboutStatus("GitHub에 저장하는 중입니다…","info");
-  try{
-    const doc=new DOMParser().parseFromString(currentAbout.html,"text/html");
-    const heroTitle=doc.querySelector(".page-hero h1"),heroSummary=doc.querySelector(".page-hero h1 + p");
-    if(heroTitle)heroTitle.textContent=$("abTitle").value.trim(); if(heroSummary)heroSummary.textContent=$("abHeroSummary").value.trim();
-    const opTitle=doc.querySelector(".about-equal .panel h2"),opBody=doc.querySelector(".about-equal .panel > p");
-    if(opTitle)opTitle.textContent=$("abOperatorTitle").value.trim(); if(opBody)opBody.textContent=$("abOperatorBody").value.trim();
-    const opList=Array.from(doc.querySelectorAll(".about-equal .panel .list > div")),opLines=previewLines($("abOperatorList").value);
-    opList.forEach((el,i)=>{if(opLines[i])el.textContent=opLines[i];});
-
-    const sections=Array.from(doc.querySelectorAll(".about-section"));
-    function syncCards(container,cards,templateSelector,kind){
-      const old=Array.from(container.querySelectorAll(templateSelector)); if(!old.length)return;
-      const template=old[0].cloneNode(true);old.forEach(x=>x.remove());
-      cards.forEach(c=>{
-        const node=template.cloneNode(true);
-        const y=node.querySelector(".year"),h3=node.querySelector("h3"),p=node.querySelector("p");
-        if(kind==="book"){
-          if(y)y.textContent=c.year||"";if(h3)h3.textContent=c.title||"";if(p)p.textContent=c.desc||"";if(c.href)node.setAttribute("href",c.href);
-        }else{
-          if(y)y.textContent=(c.period||c.year||"");if(h3)h3.textContent=c.name||"";
-          if(p){p.innerHTML="";const strong=document.createElement("strong");strong.textContent=c.topic||"";p.appendChild(strong);p.appendChild(document.createElement("br"));p.appendChild(document.createTextNode(c.desc||""));}
-        }
-        container.appendChild(node);
-      });
-    }
-    if(sections[0])syncCards(sections[0],getRepeaterData("consultingEditor"),".project-card","project");
-    if(sections[1])syncCards(sections[1],getRepeaterData("brandProjectsEditor"),".project-card","project");
-    if(sections[2])syncCards(sections[2],getRepeaterData("booksEditor"),".book-card","book");
-
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile("about.html",encodeBase64Utf8(newHtml),currentAbout.sha,"Update BIZZIP about page");
-    currentAbout.sha=result.content.sha;currentAbout.html=newHtml;
-    setStatus("BIZZIP 소개 페이지를 저장했습니다.","ok");
-    setAboutStatus("✓ 저장 완료 — BIZZIP 소개 페이지가 GitHub에 정상 저장되었습니다.","saved");
-  }catch(e){setAboutStatus("저장 실패: "+e.message,"err");}
-  finally{btn.disabled=false;btn.textContent="BIZZIP 소개 저장";}
-});
-/* ---------- 반복형 항목 공통: 사업실무 STEP ---------- */
-let businessStepsData=[{title:"",body:""}];
-
-function getBusinessSteps(){
-  const items=Array.from(document.querySelectorAll("#businessSteps .repeater-item"));
-  if(!items.length)return businessStepsData;
-  return items.map(item=>({
-    title:item.querySelector(".step-title-input")?.value.trim()||"",
-    body:item.querySelector(".step-body-input")?.value.trim()||""
-  }));
-}
-
-function setBusinessSteps(steps){
-  businessStepsData=(steps&&steps.length?steps:[{title:"",body:""}]).map(s=>({title:s.title||"",body:s.body||""}));
-  renderBusinessSteps();
-}
-
-function renderBusinessSteps(){
-  const mount=$("businessSteps");
-  if(!mount)return;
-  mount.innerHTML=businessStepsData.map((s,i)=>`
-    <div class="repeater-item" data-index="${i}">
-      <div class="repeater-head">
-        <span class="repeater-title">STEP ${i+1}</span>
-        <div class="repeater-actions">
-          <button type="button" class="admin-btn light move-step-up" ${i===0?"disabled":""}>↑</button>
-          <button type="button" class="admin-btn light move-step-down" ${i===businessStepsData.length-1?"disabled":""}>↓</button>
-          <button type="button" class="admin-btn danger delete-step" ${businessStepsData.length===1?"disabled":""}>삭제</button>
-        </div>
-      </div>
-      <label class="admin-label">제목</label>
-      <input class="admin-input step-title-input" value="${escapeHtml(s.title)}">
-      <label class="admin-label">설명</label>
-      <textarea class="admin-textarea step-body-input" style="min-height:75px">${escapeHtml(s.body)}</textarea>
-    </div>
-  `).join("");
-
-  mount.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",()=>{
-    businessStepsData=getBusinessSteps();
-    renderBusinessPreview();
-  }));
-
-  mount.querySelectorAll(".delete-step").forEach(btn=>btn.addEventListener("click",()=>{
-    businessStepsData=getBusinessSteps();
-    const idx=Number(btn.closest(".repeater-item").dataset.index);
-    if(businessStepsData.length>1)businessStepsData.splice(idx,1);
-    renderBusinessSteps();renderBusinessPreview();
-  }));
-
-  mount.querySelectorAll(".move-step-up").forEach(btn=>btn.addEventListener("click",()=>{
-    businessStepsData=getBusinessSteps();
-    const idx=Number(btn.closest(".repeater-item").dataset.index);
-    if(idx>0)[businessStepsData[idx-1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx-1]];
-    renderBusinessSteps();renderBusinessPreview();
-  }));
-
-  mount.querySelectorAll(".move-step-down").forEach(btn=>btn.addEventListener("click",()=>{
-    businessStepsData=getBusinessSteps();
-    const idx=Number(btn.closest(".repeater-item").dataset.index);
-    if(idx<businessStepsData.length-1)[businessStepsData[idx+1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx+1]];
-    renderBusinessSteps();renderBusinessPreview();
-  }));
-}
-
-function syncBusinessStepsToArticle(article){
-  const steps=getBusinessSteps();
-  let existing=Array.from(article.querySelectorAll(".step-card"));
-  if(!existing.length)return;
-
-  const parent=existing[0].parentElement;
-  const template=existing[0].cloneNode(true);
-  existing.forEach(el=>el.remove());
-
-  steps.forEach((s,i)=>{
-    const node=template.cloneNode(true);
-    const st=node.querySelector("strong");
-    const sp=node.querySelector("p");
-    if(st)st.textContent=`STEP ${i+1}. ${s.title}`;
-    if(sp)sp.textContent=s.body;
-    parent.appendChild(node);
-  });
-}
-
-document.addEventListener("click",e=>{
-  if(e.target?.id==="addBusinessStepBtn"){
-    businessStepsData=getBusinessSteps();
-    businessStepsData.push({title:"",body:""});
-    renderBusinessSteps();renderBusinessPreview();
-  }
-  if(e.target?.id==="removeBusinessStepBtn"){
-    businessStepsData=getBusinessSteps();
-    if(businessStepsData.length>1)businessStepsData.pop();
-    renderBusinessSteps();renderBusinessPreview();
-  }
-});
-
-
-/* ---------- 사업실무 실시간 미리보기 ---------- */
-function previewLines(text){
-  return text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-}
-function previewEsc(text){
-  return escapeHtml(text||"");
-}
+$("addBizTopic").onclick=()=>{state.business.cat.topics.push({title:"새 세부주제",summary:"",href:`detail-${Date.now()}.html`});renderBizTopics();renderBusinessPreview()};
 function renderBusinessPreview(){
-  const mount=$("businessPreview");
-  if(!mount)return;
-
-  const title=$("fpTitle")?.value.trim()||"페이지 제목";
-  const hero=$("fpHeroSummary")?.value.trim()||"상단 한줄 설명";
-  const intro=$("fpIntro")?.value.trim()||"";
-  const criteria=previewLines($("fpCriteria")?.value||"");
-  const action=$("fpAction")?.value.trim()||"";
-  const example=$("fpExample")?.value.trim()||"";
-  const mistakes=previewLines($("fpMistakes")?.value||"");
-  const finishTitle=$("fpFinishTitle")?.value.trim()||"";
-  const finishBody=$("fpFinishBody")?.value.trim()||"";
-
-  const steps=getBusinessSteps();
-
-  let bodyHtml="";
-  if(intro) bodyHtml+=`<h2>왜 이 내용을 먼저 봐야 할까요?</h2><p>${previewEsc(intro)}</p>`;
-  if(criteria.length){
-    bodyHtml+=`<h2>실무에서 먼저 보는 기준</h2><ul>${criteria.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`;
-  }
-  if(action){
-    bodyHtml+=`<h2>바로 해볼 일</h2><div class="preview-box"><p>${previewEsc(action)}</p></div>`;
-  }
-  if(steps.some(s=>s.title||s.body)){
-    bodyHtml+=`<h2>실행 순서</h2>`;
-    steps.forEach((s,i)=>{
-      if(!s.title&&!s.body)return;
-      bodyHtml+=`<div class="preview-step"><strong>STEP ${i+1}. ${previewEsc(s.title)}</strong><p>${previewEsc(s.body)}</p></div>`;
-    });
-  }
-  if(example){
-    bodyHtml+=`<h2>현장 예시</h2><div class="preview-box"><p>${previewEsc(example)}</p></div>`;
-  }
-  if(mistakes.length){
-    bodyHtml+=`<h2>자주 하는 실수</h2><ul>${mistakes.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`;
-  }
-  if(finishTitle||finishBody){
-    bodyHtml+=`<div class="preview-box"><strong>${previewEsc(finishTitle)}</strong><p>${previewEsc(finishBody)}</p></div>`;
-  }
-
-  mount.innerHTML=`
-    <div class="preview-hero">
-      <div class="preview-eyebrow">BUSINESS PRACTICE</div>
-      <h1>${previewEsc(title)}</h1>
-      <p>${previewEsc(hero)}</p>
-    </div>
-    <div class="preview-body">${bodyHtml||"<p>내용을 입력하면 이곳에 미리 표시됩니다.</p>"}</div>
-  `;
+  const c=state.business.selectedCat>=0?state.business.categories[state.business.selectedCat]:null;
+  $("businessPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BUSINESS PRACTICE</div><h1>${esc($("bizLandingTitle").value||"사업실무")}</h1><p>${esc($("bizLandingSummary").value||"")}</p></div><div class="pv-section"><div class="pv-grid">${state.business.categories.map((x,i)=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.summary)}</small></div>`).join("")}</div></div>${c?`<div class="pv-section"><strong>${esc($("bizCatTitle").value||c.title)}의 세부주제</strong><div class="pv-grid" style="margin-top:8px">${(state.business.cat.topics||[]).map(t=>`<div class="pv-item"><strong>${esc(t.title)}</strong><small>${esc(t.summary)}</small></div>`).join("")}</div></div>`:""}`;
 }
-
-[
-  "fpTitle","fpHeroSummary","fpIntro","fpCriteria","fpAction",
-  "fpExample","fpMistakes","fpFinishTitle","fpFinishBody"
-].forEach(id=>{
-  const el=$(id);
-  if(el)el.addEventListener("input",renderBusinessPreview);
-});
-
-
-/* ---------- 문의 관리 ---------- */
-let contactMethodsData=[{title:"",body:"",linkText:"",href:""}];
-function renderContactMethods(){
-  makeRepeater("contactMethods",contactMethodsData,[
-    {key:"title",label:"항목 제목"},
-    {key:"body",label:"설명",type:"textarea",height:70},
-    {key:"linkText",label:"링크/버튼 문구"},
-    {key:"href",label:"연결 주소"}
-  ],renderContactPreview);
-}
-function renderContactPreview(){
-  const m=$("contactPreview");if(!m)return;
-  const title=$("ctTitle")?.value.trim()||"문의";
-  const hero=$("ctHeroSummary")?.value.trim()||"";
-  const st=$("ctSectionTitle")?.value.trim()||"";
-  const sb=$("ctSectionBody")?.value.trim()||"";
-  const methods=getRepeaterData("contactMethods");
-  const finish=$("ctFinish")?.value.trim()||"";
-  const manager=$("ctManager")?.value.trim()||"";
-  const email=$("ctEmail")?.value.trim()||"";
-  const kakao=$("ctKakao")?.value.trim()||"";
-  const privacy=$("ctPrivacy")?.value.trim()||"";
-  m.innerHTML=`<div class="live-hero"><div class="live-eyebrow">CONTACT</div><h1>${previewEsc(title)}</h1><p>${previewEsc(hero)}</p></div>
-  <div class="live-body">${st?`<h2>${previewEsc(st)}</h2>`:""}${sb?`<p>${previewEsc(sb)}</p>`:""}
-  ${(manager||email||kakao)?`<div class="live-box"><strong>문의 연락처</strong><p>${manager?`담당자: ${previewEsc(manager)}<br>`:""}${email?`이메일: ${previewEsc(email)}<br>`:""}${kakao?`카카오톡: ${previewEsc(kakao)}`:""}</p></div>`:""}
-  ${methods.map(x=>`<div class="live-card"><strong>${previewEsc(x.title)}</strong><p>${previewEsc(x.body)}</p>${x.linkText?`<div class="live-box">${previewEsc(x.linkText)}</div>`:""}</div>`).join("")}
-  ${privacy?`<div class="live-box"><strong>개인정보 안내</strong><p>${previewEsc(privacy)}</p></div>`:""}
-  ${finish?`<div class="live-box"><p>${previewEsc(finish)}</p></div>`:""}</div>`;
-}
-["ctTitle","ctHeroSummary","ctSectionTitle","ctSectionBody","ctManager","ctEmail","ctKakao","ctKakaoLink","ctPrivacy","ctFinish"].forEach(id=>{
-  const el=$(id);if(el)el.addEventListener("input",renderContactPreview);
-});
-$("addContactMethodBtn").addEventListener("click",()=>addRepeaterItem("contactMethods",{title:"",body:"",linkText:"",href:""},renderContactPreview));
-$("removeContactMethodBtn").addEventListener("click",()=>removeLastRepeaterItem("contactMethods",renderContactPreview));
-
-$("loadContactBtn").addEventListener("click",async()=>{
-  $("saveContactBtn").disabled=true;setContactStatus("문의 페이지를 불러오는 중입니다…","info");
+bindInputs(["bizLandingTitle","bizLandingSummary","bizCatTitle","bizCatSummary","bizCatSectionTitle","bizCatSectionSummary"],renderBusinessPreview);
+$("saveBizLanding").onclick=async()=>{
+  try{const doc=docOf(state.business.landingHtml);setTxt(doc,".page-hero h1",$("bizLandingTitle").value);setTxt(doc,".page-hero h1 + p",$("bizLandingSummary").value);
+    const cards=Array.from(doc.querySelectorAll(".grid .card"));const parent=cards[0]?.parentElement,template=cards[0]?.cloneNode(true);if(parent&&template){cards.forEach(x=>x.remove());state.business.categories.forEach((c,i)=>{const n=template.cloneNode(true);n.href=c.href;setTxt(n,".num",String(i+1).padStart(2,"0"));setTxt(n,"h3",c.title);setTxt(n,"p",c.summary);parent.appendChild(n)})}
+    const out=htmlOf(doc),r=await putFile("business.html",out,state.business.landingSha,"Update business landing");state.business.landingSha=r.content.sha;state.business.landingHtml=out;status("businessStatus","✓ 사업실무 랜딩과 1단계 분야를 저장했습니다.","ok")
+  }catch(e){status("businessStatus","저장 실패: "+e.message,"err")}
+};
+$("saveBizCategory").onclick=async()=>{
+  const i=state.business.selectedCat;if(i<0)return;const c=state.business.categories[i];
   try{
-    const data=await getFile("contact.html");
-    const html=decodeBase64Utf8(data.content);
-    const doc=new DOMParser().parseFromString(html,"text/html");
-    currentContact={path:"contact.html",sha:data.sha,html};
+    let doc,sha=state.business.cat.sha;
+    if(state.business.cat.html)doc=docOf(state.business.cat.html);else doc=makeCategoryDoc(c.title,c.summary);
+    setTxt(doc,".page-hero h1",$("bizCatTitle").value||c.title);setTxt(doc,".page-hero h1 + p",$("bizCatSummary").value||c.summary);setTxt(doc,".section-head h2",$("bizCatSectionTitle").value);setTxt(doc,".section-head p",$("bizCatSectionSummary").value);
+    const grid=doc.querySelector(".topic-grid");if(grid){grid.innerHTML="";state.business.cat.topics.forEach(t=>{const a=doc.createElement("a");a.className="topic-card";a.href=t.href;a.innerHTML=`<div class="kicker">${esc($("bizCatTitle").value||c.title)}</div><h3>${esc(t.title)}</h3><p>${esc(t.summary)}</p><div class="more">내용 보기 →</div>`;grid.appendChild(a)})}
+    const out=htmlOf(doc),r=await putFile(c.href,out,sha,`Update business category ${c.title}`);state.business.cat.sha=r.content.sha;state.business.cat.html=out;status("businessStatus","✓ 선택 분야와 2단계 세부주제를 저장했습니다.","ok")
+  }catch(e){status("businessStatus","저장 실패: "+e.message,"err")}
+};
+function makeCategoryDoc(title,summary){const d=docOf(state.business.cat.html||state.business.landingHtml);let main=d.querySelector("main");main.innerHTML=`<section class="page-hero"><div class="wrap"><div class="breadcrumb"><a href="index.html">홈</a> / <a href="business.html">사업실무</a> / ${esc(title)}</div><div class="eyebrow">BUSINESS PRACTICE</div><h1>${esc(title)}</h1><p>${esc(summary)}</p></div></section><section><div class="wrap"><div class="section-head"><h2>${esc(title)}에서 먼저 볼 것</h2><p>세부주제를 선택하세요.</p></div><div class="topic-grid"></div></div></section>`;return d}
 
-    $("ctTitle").value=qText(doc,".page-hero h1");
-    $("ctHeroSummary").value=qText(doc,".page-hero h1 + p");
-
-    const mainCard=doc.querySelector("main .panel, main .article, main section .wrap > div");
-    $("ctSectionTitle").value=qText(mainCard||doc,"h2");
-    $("ctSectionBody").value=qText(mainCard||doc,"p");
-
-    const existingInfo=doc.querySelector(".bizzip-contact-info");
-    $("ctManager").value=qText(existingInfo||doc,"[data-field='manager']")||"BIZZIP 운영담당";
-    $("ctEmail").value=qText(existingInfo||doc,"[data-field='email']");
-    $("ctKakao").value=qText(existingInfo||doc,"[data-field='kakao']");
-    $("ctKakaoLink").value=existingInfo?.querySelector("[data-field='kakao'] a")?.getAttribute("href")||"";
-    $("ctPrivacy").value=qText(existingInfo||doc,".privacy-note")||"문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.";
-
-
-    const candidates=Array.from(doc.querySelectorAll("main .feature-box, main .contact-card, main .card, main .panel")).filter(x=>x!==mainCard);
-    const methods=candidates.slice(0,4).map(c=>{
-      const a=c.querySelector("a");
-      return {title:qText(c,"h3")||qText(c,"strong"),body:qText(c,"p"),linkText:a?.textContent.trim()||"",href:a?.getAttribute("href")||""};
-    }).filter(x=>x.title||x.body||x.linkText);
-
-    contactMethodsData=methods.length?methods:[{title:"",body:"",linkText:"",href:""}];
-    makeRepeater("contactMethods",contactMethodsData,[
-      {key:"title",label:"항목 제목"},{key:"body",label:"설명",type:"textarea",height:70},{key:"linkText",label:"링크/버튼 문구"},{key:"href",label:"연결 주소"}
-    ],renderContactPreview);
-
-    const ps=Array.from(doc.querySelectorAll("main p"));
-    $("ctFinish").value=ps.length?ps[ps.length-1].textContent.trim():"";
-
-    $("saveContactBtn").disabled=false;$("contactEditNote").textContent="문의 페이지 수정 중";
-    setContactStatus("문의 페이지를 불러왔습니다. 수정 후 저장하세요.","ok");
-    renderContactPreview();
-  }catch(e){setContactStatus("문의 페이지를 불러오지 못했습니다: "+e.message,"err");}
-});
-
-$("saveContactBtn").addEventListener("click",async()=>{
-  if(!currentContact.sha)return setContactStatus("먼저 문의 페이지를 불러와주세요.","err");
-  const btn=$("saveContactBtn");btn.disabled=true;btn.textContent="저장 중…";setContactStatus("GitHub에 저장하는 중입니다…","info");
-  try{
-    const doc=new DOMParser().parseFromString(currentContact.html,"text/html");
-    const h1=doc.querySelector(".page-hero h1"),hp=doc.querySelector(".page-hero h1 + p");
-    if(h1)h1.textContent=$("ctTitle").value.trim();if(hp)hp.textContent=$("ctHeroSummary").value.trim();
-
-    const mainCard=doc.querySelector("main .panel, main .article, main section .wrap > div");
-    if(mainCard){
-      const h2=mainCard.querySelector("h2"),p=mainCard.querySelector("p");
-      if(h2)h2.textContent=$("ctSectionTitle").value.trim();
-      if(p)p.textContent=$("ctSectionBody").value.trim();
-    }
-
-    const candidates=Array.from(doc.querySelectorAll("main .feature-box, main .contact-card, main .card, main .panel")).filter(x=>x!==mainCard);
-    const data=getRepeaterData("contactMethods");
-    candidates.forEach((c,i)=>{
-      if(!data[i])return;
-      const h=c.querySelector("h3, strong"),p=c.querySelector("p"),a=c.querySelector("a");
-      if(h)h.textContent=data[i].title||"";
-      if(p)p.textContent=data[i].body||"";
-      if(a){a.textContent=data[i].linkText||"";if(data[i].href)a.setAttribute("href",data[i].href);}
-    });
-
-    const ps=Array.from(doc.querySelectorAll("main p"));
-    if(ps.length && $("ctFinish").value.trim())ps[ps.length-1].textContent=$("ctFinish").value.trim();
-
-    
-    let info=doc.querySelector(".bizzip-contact-info");
-    if(!info){
-      info=doc.createElement("div");
-      info.className="bizzip-contact-info";
-      (mainCard||doc.querySelector("main"))?.appendChild(info);
-    }
-    const manager=$("ctManager").value.trim();
-    const email=$("ctEmail").value.trim();
-    const kakao=$("ctKakao").value.trim();
-    const kakaoLink=$("ctKakaoLink").value.trim();
-    const privacy=$("ctPrivacy").value.trim();
-
-    info.innerHTML=`<h3>문의 연락처</h3>
-      ${manager?`<p><strong>담당자</strong> <span data-field="manager">${escapeHtml(manager)}</span></p>`:""}
-      ${email?`<p><strong>이메일</strong> <a data-field="email" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>`:""}
-      ${kakao?`<p><strong>카카오톡</strong> <span data-field="kakao">${kakaoLink?`<a href="${escapeHtml(kakaoLink)}">${escapeHtml(kakao)}</a>`:escapeHtml(kakao)}</span></p>`:""}
-      ${privacy?`<p class="privacy-note">${escapeHtml(privacy)}</p>`:""}`;
-
-const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
-    const result=await putFile("contact.html",encodeBase64Utf8(newHtml),currentContact.sha,"Update contact page");
-    currentContact.sha=result.content.sha;currentContact.html=newHtml;
-    setStatus("문의 페이지를 저장했습니다.","ok");
-    setContactStatus("✓ 저장 완료 — 문의 페이지가 GitHub에 정상 저장되었습니다.","saved");
-  }catch(e){setContactStatus("저장 실패: "+e.message,"err");}
-  finally{btn.disabled=false;btn.textContent="문의 페이지 저장";}
-});
-
-/* 첨부파일 */
-async function loadFiles(){
-  try{const data=await githubRequest(ghPath(CONFIG.downloadsDir)+`?ref=${CONFIG.branch}`);files=(Array.isArray(data)?data:[]).filter(x=>x.type==="file");}
-  catch(e){if(String(e.message).startsWith("404"))files=[];else throw e;} renderFileList();
+async function loadBizDetail(path){
+  if(!path)return;try{const d=await getFile(path),html=b64decode(d.content),doc=docOf(html);state.business.detail={sha:d.sha,html,path,steps:[]};
+    $("bizDetailPath").textContent=path;$("bdTitle").value=txt(doc,".page-hero h1");$("bdSummary").value=txt(doc,".page-hero h1 + p");$("bdIntro").value=txt(doc,".detail-intro");
+    $("bdCriteria").value=Array.from(doc.querySelectorAll(".article h2:nth-of-type(2) + ul li")).map(x=>x.textContent.trim()).join("\n")||Array.from(doc.querySelectorAll(".article ul")).shift()?.querySelectorAll("li")?Array.from(doc.querySelectorAll(".article ul")[0].querySelectorAll("li")).map(x=>x.textContent.trim()).join("\n"):"";
+    $("bdAction").value=txt(doc,".practice-box p");state.business.detail.steps=Array.from(doc.querySelectorAll(".step-card")).map(x=>({title:txt(x,"strong"),body:txt(x,"p")}));
+    $("bdExample").value=txt(doc,".example-box p");$("bdMistakes").value=Array.from(doc.querySelectorAll(".mistake-box li")).map(x=>x.textContent.trim()).join("\n");$("bdFinishTitle").value=txt(doc,".finish-box strong");$("bdFinishBody").value=txt(doc,".finish-box p");
+    renderBdSteps();renderBusinessDetailPreview();$("saveBizDetail").disabled=false;
+  }catch(e){status("businessStatus","상세페이지를 불러오지 못했습니다: "+e.message,"err")}
 }
-
-function siteDownloadUrl(name){
-  return `downloads/${encodeURIComponent(name).replaceAll("%2F","/")}`;
+function renderBdSteps(){
+  $("bdSteps").innerHTML=state.business.detail.steps.map((s,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-top"><strong>STEP ${i+1}</strong><div><button class="btn light mini st-up">↑</button><button class="btn light mini st-down">↓</button><button class="btn danger mini st-del">삭제</button></div></div><input class="input st-title" value="${esc(s.title)}"><textarea class="textarea st-body" style="min-height:62px;margin-top:6px">${esc(s.body)}</textarea></div>`).join("");
+  $("bdSteps").querySelectorAll(".repeat-row").forEach(row=>{const i=+row.dataset.i,sync=()=>{state.business.detail.steps[i]={title:row.querySelector(".st-title").value,body:row.querySelector(".st-body").value};renderBusinessDetailPreview()};row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));row.querySelector(".st-up").onclick=()=>move(state.business.detail.steps,i,-1,renderBdSteps,renderBusinessDetailPreview);row.querySelector(".st-down").onclick=()=>move(state.business.detail.steps,i,1,renderBdSteps,renderBusinessDetailPreview);row.querySelector(".st-del").onclick=()=>{state.business.detail.steps.splice(i,1);renderBdSteps();renderBusinessDetailPreview()}})
 }
-function setResourceDownloadButton(path){
-  const btn=$("rsDownloadBtn");
-  if(!btn)return;
-  if(!path){
-    btn.style.display="none";
-    btn.removeAttribute("href");
-    return;
-  }
-  const name=path.replace(/^downloads\//,"");
-  btn.href=siteDownloadUrl(name);
-  btn.setAttribute("download",name);
-  btn.style.display="inline-flex";
+$("addBdStep").onclick=()=>{state.business.detail.steps.push({title:"새 단계",body:""});renderBdSteps();renderBusinessDetailPreview()};
+function renderBusinessDetailPreview(){
+  $("businessDetailPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BUSINESS PRACTICE</div><h1>${esc($("bdTitle").value)}</h1><p>${esc($("bdSummary").value)}</p></div><div class="pv-section"><p>${esc($("bdIntro").value)}</p>${lines($("bdCriteria").value).length?`<ul>${lines($("bdCriteria").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}${state.business.detail.steps.map((s,i)=>`<div class="pv-item" style="margin-top:6px"><strong>STEP ${i+1}. ${esc(s.title)}</strong><small>${esc(s.body)}</small></div>`).join("")}</div>`;
 }
-
-function humanSize(n){if(n<1024)return n+" B";if(n<1024*1024)return(n/1024).toFixed(1)+" KB";return(n/1024/1024).toFixed(1)+" MB";}
-function renderFileList(){
-  $("fileList").innerHTML=files.length?files.map((f,i)=>`<div class="item"><strong>${escapeHtml(f.name)}</strong><div class="item-meta">${humanSize(f.size||0)} · downloads/</div><div class="item-actions"><a class="admin-btn light" href="${siteDownloadUrl(f.name)}" download="${escapeHtml(f.name)}">다운로드</a><button class="admin-btn light" onclick="prepareReplace(${i})">교체</button><button class="admin-btn danger" onclick="removeAttachment(${i})">삭제</button></div></div>`).join(""):'<div class="helper">등록된 첨부파일이 없습니다.</div>';
-}
-$("fileInput").addEventListener("change",()=>{
-  const f=$("fileInput").files[0];if(!f){$("selectedFileInfo").textContent="파일을 선택해주세요.";$("uploadFileBtn").disabled=true;return;}
-  $("fileName").value=f.name;$("selectedFileInfo").textContent=`${f.name} · ${humanSize(f.size)}`;$("uploadFileBtn").disabled=!token;
-});
-$("clearFileBtn").addEventListener("click",()=>{$("fileInput").value="";$("fileName").value="";$("selectedFileInfo").textContent="PDF, XLSX, DOCX, HWP, CSV, ZIP, 이미지 등 일반 파일을 올릴 수 있습니다.";$("uploadFileBtn").disabled=true;});
-window.prepareReplace=i=>{$("fileName").value=files[i].name;$("selectedFileInfo").textContent=`교체 대상: ${files[i].name} — 새 파일을 선택해주세요.`;$("fileInput").click();};
-$("uploadFileBtn").addEventListener("click",async()=>{
-  const f=$("fileInput").files[0],name=$("fileName").value.trim();if(!f||!name)return setStatus("업로드할 파일과 저장할 파일명을 확인해주세요.","err");
-  if(name.includes("/")||name.includes("\\"))return setStatus("파일명에는 / 또는 \\\\ 문자를 사용할 수 없습니다.","err");
-  if(f.size>25*1024*1024&&!confirm("파일이 25MB보다 큽니다. 업로드가 오래 걸리거나 실패할 수 있습니다. 계속할까요?"))return;
-  setStatus("첨부파일을 GitHub에 업로드하는 중입니다…","info");
-  try{
-    const path=`${CONFIG.downloadsDir}/${name}`;let sha="";try{const existing=await getFile(path);sha=existing.sha;}catch(e){if(!String(e.message).startsWith("404"))throw e;}
-    const bytes=new Uint8Array(await f.arrayBuffer());await putFile(path,bytesToBase64(bytes),sha,`${sha?"Replace":"Add"} attachment: ${name}`);await loadFiles();$("clearFileBtn").click();setStatus(`첨부파일 "${name}"을 ${sha?"교체":"업로드"}했습니다.`,"ok");
-  }catch(e){setStatus("첨부파일 업로드에 실패했습니다: "+e.message,"err");}
-});
-window.removeAttachment=async i=>{
-  const f=files[i];if(!confirm(`"${f.name}" 파일을 삭제할까요?\n이 파일을 내려받는 링크가 페이지에 남아 있다면 링크가 깨질 수 있습니다.`))return;
-  try{await deleteFile(f.path,f.sha,`Delete attachment: ${f.name}`);await loadFiles();setStatus("첨부파일을 삭제했습니다.","ok");}catch(e){setStatus("첨부파일을 삭제하지 못했습니다: "+e.message,"err");}
+bindInputs(["bdTitle","bdSummary","bdIntro","bdCriteria","bdAction","bdExample","bdMistakes","bdFinishTitle","bdFinishBody"],renderBusinessDetailPreview);
+$("saveBizDetail").onclick=async()=>{
+  const st=state.business.detail;if(!st.path||!st.html)return;
+  try{const doc=docOf(st.html);setTxt(doc,".page-hero h1",$("bdTitle").value);setTxt(doc,".page-hero h1 + p",$("bdSummary").value);setTxt(doc,".detail-intro",$("bdIntro").value);
+    const article=doc.querySelector(".article");const intro=article?.querySelector(".detail-intro");if(intro){let h2=intro.previousElementSibling;let ul=h2?.nextElementSibling===intro?intro.nextElementSibling:null}
+    const uls=article?.querySelectorAll("ul")||[];if(uls[0])uls[0].innerHTML=lines($("bdCriteria").value).map(x=>`<li>${esc(x)}</li>`).join("");
+    setTxt(doc,".practice-box p",$("bdAction").value);const sg=doc.querySelector(".step-grid");if(sg)sg.innerHTML=st.steps.map((s,i)=>`<div class="step-card"><b>STEP ${i+1}</b><strong>${esc(s.title)}</strong><p>${esc(s.body)}</p></div>`).join("");
+    setTxt(doc,".example-box p",$("bdExample").value);const mb=doc.querySelector(".mistake-box ul");if(mb)mb.innerHTML=lines($("bdMistakes").value).map(x=>`<li>${esc(x)}</li>`).join("");setTxt(doc,".finish-box strong",$("bdFinishTitle").value);setTxt(doc,".finish-box p",$("bdFinishBody").value);
+    const out=htmlOf(doc),r=await putFile(st.path,out,st.sha,`Update business detail ${st.path}`);st.sha=r.content.sha;st.html=out;status("businessStatus","✓ 상세페이지를 저장했습니다.","ok")
+  }catch(e){status("businessStatus","저장 실패: "+e.message,"err")}
 };
 
-populateTaxonomy();newPost();
+/* =========================
+   PROBLEMS
+========================= */
+async function loadProblems(){
+  const d=await getFile("problems.html"),html=b64decode(d.content),doc=docOf(html);state.problems.landingSha=d.sha;state.problems.landingHtml=html;
+  $("problemLandingTitle").value=txt(doc,".page-hero h1");$("problemLandingSummary").value=txt(doc,".page-hero h1 + p");
+  state.problems.roots=Array.from(doc.querySelectorAll(".problem-card")).map(a=>({title:txt(a,"strong"),href:a.getAttribute("href")||""}));
+  renderProblemRoots();renderProblemPreview();$("saveProblemLanding").disabled=false;if(state.problems.roots.length)await selectProblemRoot(0);
+}
+function renderProblemRoots(){
+  $("problemRootCards").innerHTML=state.problems.roots.map((x,i)=>`<div class="h-card ${i===state.problems.selectedRoot?"active":""}" data-i="${i}"><textarea class="textarea pr-title" style="min-height:70px">${esc(x.title)}</textarea><input class="input pr-href" value="${esc(x.href)}"><div class="h-actions"><button class="btn dark mini pr-edit">관련 문제</button><button class="btn light mini pr-left">←</button><button class="btn light mini pr-right">→</button><button class="btn danger mini pr-del">삭제</button></div></div>`).join("");
+  $("problemRootCards").querySelectorAll(".h-card").forEach(row=>{const i=+row.dataset.i,sync=()=>{state.problems.roots[i].title=row.querySelector(".pr-title").value;state.problems.roots[i].href=row.querySelector(".pr-href").value;renderProblemPreview()};row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));row.querySelector(".pr-edit").onclick=()=>{sync();selectProblemRoot(i)};row.querySelector(".pr-left").onclick=()=>move(state.problems.roots,i,-1,renderProblemRoots,renderProblemPreview);row.querySelector(".pr-right").onclick=()=>move(state.problems.roots,i,1,renderProblemRoots,renderProblemPreview);row.querySelector(".pr-del").onclick=()=>{state.problems.roots.splice(i,1);state.problems.selectedRoot=-1;renderProblemRoots();$("problemSubCards").innerHTML="";renderProblemPreview()}})
+}
+$("addProblemRoot").onclick=()=>{state.problems.roots.push({title:"새 큰 문제",href:`problem-${Date.now()}.html`});renderProblemRoots();renderProblemPreview()};
+async function selectProblemRoot(i){
+  state.problems.selectedRoot=i;renderProblemRoots();const x=state.problems.roots[i];
+  try{const d=await getFile(x.href),html=b64decode(d.content),doc=docOf(html);state.problems.page={sha:d.sha,html,path:x.href,subs:Array.from(doc.querySelectorAll(".problem-subcard")).map(a=>({title:txt(a,"h3"),summary:txt(a,"p"),href:a.getAttribute("href")||""}))};
+    $("problemPageTitle").value=txt(doc,".page-hero h1");$("problemPageSummary").value=txt(doc,".page-hero h1 + p");$("problemSectionTitle").value=txt(doc,".section-head h2");$("problemSectionSummary").value=txt(doc,".section-head p");renderProblemSubs();$("saveProblemPage").disabled=false;renderProblemPreview()
+  }catch(e){state.problems.page={sha:"",html:"",path:x.href,subs:[]};renderProblemSubs();status("problemStatus","중간 문제 페이지를 찾지 못했습니다. 새 문제라면 파일명을 확인한 뒤 저장하세요.","info")}
+}
+function renderProblemSubs(){
+  $("problemSubCards").innerHTML=state.problems.page.subs.map((x,i)=>`<div class="h-card" data-i="${i}"><input class="input ps-title" value="${esc(x.title)}"><input class="input ps-href" value="${esc(x.href)}"><textarea class="textarea ps-summary" style="min-height:58px">${esc(x.summary)}</textarea><div class="h-actions"><button class="btn dark mini ps-detail">상세 편집</button><button class="btn light mini ps-left">←</button><button class="btn light mini ps-right">→</button><button class="btn danger mini ps-del">삭제</button></div></div>`).join("");
+  $("problemSubCards").querySelectorAll(".h-card").forEach(row=>{const i=+row.dataset.i,sync=()=>{const x=state.problems.page.subs[i];x.title=row.querySelector(".ps-title").value;x.href=row.querySelector(".ps-href").value;x.summary=row.querySelector(".ps-summary").value;renderProblemPreview()};row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));row.querySelector(".ps-detail").onclick=()=>{sync();openPanel("business");loadBizDetail(state.problems.page.subs[i].href)};row.querySelector(".ps-left").onclick=()=>move(state.problems.page.subs,i,-1,renderProblemSubs,renderProblemPreview);row.querySelector(".ps-right").onclick=()=>move(state.problems.page.subs,i,1,renderProblemSubs,renderProblemPreview);row.querySelector(".ps-del").onclick=()=>{state.problems.page.subs.splice(i,1);renderProblemSubs();renderProblemPreview()}})
+}
+$("addProblemSub").onclick=()=>{state.problems.page.subs.push({title:"새 관련 문제",summary:"",href:""});renderProblemSubs();renderProblemPreview()};
+function renderProblemPreview(){
+  $("problemPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">SOLVE THE PROBLEM</div><h1>${esc($("problemLandingTitle").value||"문제별 해결")}</h1><p>${esc($("problemLandingSummary").value)}</p></div><div class="pv-section"><div class="pv-grid">${state.problems.roots.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong></div>`).join("")}</div></div>${state.problems.selectedRoot>=0?`<div class="pv-section"><strong>${esc($("problemPageTitle").value)}</strong><div class="pv-grid" style="margin-top:8px">${state.problems.page.subs.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.summary)}</small></div>`).join("")}</div></div>`:""}`;
+}
+bindInputs(["problemLandingTitle","problemLandingSummary","problemPageTitle","problemPageSummary","problemSectionTitle","problemSectionSummary"],renderProblemPreview);
+$("saveProblemLanding").onclick=async()=>{try{const doc=docOf(state.problems.landingHtml);setTxt(doc,".page-hero h1",$("problemLandingTitle").value);setTxt(doc,".page-hero h1 + p",$("problemLandingSummary").value);const cards=Array.from(doc.querySelectorAll(".problem-card")),parent=cards[0]?.parentElement,template=cards[0]?.cloneNode(true);if(parent&&template){cards.forEach(x=>x.remove());state.problems.roots.forEach((x,i)=>{const n=template.cloneNode(true);n.href=x.href;setTxt(n,"span",String(i+1).padStart(2,"0"));setTxt(n,"strong",x.title);parent.appendChild(n)})}const out=htmlOf(doc),r=await putFile("problems.html",out,state.problems.landingSha,"Update problems landing");state.problems.landingSha=r.content.sha;state.problems.landingHtml=out;status("problemStatus","✓ 문제별 해결 랜딩과 1단계 구조를 저장했습니다.","ok")}catch(e){status("problemStatus","저장 실패: "+e.message,"err")}};
+$("saveProblemPage").onclick=async()=>{const root=state.problems.roots[state.problems.selectedRoot];if(!root)return;try{let doc=state.problems.page.html?docOf(state.problems.page.html):makeProblemDoc(root.title);setTxt(doc,".page-hero h1",$("problemPageTitle").value||root.title);setTxt(doc,".page-hero h1 + p",$("problemPageSummary").value);setTxt(doc,".section-head h2",$("problemSectionTitle").value);setTxt(doc,".section-head p",$("problemSectionSummary").value);const grid=doc.querySelector(".problem-subgrid");if(grid){grid.innerHTML="";state.problems.page.subs.forEach(x=>{const a=doc.createElement("a");a.className="problem-subcard";a.href=x.href;a.innerHTML=`<div class="kicker">관련 문제</div><h3>${esc(x.title)}</h3><p>${esc(x.summary)}</p><div class="more">관련 내용 보기 →</div>`;grid.appendChild(a)})}const out=htmlOf(doc),r=await putFile(root.href,out,state.problems.page.sha,`Update problem page ${root.title}`);state.problems.page.sha=r.content.sha;state.problems.page.html=out;status("problemStatus","✓ 선택 문제와 관련 문제를 저장했습니다.","ok")}catch(e){status("problemStatus","저장 실패: "+e.message,"err")}};
+function makeProblemDoc(title){const d=docOf(state.problems.landingHtml);d.querySelector("main").innerHTML=`<section class="page-hero"><div class="wrap"><div class="eyebrow">PROBLEM GUIDE</div><h1>${esc(title)}</h1><p></p></div></section><section><div class="wrap"><div class="section-head"><h2>어떤 부분에서 막혀 있나요?</h2><p>가장 가까운 문제를 선택하세요.</p></div><div class="problem-subgrid"></div></div></section>`;return d}
 
+/* =========================
+   CONTENTS
+========================= */
+async function loadContents(){
+  const [pd,ld]=await Promise.all([getFile(CONFIG.posts),getFile("contents.html")]);state.contents.postsSha=pd.sha;state.contents.posts=JSON.parse(b64decode(pd.content));state.contents.landingSha=ld.sha;state.contents.landingHtml=b64decode(ld.content);
+  const doc=docOf(state.contents.landingHtml);$("contentsLandingTitle").value=txt(doc,".page-hero h1");$("contentsLandingSummary").value=txt(doc,".page-hero h1 + p");fillPostCategories();renderPostList();newPost();
+}
+function fillPostCategories(){
+  $("postCategory").innerHTML=state.business.categories.map((c,i)=>`<option value="${i}">${esc(c.title)}</option>`).join("");refreshPostSubs()
+}
+function refreshPostSubs(){const c=state.business.categories[+$("postCategory").value]||state.business.categories[0];const catKey=(c?.href||"").replace(".html","");const map=state.business.selectedCat>=0&&state.business.categories[state.business.selectedCat]?.href===c?.href?state.business.cat.topics:[];$("postSubcategory").innerHTML=(map||[]).map((x,i)=>`<option value="${i}">${esc(x.title)}</option>`).join("")}
+$("postCategory").onchange=refreshPostSubs;
+function renderPostList(){
+  $("postList").innerHTML=state.contents.posts.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(p=>{const i=state.contents.posts.findIndex(x=>x.id===p.id);return `<div class="list-row"><div><strong>${esc(p.title)}</strong><small>${esc(p.date||"")}</small></div><button class="btn light mini edit-post" data-i="${i}">수정</button></div>`}).join("");
+  document.querySelectorAll(".edit-post").forEach(b=>b.onclick=()=>editPost(+b.dataset.i))
+}
+function newPost(){state.contents.editIndex=-1;$("postTitle").value="";$("postDate").value=today();$("postSummary").value="";$("postBody").value="";$("savePost").disabled=false;renderPostPreview()}
+$("newPost").onclick=newPost;
+function editPost(i){state.contents.editIndex=i;const p=state.contents.posts[i];$("postTitle").value=p.title||"";$("postDate").value=p.date||today();$("postSummary").value=p.summary||"";$("postBody").value=p.body||"";$("savePost").disabled=false;renderPostPreview()}
+function renderPostPreview(){const body=$("postBody").value.split(/\r?\n/).map(x=>x.startsWith("## ")?`<h3>${esc(x.slice(3))}</h3>`:x.startsWith("- ")?`<div>• ${esc(x.slice(2))}</div>`:`<p>${esc(x)}</p>`).join("");$("postPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BIZZIP CONTENT</div><h1>${esc($("postTitle").value)}</h1><p>${esc($("postSummary").value)}</p></div><div class="pv-section">${body}</div>`}
+bindInputs(["postTitle","postSummary","postBody"],renderPostPreview);
+$("savePost").onclick=async()=>{try{const i=state.contents.editIndex,old=i>=0?state.contents.posts[i]:{};const p={...old,id:old.id||`post-${Date.now()}`,title:$("postTitle").value.trim(),date:$("postDate").value,summary:$("postSummary").value.trim(),body:$("postBody").value,categoryLabel:$("postCategory").selectedOptions[0]?.textContent||"",subcategoryLabel:$("postSubcategory").selectedOptions[0]?.textContent||""};if(i>=0)state.contents.posts[i]=p;else state.contents.posts.push(p);const r=await putFile(CONFIG.posts,JSON.stringify(state.contents.posts,null,2),state.contents.postsSha,"Update BIZZIP contents");state.contents.postsSha=r.content.sha;renderPostList();status("contentsStatus","✓ 콘텐츠를 저장했습니다.","ok")}catch(e){status("contentsStatus","저장 실패: "+e.message,"err")}};
+$("saveContentsLanding").onclick=async()=>{try{const doc=docOf(state.contents.landingHtml);setTxt(doc,".page-hero h1",$("contentsLandingTitle").value);setTxt(doc,".page-hero h1 + p",$("contentsLandingSummary").value);const out=htmlOf(doc),r=await putFile("contents.html",out,state.contents.landingSha,"Update contents landing");state.contents.landingSha=r.content.sha;state.contents.landingHtml=out;status("contentsStatus","✓ 콘텐츠 랜딩을 저장했습니다.","ok")}catch(e){status("contentsStatus","저장 실패: "+e.message,"err")}};
 
-$("pageSubcategory").addEventListener("change",()=>{
-  const s=$("pageSaveStatus");
-  if(s){s.className="status";s.textContent="";}
-  $("savePageBtn").disabled=true;
-  $("pageEditNote").textContent="페이지를 다시 불러오세요";
-});
+/* =========================
+   RESOURCES
+========================= */
+async function loadResources(){
+  const d=await getFile("resources.html"),html=b64decode(d.content),doc=docOf(html);state.resources.landingSha=d.sha;state.resources.landingHtml=html;$("resourceLandingTitle").value=txt(doc,".page-hero h1");$("resourceLandingSummary").value=txt(doc,".page-hero h1 + p");
+  state.resources.cards=Array.from(doc.querySelectorAll(".resource-card")).map(a=>({title:txt(a,"h3"),summary:txt(a,"p"),href:a.getAttribute("href")||"",type:txt(a,".resource-meta b")||"GUIDE"}));renderResourceCards();renderResourceLandingPreview();$("saveResourceLanding").disabled=false;if(state.resources.cards.length)loadResourceDetail(0)
+}
+function renderResourceCards(){$("resourceCards").innerHTML=state.resources.cards.map((x,i)=>`<div class="h-card ${i===state.resources.selected?"active":""}" data-i="${i}"><input class="input rc-title" value="${esc(x.title)}"><input class="input rc-href" value="${esc(x.href)}"><textarea class="textarea rc-summary" style="min-height:58px">${esc(x.summary)}</textarea><div class="h-actions"><button class="btn dark mini rc-edit">상세 편집</button><button class="btn light mini rc-left">←</button><button class="btn light mini rc-right">→</button><button class="btn danger mini rc-del">삭제</button></div></div>`).join("");$("resourceCards").querySelectorAll(".h-card").forEach(row=>{const i=+row.dataset.i,sync=()=>{const x=state.resources.cards[i];x.title=row.querySelector(".rc-title").value;x.href=row.querySelector(".rc-href").value;x.summary=row.querySelector(".rc-summary").value;renderResourceLandingPreview()};row.querySelectorAll("input,textarea").forEach(x=>x.addEventListener("input",sync));row.querySelector(".rc-edit").onclick=()=>{sync();loadResourceDetail(i)};row.querySelector(".rc-left").onclick=()=>move(state.resources.cards,i,-1,renderResourceCards,renderResourceLandingPreview);row.querySelector(".rc-right").onclick=()=>move(state.resources.cards,i,1,renderResourceCards,renderResourceLandingPreview);row.querySelector(".rc-del").onclick=()=>{state.resources.cards.splice(i,1);renderResourceCards();renderResourceLandingPreview()}})}
+$("addResourceCard").onclick=()=>{state.resources.cards.push({title:"새 실무자료",summary:"",href:`resource-${Date.now()}.html`,type:"GUIDE"});renderResourceCards();renderResourceLandingPreview()};
+function renderResourceLandingPreview(){$("resourceLandingPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">PRACTICAL RESOURCES</div><h1>${esc($("resourceLandingTitle").value)}</h1><p>${esc($("resourceLandingSummary").value)}</p></div><div class="pv-section"><div class="pv-grid">${state.resources.cards.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.summary)}</small></div>`).join("")}</div></div>`}
+bindInputs(["resourceLandingTitle","resourceLandingSummary"],renderResourceLandingPreview);
+async function loadResourceDetail(i){state.resources.selected=i;renderResourceCards();const x=state.resources.cards[i];try{const d=await getFile(x.href),html=b64decode(d.content),doc=docOf(html);state.resources.detail={sha:d.sha,html,path:x.href};$("rdTitle").value=txt(doc,".page-hero h1");$("rdSummary").value=txt(doc,".page-hero h1 + p");$("rdUsage").value=Array.from(doc.querySelectorAll(".article > ul:first-of-type li")).map(x=>x.textContent.trim()).join("\n");$("rdTip").value=txt(doc,".practice-box p");$("rdExample").value=txt(doc,".example-box p");$("rdSteps").value=Array.from(doc.querySelectorAll(".resource-steps li")).map(x=>x.textContent.trim()).join("\n");$("rdFinishTitle").value=txt(doc,".finish-box strong");$("rdFinishBody").value=txt(doc,".finish-box p");$("rdDownload").value=doc.querySelector(".article a[download]")?.getAttribute("href")||"";$("saveResourceDetail").disabled=false;renderResourceDetailPreview()}catch(e){status("resourcesStatus","자료 상세를 불러오지 못했습니다: "+e.message,"err")}}
+function renderResourceDetailPreview(){$("resourceDetailPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">PRACTICAL RESOURCE</div><h1>${esc($("rdTitle").value)}</h1><p>${esc($("rdSummary").value)}</p></div><div class="pv-section"><ul>${lines($("rdUsage").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="pv-item"><strong>사용 팁</strong><small>${esc($("rdTip").value)}</small></div></div>`}
+bindInputs(["rdTitle","rdSummary","rdUsage","rdTip","rdExample","rdSteps","rdFinishTitle","rdFinishBody","rdDownload"],renderResourceDetailPreview);
+$("saveResourceLanding").onclick=async()=>{try{const doc=docOf(state.resources.landingHtml);setTxt(doc,".page-hero h1",$("resourceLandingTitle").value);setTxt(doc,".page-hero h1 + p",$("resourceLandingSummary").value);const cards=Array.from(doc.querySelectorAll(".resource-card")),p=cards[0]?.parentElement,t=cards[0]?.cloneNode(true);if(p&&t){cards.forEach(x=>x.remove());state.resources.cards.forEach(x=>{const n=t.cloneNode(true);n.href=x.href;setTxt(n,"h3",x.title);setTxt(n,"p",x.summary);setTxt(n,".resource-meta b",x.type||"GUIDE");p.appendChild(n)})}const out=htmlOf(doc),r=await putFile("resources.html",out,state.resources.landingSha,"Update resources landing");state.resources.landingSha=r.content.sha;state.resources.landingHtml=out;status("resourcesStatus","✓ 실무자료 랜딩을 저장했습니다.","ok")}catch(e){status("resourcesStatus","저장 실패: "+e.message,"err")}};
+$("saveResourceDetail").onclick=async()=>{const st=state.resources.detail;try{const doc=docOf(st.html);setTxt(doc,".page-hero h1",$("rdTitle").value);setTxt(doc,".page-hero h1 + p",$("rdSummary").value);const ul=doc.querySelector(".article > ul:first-of-type");if(ul)ul.innerHTML=lines($("rdUsage").value).map(x=>`<li>${esc(x)}</li>`).join("");setTxt(doc,".practice-box p",$("rdTip").value);setTxt(doc,".example-box p",$("rdExample").value);const ol=doc.querySelector(".resource-steps");if(ol)ol.innerHTML=lines($("rdSteps").value).map(x=>`<li>${esc(x)}</li>`).join("");setTxt(doc,".finish-box strong",$("rdFinishTitle").value);setTxt(doc,".finish-box p",$("rdFinishBody").value);const a=doc.querySelector(".article a[download]");if(a)a.href=$("rdDownload").value;const out=htmlOf(doc),r=await putFile(st.path,out,st.sha,`Update resource ${st.path}`);st.sha=r.content.sha;st.html=out;status("resourcesStatus","✓ 자료 상세를 저장했습니다.","ok")}catch(e){status("resourcesStatus","저장 실패: "+e.message,"err")}};
 
-setBusinessSteps([{title:"",body:""}]);
+/* =========================
+   ABOUT
+========================= */
+async function loadAbout(){const d=await getFile("about.html"),html=b64decode(d.content),doc=docOf(html);state.about.sha=d.sha;state.about.html=html;$("aboutTitle").value=txt(doc,".page-hero h1");$("aboutSummary").value=txt(doc,".page-hero h1 + p");const op=doc.querySelector(".split .panel");$("aboutOperatorTitle").value=txt(op,"h2");$("aboutOperatorBody").value=txt(op,"p");$("aboutOperatorList").value=Array.from(op?.querySelectorAll(".list > div")||[]).map(x=>x.textContent.trim()).join("\n");const sections=Array.from(doc.querySelectorAll(".about-section"));state.about.consulting=projectData(sections[0]);state.about.brands=projectData(sections[1]);state.about.books=Array.from(sections[2]?.querySelectorAll(".book-card")||[]).map(x=>({year:txt(x,".year"),title:txt(x,"h3"),desc:txt(x,"p"),href:x.getAttribute("href")||x.querySelector("a")?.getAttribute("href")||""}));renderAboutRows();renderAboutPreview();$("saveAbout").disabled=false}
+function projectData(sec){return Array.from(sec?.querySelectorAll(".project-card")||[]).map(x=>({period:txt(x,".year"),name:txt(x,"h3"),topic:txt(x,"p strong"),desc:txt(x,"p").replace(txt(x,"p strong"),"").trim()}))}
+function renderAboutRows(){renderRep("consultingRows",state.about.consulting,[["period","기간"],["name","기업명"],["topic","주제"],["desc","설명"]],renderAboutPreview);renderRep("brandProjectRows",state.about.brands,[["period","연도"],["name","브랜드"],["topic","주제"],["desc","설명"]],renderAboutPreview);renderRep("bookRows",state.about.books,[["year","연도"],["title","도서명"],["desc","설명"],["href","링크"]],renderAboutPreview)}
+$("addConsulting").onclick=()=>{state.about.consulting.push({period:"",name:"",topic:"",desc:""});renderAboutRows()};$("addBrandProject").onclick=()=>{state.about.brands.push({period:"",name:"",topic:"",desc:""});renderAboutRows()};$("addBook").onclick=()=>{state.about.books.push({year:"",title:"",desc:"",href:""});renderAboutRows()};
+function renderAboutPreview(){$("aboutPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">ABOUT BIZZIP</div><h1>${esc($("aboutTitle").value)}</h1><p>${esc($("aboutSummary").value)}</p></div><div class="pv-section"><strong>${esc($("aboutOperatorTitle").value)}</strong><p>${esc($("aboutOperatorBody").value)}</p></div><div class="pv-section"><strong>프로젝트</strong><div class="pv-grid">${state.about.consulting.map(x=>`<div class="pv-item"><strong>${esc(x.name)}</strong><small>${esc(x.topic)}</small></div>`).join("")}</div></div>`}
+bindInputs(["aboutTitle","aboutSummary","aboutOperatorTitle","aboutOperatorBody","aboutOperatorList"],renderAboutPreview);
+$("saveAbout").onclick=async()=>{try{const doc=docOf(state.about.html);setTxt(doc,".page-hero h1",$("aboutTitle").value);setTxt(doc,".page-hero h1 + p",$("aboutSummary").value);const op=doc.querySelector(".split .panel");setTxt(op,"h2",$("aboutOperatorTitle").value);setTxt(op,"p",$("aboutOperatorBody").value);const list=op?.querySelector(".list");if(list)list.innerHTML=lines($("aboutOperatorList").value).map(x=>`<div>${esc(x)}</div>`).join("");const secs=Array.from(doc.querySelectorAll(".about-section"));syncProjects(doc,secs[0],state.about.consulting);syncProjects(doc,secs[1],state.about.brands);syncBooks(doc,secs[2],state.about.books);const out=htmlOf(doc),r=await putFile("about.html",out,state.about.sha,"Update BIZZIP about");state.about.sha=r.content.sha;state.about.html=out;status("aboutStatus","✓ BIZZIP 소개를 저장했습니다.","ok")}catch(e){status("aboutStatus","저장 실패: "+e.message,"err")}};
 
-if($("reloadBusinessHierarchyBtn")) $("reloadBusinessHierarchyBtn").addEventListener("click",()=>loadBusinessHierarchy());
+/* =========================
+   CONTACT
+========================= */
+async function loadContact(){const d=await getFile("contact.html"),html=b64decode(d.content),doc=docOf(html);state.contact.sha=d.sha;state.contact.html=html;$("contactTitle").value=txt(doc,".page-hero h1");$("contactSummary").value=txt(doc,".page-hero h1 + p");$("contactGuideTitle").value=txt(doc,".contact-main h2");$("contactGuideBody").value=txt(doc,".contact-main p");$("contactEmail").value=(doc.querySelector(".contact-mail")?.getAttribute("href")||"").replace("mailto:","");const info=doc.querySelector(".bizzip-contact-info");$("contactManager").value=txt(info,"[data-manager]")||"BIZZIP 운영담당";$("contactKakao").value=txt(info,"[data-kakao]");$("contactKakaoUrl").value=info?.querySelector("[data-kakao] a")?.getAttribute("href")||"";$("contactPrivacy").value=txt(info,".privacy-note")||"문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.";state.contact.types=Array.from(doc.querySelectorAll(".contact-option")).map(x=>({label:txt(x,".label"),title:txt(x,"h3"),body:txt(x,"p")}));renderContactRows();renderContactPreview();$("saveContact").disabled=false}
+function renderContactRows(){renderRep("contactTypeRows",state.contact.types,[["label","라벨"],["title","유형 제목"],["body","설명"]],renderContactPreview)}
+$("addContactType").onclick=()=>{state.contact.types.push({label:"INQUIRY",title:"새 문의 유형",body:""});renderContactRows()};
+function renderContactPreview(){$("contactPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">CONTACT</div><h1>${esc($("contactTitle").value)}</h1><p>${esc($("contactSummary").value)}</p></div><div class="pv-section"><strong>${esc($("contactGuideTitle").value)}</strong><p>${esc($("contactGuideBody").value)}</p><div class="pv-item"><strong>담당자 ${esc($("contactManager").value)}</strong><small>${esc($("contactEmail").value)}${$("contactKakao").value?" / 카카오톡 "+esc($("contactKakao").value):""}</small></div></div><div class="pv-section"><div class="pv-grid">${state.contact.types.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.body)}</small></div>`).join("")}</div><p class="hint">${esc($("contactPrivacy").value)}</p></div>`}
+bindInputs(["contactTitle","contactSummary","contactManager","contactEmail","contactKakao","contactKakaoUrl","contactGuideTitle","contactGuideBody","contactPrivacy"],renderContactPreview);
+$("saveContact").onclick=async()=>{try{const doc=docOf(state.contact.html);setTxt(doc,".page-hero h1",$("contactTitle").value);setTxt(doc,".page-hero h1 + p",$("contactSummary").value);setTxt(doc,".contact-main h2",$("contactGuideTitle").value);setTxt(doc,".contact-main p",$("contactGuideBody").value);let mail=doc.querySelector(".contact-mail");if(mail){mail.href=`mailto:${$("contactEmail").value}`;mail.textContent=$("contactEmail").value+" →"}const side=doc.querySelector(".contact-side");if(side)side.innerHTML=state.contact.types.map(x=>`<div class="contact-option"><div class="label">${esc(x.label)}</div><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join("");let info=doc.querySelector(".bizzip-contact-info");if(!info){info=doc.createElement("div");info.className="bizzip-contact-info contact-guide";doc.querySelector(".contact-shell")?.after(info)}info.innerHTML=`<h3>문의 연락처</h3><p data-manager><strong>담당자</strong> ${esc($("contactManager").value)}</p><p><strong>이메일</strong> <a href="mailto:${esc($("contactEmail").value)}">${esc($("contactEmail").value)}</a></p>${$("contactKakao").value?`<p data-kakao><strong>카카오톡</strong> ${$("contactKakaoUrl").value?`<a href="${esc($("contactKakaoUrl").value)}">${esc($("contactKakao").value)}</a>`:esc($("contactKakao").value)}</p>`:""}<p class="privacy-note">${esc($("contactPrivacy").value)}</p>`;const out=htmlOf(doc),r=await putFile("contact.html",out,state.contact.sha,"Update BIZZIP contact");state.contact.sha=r.content.sha;state.contact.html=out;status("contactStatus","✓ 문의 페이지를 저장했습니다.","ok")}catch(e){status("contactStatus","저장 실패: "+e.message,"err")}};
+
+/* =========================
+   FILES
+========================= */
+async function loadFiles(){const arr=await api(CONFIG.downloads);state.files=arr.filter(x=>x.type==="file");renderFiles();$("uploadFileBtn").disabled=false}
+function renderFiles(){$("fileList").innerHTML=state.files.map((f,i)=>`<div class="list-row"><div><strong>${esc(f.name)}</strong><small>${Math.round((f.size||0)/1024)} KB</small></div><div class="compact-actions"><button class="btn light mini file-down" data-i="${i}">다운로드</button><button class="btn danger mini file-del" data-i="${i}">삭제</button></div></div>`).join("");document.querySelectorAll(".file-down").forEach(b=>b.onclick=()=>window.open(state.files[+b.dataset.i].download_url,"_blank"));document.querySelectorAll(".file-del").forEach(b=>b.onclick=async()=>{const f=state.files[+b.dataset.i];if(!confirm(`${f.name} 파일을 삭제할까요?`))return;try{await deleteFile(f.path,f.sha,`Delete ${f.name}`);await loadFiles();status("filesStatus","✓ 파일을 삭제했습니다.","ok")}catch(e){status("filesStatus","삭제 실패: "+e.message,"err")}})}
+$("uploadFileBtn").onclick=async()=>{const file=$("fileUpload").files[0];if(!file)return status("filesStatus","업로드할 파일을 선택하세요.","err");try{const bytes=new Uint8Array(await file.arrayBuffer());const existing=state.files.find(x=>x.name===file.name);await putBytes(`${CONFIG.downloads}/${file.name}`,bytes,existing?.sha,`Upload ${file.name}`);await loadFiles();status("filesStatus","✓ 파일을 업로드했습니다.","ok")}catch(e){status("filesStatus","업로드 실패: "+e.message,"err")}};
+
+/* =========================
+   COMMON HELPERS
+========================= */
+function move(arr,i,d,...renders){const j=i+d;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];renders.forEach(f=>f&&f())}
+function renderRep(id,arr,fields,preview){
+  $(id).innerHTML=arr.map((x,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-top"><strong>${i+1}번</strong><div><button class="btn light mini rp-up">↑</button><button class="btn light mini rp-down">↓</button><button class="btn danger mini rp-del">삭제</button></div></div>${fields.map(([k,l])=>`<label class="label">${l}</label>${k==="desc"||k==="body"?`<textarea class="textarea rp-field" data-k="${k}" style="min-height:60px">${esc(x[k]||"")}</textarea>`:`<input class="input rp-field" data-k="${k}" value="${esc(x[k]||"")}">`}`).join("")}</div>`).join("");
+  $(id).querySelectorAll(".repeat-row").forEach(row=>{const i=+row.dataset.i;row.querySelectorAll(".rp-field").forEach(el=>el.oninput=()=>{arr[i][el.dataset.k]=el.value;preview&&preview()});row.querySelector(".rp-up").onclick=()=>move(arr,i,-1,()=>renderRep(id,arr,fields,preview),preview);row.querySelector(".rp-down").onclick=()=>move(arr,i,1,()=>renderRep(id,arr,fields,preview),preview);row.querySelector(".rp-del").onclick=()=>{arr.splice(i,1);renderRep(id,arr,fields,preview);preview&&preview()}})
+}
+function syncProjects(doc,sec,arr){if(!sec)return;const grid=sec.querySelector(".project-grid");if(!grid)return;grid.innerHTML=arr.map(x=>`<article class="project-card"><span class="year">${esc(x.period)}</span><h3>${esc(x.name)}</h3><p><strong>${esc(x.topic)}</strong><br>${esc(x.desc)}</p></article>`).join("")}
+function syncBooks(doc,sec,arr){if(!sec)return;const grid=sec.querySelector(".book-grid");if(!grid)return;grid.innerHTML=arr.map(x=>`<a class="book-card book-link" href="${esc(x.href)}"><span class="year">${esc(x.year)}</span><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p></a>`).join("")}
