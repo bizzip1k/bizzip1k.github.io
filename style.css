@@ -478,3 +478,144 @@ main > section{
     padding-top:10px !important;
   }
 }
+
+
+/* ===== v24 Internal block spacing 50% tighter ===== */
+/* 큰 카드/본문 블록 내부의 섹션 간 간격까지 약 50% 축소 */
+
+.article,
+.detail-card,
+.main-card,
+.content-body{
+  line-height:1.65;
+}
+
+/* 본문 안 각 소제목 사이 간격 */
+.article h2,
+.detail-card h2,
+.content-body h2{
+  margin-top:16px !important;
+  margin-bottom:7px !important;
+}
+
+/* 첫 소제목은 위쪽 간격 제거 */
+.article h2:first-child,
+.detail-card h2:first-child,
+.content-body h2:first-child{
+  margin-top:0 !important;
+}
+
+/* 문단 간격 */
+.article p,
+.detail-card p,
+.content-body p{
+  margin-top:0 !important;
+  margin-bottom:7px !important;
+}
+
+/* 목록 앞뒤 간격 */
+.article ul,
+.article ol,
+.detail-card ul,
+.detail-card ol,
+.content-body ul,
+.content-body ol{
+  margin-top:5px !important;
+  margin-bottom:8px !important;
+}
+
+/* 목록 항목 자체 간격 */
+.article li,
+.detail-card li,
+.content-body li{
+  margin-bottom:3px !important;
+}
+
+/* 소제목 단위 블록 사이의 불필요한 큰 마진 축소 */
+.article section,
+.detail-card section,
+.content-body section{
+  margin-top:14px !important;
+  margin-bottom:14px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+/* 실행박스/예시박스/주의박스 등 내부 간격도 축소 */
+.practice-box,
+.example-box,
+.tip-box,
+.note-box,
+.warning-box,
+.small-cta{
+  margin-top:10px !important;
+  margin-bottom:10px !important;
+}
+
+.practice-box p,
+.example-box p,
+.tip-box p,
+.note-box p,
+.warning-box p,
+.small-cta p{
+  margin-bottom:5px !important;
+}
+
+@media(max-width:700px){
+  .article h2,
+  .detail-card h2,
+  .content-body h2{
+    margin-top:14px !important;
+    margin-bottom:6px !important;
+  }
+
+  .article section,
+  .detail-card section,
+  .content-body section{
+    margin-top:12px !important;
+    margin-bottom:12px !important;
+  }
+}
+
+
+/* ===== v25 Header hierarchy / breadcrumb refinement ===== */
+
+/* 1) 모든 페이지의 breadcrumb(홈 / 사업실무 / ...)을 우측 상단으로 이동하고 약 2배 크게 */
+.breadcrumb{
+  width:100%;
+  text-align:right !important;
+  font-size:14px !important;
+  line-height:1.5 !important;
+  margin:0 0 14px 0 !important;
+}
+
+/* breadcrumb 링크도 같은 크기와 흐름 유지 */
+.breadcrumb a{
+  font-size:inherit !important;
+}
+
+/* 2) 영문 eyebrow와 메인 타이틀 사이 간격 확대
+   메인 홈의 BUSINESS KNOW-HOW ARCHIVE ↔ 메인 카피,
+   하부 페이지의 BUSINESS PRACTICE ↔ 페이지 타이틀에 동일 기준 적용 */
+.eyebrow{
+  margin-bottom:24px !important;
+}
+
+/* 혹시 eyebrow 직후 제목에 별도 margin이 있으면 중복되지 않도록 정리 */
+.eyebrow + h1,
+.eyebrow + .hero-title,
+.page-hero .eyebrow + h1{
+  margin-top:0 !important;
+}
+
+/* 모바일에서도 breadcrumb은 우측 유지, 크기는 과도하지 않게 조정 */
+@media(max-width:700px){
+  .breadcrumb{
+    font-size:12px !important;
+    margin-bottom:12px !important;
+  }
+
+  .eyebrow{
+    margin-bottom:20px !important;
+  }
+}
