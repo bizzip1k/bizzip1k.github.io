@@ -294,37 +294,51 @@ footer{padding:34px 0 50px;color:#757b82;font-size:13px}
 }
 
 
-/* ===== v17 Auto post system ===== */
-.auto-post-card{
-  display:flex;
-  flex-direction:column;
-  transition:.2s ease;
+/* ===== v17 Header single-line concept text ===== */
+.brand-copy{
+  display:block;
+  line-height:1.2;
 }
-.auto-post-card:hover{
-  transform:translateY(-3px);
-  border-color:#b9dcda;
-  box-shadow:0 12px 30px rgba(16,36,56,.06);
+.brand-copy strong,
+.brand-copy span{
+  display:none;
 }
-.post-date{
-  margin-top:auto;
-  padding-top:18px;
-  font-size:12px;
-  color:#98a1a8;
+.brand-copy::after{
+  content:"내 사업에 사소한 일은 없습니다. 비즈집";
+  display:block;
+  font-size:15px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-.3px;
+  white-space:nowrap;
 }
-.empty-posts{
-  grid-column:1/-1;
-  padding:26px;
-  background:#fff;
-  border:1px dashed #bfd3d6;
-  border-radius:14px;
-  color:#7a8791;
-  font-size:14px;
+@media(max-width:980px){
+  .brand-copy{display:none}
 }
-.post-meta{
-  margin-top:12px;
-  font-size:13px;
-  color:#87939b;
-}
-.post-section + .post-section{
-  margin-top:34px;
-}
+
+/* ===== v18 final seeded-content refinement ===== */
+.brand-copy{display:flex;align-items:center;line-height:1.2}
+.brand-copy strong{display:block!important;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;white-space:nowrap}
+.brand-copy span,.brand-copy::after{display:none!important;content:none!important}
+.practice-box{margin-top:24px;padding:20px 22px;border-radius:14px;background:#f4faf9;border:1px solid #d8ebe8}
+.practice-box strong{display:block;margin-bottom:8px;color:#206f67;font-size:15px}
+.practice-box p{margin:0;color:#52626a;font-size:14px}
+.example-box{margin-top:18px;padding:20px 22px;border-left:4px solid var(--teal);background:#fff;border-radius:0 12px 12px 0;box-shadow:0 8px 22px rgba(16,36,56,.04)}
+.example-box strong{display:block;margin-bottom:7px;font-size:15px;color:var(--text)}
+.example-box p{margin:0;color:#53606a;font-size:14px}
+.feature-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+.feature-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+.feature-box .label{font-size:11px;font-weight:900;color:var(--teal-dark);letter-spacing:.07em;margin-bottom:9px}
+.feature-box h3{font-size:19px;margin:0 0 8px}
+.feature-box p{font-size:14px;color:var(--muted);margin:0}
+.resource-card-link{display:flex;flex-direction:column;color:inherit}
+.resource-card-link:hover{transform:translateY(-3px);border-color:#b9dcda;box-shadow:0 12px 30px rgba(16,36,56,.06)}
+.download-link{display:inline-flex;margin-top:16px;font-size:13px;font-weight:800;color:var(--teal-dark)}
+.about-equal{align-items:stretch}
+.about-equal .visual,.about-equal .panel{height:100%}
+.about-equal .panel{padding:24px 28px}
+.about-equal .panel h2{font-size:27px;margin-bottom:12px}
+.about-equal .panel>p{font-size:13px;line-height:1.58}
+.about-equal .list{margin-top:14px}
+.about-equal .list div{padding:10px 0;font-size:12.5px}
+@media(max-width:700px){.feature-pair{grid-template-columns:1fr}.brand-copy{display:none}}
