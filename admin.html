@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIZZIP 관리자 v5.1</title>
+<title>BIZZIP 관리자 v5.2</title>
 <style>
 :root{
   --navy:#10263f;--teal:#18aaa4;--mint:#eaf8f6;--bg:#f4f7f8;--line:#d8e3e6;
@@ -55,6 +55,23 @@ button,input,select,textarea{font:inherit}
 .index-section{border:1px solid var(--line);border-radius:11px;padding:10px;background:#fbfcfc}.index-section+.index-section{margin-top:9px}
 .index-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:7px;margin-top:7px}
 .article-preview h3{margin:12px 0 5px;font-size:15px}.article-preview p,.article-preview li{font-size:12px;line-height:1.6;color:#52636f}
+
+.hierarchy-workspace{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;align-items:start}
+.hierarchy-preview{position:sticky;top:68px}
+.two-row-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.two-row-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.structure-preview-box{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden;min-height:230px}
+.structure-preview-box .pv-section{padding:12px}
+@media(max-width:1280px){
+  .hierarchy-workspace{grid-template-columns:1fr 300px}
+  .two-row-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two-row-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:980px){
+  .hierarchy-workspace{grid-template-columns:1fr}
+  .hierarchy-preview{position:static}
+}
+
 @media(max-width:1120px){.workspace,.three{grid-template-columns:1fr}.preview,.sticky{position:static}.connect{min-width:0;flex:1}.topbar{flex-direction:column;align-items:stretch}.pv-grid{grid-template-columns:1fr}}
 @media(max-width:720px){.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.tile-grid,.tree-grid,.index-card-grid{grid-template-columns:1fr}}
 </style>
@@ -62,7 +79,7 @@ button,input,select,textarea{font:inherit}
 <body>
 <div class="shell">
   <div class="topbar">
-    <div class="brand"><h1>BIZZIP 관리자 v5.1</h1><small>실제 페이지 구조 1:1 연결 · 메뉴별 독립 관리</small></div>
+    <div class="brand"><h1>BIZZIP 관리자 v5.2</h1><small>실제 페이지 구조 1:1 연결 · 메뉴별 독립 관리</small></div>
     <div class="connect"><input id="token" class="input" type="password" placeholder="GitHub Fine-grained token"><button id="connectBtn" class="btn primary">GitHub 연결</button></div>
   </div>
   <div id="globalStatus" class="status"></div>
@@ -101,15 +118,37 @@ button,input,select,textarea{font:inherit}
 
   <!-- BUSINESS -->
   <section id="panel-business" class="panel">
-    <div class="panel-head"><div><h2>사업실무</h2><p>랜딩 → 1단계 분야 → 2단계 세부주제 → 상세페이지를 같은 화면에서 관리합니다.</p></div></div>
+    <div class="panel-head"><div><h2>사업실무</h2><p>랜딩 → 1단계 분야 → 분야 정보 → 2단계 세부주제 → 3단계 상세페이지 순서로 관리합니다.</p></div></div>
     <div class="card">
       <div class="form-grid">
-        <div><label class="label">랜딩 제목</label><input id="bizLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="bizLandingSummary" class="input"></div>
+        <div><label class="label">랜딩 제목</label><input id="bizLandingTitle" class="input"></div>
+        <div><label class="label">랜딩 설명</label><input id="bizLandingSummary" class="input"></div>
       </div>
-      <div class="section-box"><div class="section-title"><h3>1단계 분야</h3><div class="actions"><button id="addBizCategory" class="btn light mini">+ 분야</button><button id="saveBizLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div><div id="bizCategories" class="tile-grid"></div></div>
-      <div class="section-box"><div class="section-title"><h3>2단계 세부주제</h3><div class="actions"><button id="addBizTopic" class="btn light mini">+ 주제</button><button id="saveBizCategory" class="btn primary" disabled>선택 분야 저장</button></div></div><div id="bizTopics" class="tile-grid"></div>
-        <div class="form-grid" style="margin-top:8px"><div><label class="label">분야 제목</label><input id="bizCatTitle" class="input"></div><div><label class="label">분야 설명</label><input id="bizCatSummary" class="input"></div><div><label class="label">세부주제 영역 제목</label><input id="bizCatSectionTitle" class="input"></div><div><label class="label">세부주제 영역 설명</label><input id="bizCatSectionSummary" class="input"></div></div>
+
+      <div class="hierarchy-workspace section-box">
+        <div>
+          <div class="section-title"><h3>1단계 분야</h3><div class="actions"><button id="addBizCategory" class="btn light mini">+ 분야</button><button id="saveBizLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div>
+          <div id="bizCategories" class="two-row-4"></div>
+
+          <div class="form-grid" style="margin-top:10px">
+            <div><label class="label">분야 제목</label><input id="bizCatTitle" class="input"></div>
+            <div><label class="label">분야 설명</label><input id="bizCatSummary" class="input"></div>
+            <div><label class="label">세부주제 영역 제목</label><input id="bizCatSectionTitle" class="input"></div>
+            <div><label class="label">세부주제 영역 설명</label><input id="bizCatSectionSummary" class="input"></div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-title"><h3>2단계 세부주제</h3><div class="actions"><button id="addBizTopic" class="btn light mini">+ 주제</button><button id="saveBizCategory" class="btn primary" disabled>선택 분야 저장</button></div></div>
+            <div id="bizTopics" class="two-row-4"></div>
+          </div>
+        </div>
+
+        <div class="hierarchy-preview">
+          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
+          <div id="businessHierarchyPreview" class="structure-preview-box"></div>
+        </div>
       </div>
+
       <div class="section-box"><div class="section-title"><h3>3단계 상세페이지</h3><span id="bizDetailPath" class="hint">세부주제에서 ‘상세 편집’을 선택하세요.</span></div>
         <div class="workspace"><div id="bizDetailEditor"></div><div class="preview"><div id="bizDetailPreview" class="preview-canvas"></div></div></div>
       </div>
@@ -119,13 +158,37 @@ button,input,select,textarea{font:inherit}
 
   <!-- PROBLEMS -->
   <section id="panel-problems" class="panel">
-    <div class="panel-head"><div><h2>문제별 해결</h2><p>문제별 해결 안에서 끝까지 편집합니다. 연결 상세페이지를 눌러도 사업실무 탭으로 이동하지 않습니다.</p></div></div>
+    <div class="panel-head"><div><h2>문제별 해결</h2><p>문제별 해결 안에서 1단계 → 2단계 → 연결 상세페이지를 끝까지 편집합니다.</p></div></div>
     <div class="card">
-      <div class="form-grid"><div><label class="label">랜딩 제목</label><input id="prLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="prLandingSummary" class="input"></div></div>
-      <div class="section-box"><div class="section-title"><h3>1단계 큰 문제</h3><div class="actions"><button id="addProblemRoot" class="btn light mini">+ 큰 문제</button><button id="saveProblemLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div><div id="problemRoots" class="tile-grid"></div></div>
-      <div class="section-box"><div class="section-title"><h3>2단계 관련 문제</h3><div class="actions"><button id="addProblemSub" class="btn light mini">+ 관련 문제</button><button id="saveProblemPage" class="btn primary" disabled>선택 문제 저장</button></div></div><div id="problemSubs" class="tile-grid"></div>
-        <div class="form-grid" style="margin-top:8px"><div><label class="label">문제 페이지 제목</label><input id="prPageTitle" class="input"></div><div><label class="label">상단 설명</label><input id="prPageSummary" class="input"></div><div><label class="label">관련 문제 영역 제목</label><input id="prSectionTitle" class="input"></div><div><label class="label">관련 문제 영역 설명</label><input id="prSectionSummary" class="input"></div></div>
+      <div class="form-grid">
+        <div><label class="label">랜딩 제목</label><input id="prLandingTitle" class="input"></div>
+        <div><label class="label">랜딩 설명</label><input id="prLandingSummary" class="input"></div>
       </div>
+
+      <div class="hierarchy-workspace section-box">
+        <div>
+          <div class="section-title"><h3>1단계 큰 문제</h3><div class="actions"><button id="addProblemRoot" class="btn light mini">+ 큰 문제</button><button id="saveProblemLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div>
+          <div id="problemRoots" class="two-row-3"></div>
+
+          <div class="form-grid" style="margin-top:10px">
+            <div><label class="label">문제 페이지 제목</label><input id="prPageTitle" class="input"></div>
+            <div><label class="label">상단 설명</label><input id="prPageSummary" class="input"></div>
+            <div><label class="label">관련 문제 영역 제목</label><input id="prSectionTitle" class="input"></div>
+            <div><label class="label">관련 문제 영역 설명</label><input id="prSectionSummary" class="input"></div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-title"><h3>2단계 관련 문제</h3><div class="actions"><button id="addProblemSub" class="btn light mini">+ 관련 문제</button><button id="saveProblemPage" class="btn primary" disabled>선택 문제 저장</button></div></div>
+            <div id="problemSubs" class="two-row-3"></div>
+          </div>
+        </div>
+
+        <div class="hierarchy-preview">
+          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
+          <div id="problemHierarchyPreview" class="structure-preview-box"></div>
+        </div>
+      </div>
+
       <div class="section-box"><div class="section-title"><h3>연결 상세페이지</h3><span id="problemDetailPath" class="hint">관련 문제에서 ‘상세 편집’을 선택하세요.</span></div>
         <div class="workspace"><div id="problemDetailEditor"></div><div class="preview"><div id="problemDetailPreview" class="preview-canvas"></div></div></div>
       </div>
@@ -155,10 +218,24 @@ button,input,select,textarea{font:inherit}
 
   <!-- RESOURCES -->
   <section id="panel-resources" class="panel">
-    <div class="panel-head"><div><h2>실무자료</h2><p>상세내용과 연결 파일을 자료별로 함께 관리합니다. 별도 첨부파일 메뉴는 제거했습니다.</p></div></div>
+    <div class="panel-head"><div><h2>실무자료</h2><p>자료 카드는 2줄 구조로 한눈에 보고, 오른쪽에서 랜딩 미리보기를 확인합니다.</p></div></div>
     <div class="card">
-      <div class="form-grid"><div><label class="label">랜딩 제목</label><input id="rsLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="rsLandingSummary" class="input"></div></div>
-      <div class="section-box"><div class="section-title"><h3>자료 카드</h3><div class="actions"><button id="addResourceCard" class="btn light mini">+ 자료</button><button id="saveResourceLanding" class="btn primary" disabled>랜딩 저장</button></div></div><div id="resourceCards" class="tile-grid"></div></div>
+      <div class="form-grid">
+        <div><label class="label">랜딩 제목</label><input id="rsLandingTitle" class="input"></div>
+        <div><label class="label">랜딩 설명</label><input id="rsLandingSummary" class="input"></div>
+      </div>
+
+      <div class="hierarchy-workspace section-box">
+        <div>
+          <div class="section-title"><h3>실무자료 카드</h3><div class="actions"><button id="addResourceCard" class="btn light mini">+ 자료</button><button id="saveResourceLanding" class="btn primary" disabled>랜딩 저장</button></div></div>
+          <div id="resourceCards" class="two-row-3"></div>
+        </div>
+        <div class="hierarchy-preview">
+          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">자료 랜딩</span></div>
+          <div id="resourceLandingPreview" class="structure-preview-box"></div>
+        </div>
+      </div>
+
       <div class="section-box">
         <div class="workspace">
           <div>
@@ -175,7 +252,7 @@ button,input,select,textarea{font:inherit}
             </div>
             <button id="saveResourceDetail" class="btn primary" disabled style="margin-top:10px">자료 상세 저장</button>
           </div>
-          <div class="preview"><div id="resourcePreview" class="preview-canvas"></div></div>
+          <div class="preview"><div class="section-title"><h3>자료 상세 미리보기</h3></div><div id="resourcePreview" class="preview-canvas"></div></div>
         </div>
       </div>
       <div id="resourcesStatus" class="status"></div>
@@ -222,6 +299,6 @@ button,input,select,textarea{font:inherit}
     </div>
   </section>
 </div>
-<script src="admin.js?v=5.1"></script>
+<script src="admin.js?v=5.2"></script>
 </body>
 </html>
