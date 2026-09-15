@@ -293,7 +293,7 @@ body{background:#f4f9fa;color:#102b46}
 }
 
 
-/* ===== ADMIN v4.1.1 unified hierarchy ===== */
+/* ===== ADMIN v4.2 unified hierarchy ===== */
 .structure-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -365,7 +365,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v4.1.1</div>
+    <div class="admin-badge">ADMIN v4.2</div>
   </div>
 
   <div class="connect-card">
@@ -387,82 +387,40 @@ body{background:#f4f9fa;color:#102b46}
   </div>
 
   
-  <section id="panel-structure" class="panel active">
-    <div class="admin-card">
-      <h2>사이트 구조 관리</h2>
-      <div class="notice">
-        메인 메뉴 6개를 기준으로 랜딩페이지부터 하위 단계까지 이동하며 수정합니다.
-        아래의 “관리 열기”를 누르면 해당 메뉴의 실제 관리자 화면으로 이동합니다.
-      </div>
-
-      <div class="structure-grid" style="margin-top:14px">
-        <div class="structure-card">
-          <h3>사업실무</h3>
-          <p>사업실무 랜딩 → 분야 → 세부주제 → 상세페이지 순서로 관리합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="business">관리 열기</button>
-            <button class="admin-btn light landing-load" data-page="business.html" data-kind="business">랜딩 수정</button>
-          </div>
-        </div>
-        <div class="structure-card">
-          <h3>문제별 해결</h3>
-          <p>문제별 해결 랜딩 → 큰 문제 → 관련 문제 → 연결 상세페이지를 관리합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="problems">관리 열기</button>
-            <button class="admin-btn light landing-load" data-page="problems.html" data-kind="problems">랜딩 수정</button>
-          </div>
-        </div>
-        <div class="structure-card">
-          <h3>콘텐츠</h3>
-          <p>콘텐츠 랜딩 문구를 수정하고 개별 콘텐츠를 추가, 수정, 삭제합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="posts">콘텐츠 관리</button>
-            <button class="admin-btn light landing-load" data-page="contents.html" data-kind="contents">랜딩 수정</button>
-          </div>
-        </div>
-        <div class="structure-card">
-          <h3>실무자료</h3>
-          <p>실무자료 랜딩 → 자료 카드 → 자료 상세/첨부파일을 관리합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="resources">관리 열기</button>
-            <button class="admin-btn light landing-load" data-page="resources.html" data-kind="resources">랜딩 수정</button>
-          </div>
-        </div>
-        <div class="structure-card">
-          <h3>BIZZIP 소개</h3>
-          <p>소개 랜딩과 운영자, 프로젝트, 출판서적 내용을 관리합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="about">관리 열기</button>
-            <button class="admin-btn light landing-load" data-page="about.html" data-kind="about">랜딩 수정</button>
-          </div>
-        </div>
-        <div class="structure-card">
-          <h3>문의</h3>
-          <p>문의 랜딩, 이메일, 문의유형과 안내문구를 관리합니다.</p>
-          <div class="structure-actions">
-            <button class="admin-btn primary structure-open" data-target="contact">관리 열기</button>
-            <button class="admin-btn light landing-load" data-page="contact.html" data-kind="contact">랜딩 수정</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="landing-editor">
-        <h2>선택한 랜딩페이지 수정</h2>
-        <div id="landingEditorHint" class="helper">위에서 “랜딩 수정”을 선택하세요.</div>
-        <div class="fixed-fields">
-          <div><label class="admin-label">페이지 제목</label><input id="ldTitle" class="admin-input"></div>
-          <div><label class="admin-label">상단 한줄 설명</label><input id="ldSummary" class="admin-input"></div>
-          <div class="wide"><label class="admin-label">영문 라벨</label><input id="ldEyebrow" class="admin-input"></div>
-        </div>
-        <div id="landingCardsArea" style="margin-top:12px"></div>
-        <div class="form-actions">
-          <button id="saveLandingBtn" class="admin-btn teal" disabled>랜딩페이지 저장</button>
-          <span id="landingEditNote" class="edit-note">랜딩페이지를 먼저 불러오세요</span>
-        </div>
-        <div id="landingSaveStatus" class="status" style="margin-top:10px"></div>
-      </div>
+  
+<section id="panel-structure" class="panel active">
+  <div class="admin-card">
+    <h2>사이트 전체 구조 관리</h2>
+    <div class="notice">
+      메인 메뉴 구조를 직접 추가, 삭제, 이름변경, 순서변경할 수 있습니다.
+      각 메뉴의 랜딩페이지 파일도 함께 지정합니다.
     </div>
-  </section>
+
+    <div id="siteMenuEditor" class="hier-list" style="margin-top:14px"></div>
+    <div class="rep-footer">
+      <button id="addSiteMenuBtn" type="button" class="admin-btn light">+ 메인 메뉴 추가</button>
+      <button id="removeSiteMenuBtn" type="button" class="admin-btn light">− 마지막 메뉴 삭제</button>
+      <button id="saveSiteMenuBtn" type="button" class="admin-btn teal" disabled>전체 구조 저장</button>
+    </div>
+    <div id="siteMenuStatus" class="status" style="margin-top:10px"></div>
+
+    <div class="landing-editor">
+      <h2>선택한 랜딩페이지 수정</h2>
+      <div id="landingEditorHint" class="helper">위 구조 목록에서 “랜딩 수정”을 선택하세요.</div>
+      <div class="fixed-fields">
+        <div><label class="admin-label">페이지 제목</label><input id="ldTitle" class="admin-input"></div>
+        <div><label class="admin-label">상단 한줄 설명</label><input id="ldSummary" class="admin-input"></div>
+        <div class="wide"><label class="admin-label">영문 라벨</label><input id="ldEyebrow" class="admin-input"></div>
+      </div>
+      <div id="landingCardsArea" style="margin-top:12px"></div>
+      <div class="form-actions">
+        <button id="saveLandingBtn" class="admin-btn teal" disabled>랜딩페이지 저장</button>
+        <span id="landingEditNote" class="edit-note">랜딩페이지를 먼저 불러오세요</span>
+      </div>
+      <div id="landingSaveStatus" class="status" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
 
   <section id="panel-posts" class="panel">
     <div class="admin-grid">
@@ -496,12 +454,18 @@ body{background:#f4f9fa;color:#102b46}
       세부주제의 “상세페이지 편집”으로 3단계 상세페이지까지 이어서 수정합니다.
     </div>
     <div class="business-levels">
-      <div class="level-nav">
-        <h3>1단계 분야</h3>
-        <div id="businessCategoryNav"><div class="helper">GitHub 연결 후 불러옵니다.</div></div>
-        <button id="reloadBusinessHierarchyBtn" class="admin-btn light" disabled>사업실무 구조 다시 불러오기</button>
-      </div>
-      <div class="category-editor">
+      
+<div class="level-nav">
+  <h3>1단계 분야</h3>
+  <div id="businessCategoryNav"><div class="helper">GitHub 연결 후 불러옵니다.</div></div>
+  <div class="rep-footer">
+    <button id="addBusinessCategoryBtn" type="button" class="admin-btn light">+ 분야 추가</button>
+    <button id="removeBusinessCategoryBtn" type="button" class="admin-btn light">− 마지막 분야 삭제</button>
+    <button id="saveBusinessHierarchyBtn" type="button" class="admin-btn teal" disabled>1단계 분야 저장</button>
+  </div>
+  <div id="businessHierarchyStatus" class="status" style="margin-top:10px"></div>
+</div>
+<div class="category-editor">
         <h3 style="margin-top:0">2단계 분야 페이지 수정</h3>
         <div id="businessCategoryHint" class="helper">왼쪽에서 분야를 선택하세요.</div>
         <div class="fixed-fields">
@@ -834,7 +798,18 @@ body{background:#f4f9fa;color:#102b46}
             <div class="wide"><label class="admin-label">문의 안내 제목</label><input id="ctSectionTitle" class="admin-input"></div>
             <div class="wide"><label class="admin-label">문의 안내 본문</label><textarea id="ctSectionBody" class="admin-textarea" style="min-height:110px"></textarea></div>
 
-            <div class="wide"><label class="admin-label">문의방법</label>
+            
+<div><label class="admin-label">문의 담당자</label><input id="ctManager" class="admin-input" placeholder="예: BIZZIP 운영담당"></div>
+<div><label class="admin-label">업무용 이메일</label><input id="ctEmail" class="admin-input" placeholder="예: contact@bizzip.co.kr"></div>
+<div><label class="admin-label">카카오톡 ID / 채널명</label><input id="ctKakao" class="admin-input" placeholder="업무용 ID 또는 채널 권장"></div>
+<div><label class="admin-label">카카오톡 연결 주소</label><input id="ctKakaoLink" class="admin-input" placeholder="선택 입력"></div>
+<div class="wide">
+  <label class="admin-label">개인정보 안내 문구</label>
+  <textarea id="ctPrivacy" class="admin-textarea" style="min-height:105px">문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.</textarea>
+  <div class="helper">개인정보 저장형 문의폼보다 이메일 또는 업무용 카카오톡 채널/ID를 통한 직접 문의 방식을 권장합니다.</div>
+</div>
+
+<div class="wide"><label class="admin-label">문의방법</label>
               <div id="contactMethods" class="rep-group"></div>
               <div class="rep-footer">
                 <button id="addContactMethodBtn" type="button" class="admin-btn light">+ 문의방법 추가</button>
@@ -883,6 +858,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=4.1.1"></script>
+<script src="admin.js?v=4.2"></script>
 </body>
 </html>

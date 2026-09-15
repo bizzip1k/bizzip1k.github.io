@@ -7,7 +7,7 @@ const CONFIG = {
 };
 const TAXONOMY = {"startup": {"label": "창업 준비", "subs": {"idea-validation": {"label": "사업 아이디어 검증", "page": "startup-idea-validation.html"}, "market-check": {"label": "시장성 확인", "page": "startup-market-check.html"}, "business-registration": {"label": "사업자등록", "page": "startup-business-registration.html"}, "trademark": {"label": "상표 출원", "page": "startup-trademark.html"}, "domain": {"label": "도메인 확보", "page": "startup-domain.html"}, "office-contract": {"label": "사무실 계약", "page": "startup-office-contract.html"}, "startup-cost": {"label": "초기비용 계산", "page": "startup-startup-cost.html"}, "startup-checklist": {"label": "사업 시작 체크리스트", "page": "startup-startup-checklist.html"}}}, "product": {"label": "상품과 서비스", "subs": {"product-planning": {"label": "상품기획", "page": "product-product-planning.html"}, "costing": {"label": "원가 계산", "page": "product-costing.html"}, "pricing": {"label": "가격 결정", "page": "product-pricing.html"}, "oem": {"label": "OEM 견적 확인", "page": "product-oem.html"}, "package": {"label": "패키지", "page": "product-package.html"}, "launch-test": {"label": "출시 전 검증", "page": "product-launch-test.html"}}}, "brand": {"label": "브랜드", "subs": {"brand-name": {"label": "브랜드명", "page": "brand-brand-name.html"}, "positioning": {"label": "포지셔닝", "page": "brand-positioning.html"}, "message": {"label": "브랜드 메시지", "page": "brand-message.html"}, "visual": {"label": "비주얼 기준", "page": "brand-visual.html"}, "brand-check": {"label": "브랜드 점검", "page": "brand-brand-check.html"}}}, "marketing": {"label": "마케팅", "subs": {"search": {"label": "검색 노출", "page": "marketing-search.html"}, "ads": {"label": "광고 성과", "page": "marketing-ads.html"}, "content": {"label": "콘텐츠 기획", "page": "marketing-content.html"}, "promotion": {"label": "프로모션", "page": "marketing-promotion.html"}, "conversion": {"label": "전환율", "page": "marketing-conversion.html"}}}, "sales": {"label": "판매와 유통", "subs": {"channel-choice": {"label": "판매채널 선택", "page": "sales-channel-choice.html"}, "naver": {"label": "네이버 판매", "page": "sales-naver.html"}, "coupang": {"label": "쿠팡 판매", "page": "sales-coupang.html"}, "offline": {"label": "오프라인 입점", "page": "sales-offline.html"}, "proposal": {"label": "입점 제안서", "page": "sales-proposal.html"}}}, "operation": {"label": "회사 운영", "subs": {"contract": {"label": "계약 확인", "page": "operation-contract.html"}, "expense": {"label": "비용 관리", "page": "operation-expense.html"}, "outsourcing": {"label": "외주 관리", "page": "operation-outsourcing.html"}, "workflow": {"label": "업무 정리", "page": "operation-workflow.html"}, "document": {"label": "문서 관리", "page": "operation-document.html"}}}, "logistics": {"label": "물류와 재고", "subs": {"3pl": {"label": "3PL 선택", "page": "logistics-3pl.html"}, "inventory": {"label": "재고 관리", "page": "logistics-inventory.html"}, "packing": {"label": "포장비", "page": "logistics-packing.html"}, "returns": {"label": "반품 관리", "page": "logistics-returns.html"}, "warehouse-move": {"label": "물류 이관", "page": "logistics-warehouse-move.html"}}}, "data-ai": {"label": "데이터와 AI", "subs": {"sales-data": {"label": "매출 데이터", "page": "data-ai-sales-data.html"}, "customer-data": {"label": "고객 데이터", "page": "data-ai-customer-data.html"}, "free-data": {"label": "무료 데이터", "page": "data-ai-free-data.html"}, "ai-work": {"label": "AI 업무 활용", "page": "data-ai-ai-work.html"}, "automation": {"label": "업무 자동화", "page": "data-ai-automation.html"}}}};
 
-let token="", posts=[], postsSha="", landingState={path:"",sha:"",html:"",kind:"",cards:[]}, businessHierarchy={sha:"",html:"",categories:[],current:null}, currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, currentAbout={path:"about.html",sha:"",html:""}, currentContact={path:"contact.html",sha:"",html:""}, files=[];
+let token="", posts=[], postsSha="", siteMenuState={sha:"",html:"",items:[]}, landingState={path:"",sha:"",html:"",kind:"",cards:[]}, businessHierarchy={sha:"",html:"",categories:[],current:null}, currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, currentProblem={path:"",sha:"",html:""}, currentAbout={path:"about.html",sha:"",html:""}, currentContact={path:"contact.html",sha:"",html:""}, files=[];
 const $=id=>document.getElementById(id);
 
 function setStatus(message,type="info"){
@@ -54,6 +54,19 @@ function setContactStatus(message,type="info"){
   el.className=`status show ${type}`;
 }
 
+
+function setSiteMenuStatus(message,type="info"){
+  const el=$("siteMenuStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+function setBusinessHierarchyStatus(message,type="info"){
+  const el=$("businessHierarchyStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
 
 function setLandingStatus(message,type="info"){
   const el=$("landingSaveStatus");
@@ -288,6 +301,7 @@ $("connectBtn").addEventListener("click",async()=>{
       setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다. 일부 구조 기능은 별도 점검이 필요합니다.`,"ok");
       console.warn(initErrors.join(" | "));
     }else{
+      await loadSiteMenuStructure();
       setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
     }
 
@@ -297,61 +311,316 @@ $("connectBtn").addEventListener("click",async()=>{
 });
 
 
-/* ---------- v4.1 temporary safe business hierarchy loader ---------- */
-async function loadBusinessHierarchy(){
-  const hint=$("businessCategoryHint");
-  const nav=$("businessCategoryNav");
 
+/* ---------- v4.1.2 사업실무 1단계 → 2단계 분야 페이지 로더 ---------- */
+const BUSINESS_CATEGORY_FILES = {
+  "startup.html":"창업 준비",
+  "product.html":"상품과 서비스",
+  "brand.html":"브랜드",
+  "marketing.html":"마케팅",
+  "sales.html":"판매와 유통",
+  "operation.html":"회사 운영",
+  "logistics.html":"물류와 재고",
+  "data-ai.html":"데이터와 AI"
+};
+
+async function loadBusinessHierarchy(){
+  const nav=$("businessCategoryNav"); if(!nav)return;
+  nav.innerHTML='<div class="helper">사업실무 분야를 불러오는 중입니다…</div>';
   try{
     const data=await getFile("business.html");
+    const h=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(h,"text/html");
+    let categories=Array.from(doc.querySelectorAll('a[href$=".html"]')).map(a=>({
+      href:a.getAttribute("href")||"",
+      label:(a.querySelector("h3")||a.querySelector("strong")||a).textContent.trim()
+    })).filter(x=>BUSINESS_CATEGORY_FILES[x.href]);
+    const seen=new Set(); categories=categories.filter(x=>!seen.has(x.href)&&seen.add(x.href));
+    if(!categories.length)categories=Object.entries(BUSINESS_CATEGORY_FILES).map(([href,label])=>({href,label}));
+    businessHierarchy={sha:data.sha,html:h,categories,current:null};
+    renderBusinessCategoryNav();
+    $("saveBusinessHierarchyBtn").disabled=false;
+  }catch(e){
+    nav.innerHTML='<div class="helper">사업실무 분야를 불러오지 못했습니다.</div>';
+    setBusinessHierarchyStatus("사업실무 구조를 불러오지 못했습니다: "+e.message,"err");
+  }
+}
+
+function renderBusinessCategoryNav(){
+  const mount=$("businessCategoryNav"); if(!mount)return;
+  const cats=businessHierarchy.categories||[];
+  mount.innerHTML=cats.map((c,i)=>`
+    <div class="hier-card" data-index="${i}" style="margin-bottom:8px">
+      <input class="admin-input bc-root-title" value="${escapeHtml(c.label||"")}" style="margin-bottom:7px">
+      <input class="admin-input bc-root-href" value="${escapeHtml(c.href||"")}" placeholder="예: startup.html">
+      <div class="hier-actions" style="margin-top:7px">
+        <button type="button" class="admin-btn light bc-root-open">2단계 편집</button>
+        <button type="button" class="admin-btn light bc-root-up" ${i===0?"disabled":""}>↑</button>
+        <button type="button" class="admin-btn light bc-root-down" ${i===cats.length-1?"disabled":""}>↓</button>
+        <button type="button" class="admin-btn danger bc-root-delete" ${cats.length===1?"disabled":""}>삭제</button>
+      </div>
+    </div>`).join("");
+
+  mount.querySelectorAll(".hier-card").forEach(row=>{
+    const i=Number(row.dataset.index);
+    const sync=()=>{businessHierarchy.categories[i].label=row.querySelector(".bc-root-title").value;businessHierarchy.categories[i].href=row.querySelector(".bc-root-href").value;};
+    row.querySelectorAll("input").forEach(el=>el.addEventListener("input",sync));
+    row.querySelector(".bc-root-open")?.addEventListener("click",()=>{sync();loadBusinessCategoryPage(businessHierarchy.categories[i].href);});
+    row.querySelector(".bc-root-up")?.addEventListener("click",()=>{sync();if(i>0)[businessHierarchy.categories[i-1],businessHierarchy.categories[i]]=[businessHierarchy.categories[i],businessHierarchy.categories[i-1]];renderBusinessCategoryNav();});
+    row.querySelector(".bc-root-down")?.addEventListener("click",()=>{sync();if(i<cats.length-1)[businessHierarchy.categories[i+1],businessHierarchy.categories[i]]=[businessHierarchy.categories[i],businessHierarchy.categories[i+1]];renderBusinessCategoryNav();});
+    row.querySelector(".bc-root-delete")?.addEventListener("click",()=>{if(cats.length>1)businessHierarchy.categories.splice(i,1);renderBusinessCategoryNav();});
+  });
+}
+
+$("addBusinessCategoryBtn")?.addEventListener("click",()=>{businessHierarchy.categories.push({label:"새 분야",href:`business-${Date.now()}.html`});renderBusinessCategoryNav();});
+$("removeBusinessCategoryBtn")?.addEventListener("click",()=>{if(businessHierarchy.categories.length>1)businessHierarchy.categories.pop();renderBusinessCategoryNav();});
+
+$("saveBusinessHierarchyBtn")?.addEventListener("click",async()=>{
+  if(!businessHierarchy.sha || !businessHierarchy.html)return setBusinessHierarchyStatus("먼저 사업실무 구조를 불러와주세요.","err");
+  const btn=$("saveBusinessHierarchyBtn");btn.disabled=true;btn.textContent="저장 중…";
+  try{
+    const doc=new DOMParser().parseFromString(businessHierarchy.html,"text/html");
+    const cards=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>Object.keys(BUSINESS_CATEGORY_FILES).includes(a.getAttribute("href")||""));
+    if(!cards.length)throw new Error("분야 카드 영역을 찾지 못했습니다.");
+    const parent=cards[0].parentElement,template=cards[0].cloneNode(true);
+    cards.forEach(x=>x.remove());
+    businessHierarchy.categories.forEach((c,i)=>{
+      const node=template.cloneNode(true);node.setAttribute("href",c.href);
+      const num=node.querySelector(".num"),h=node.querySelector("h3")||node.querySelector("strong");
+      if(num)num.textContent=String(i+1).padStart(2,"0");if(h)h.textContent=c.label;
+      parent.appendChild(node);
+    });
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const r=await putFile("business.html",encodeBase64Utf8(newHtml),businessHierarchy.sha,"Update business category structure");
+    businessHierarchy.sha=r.content.sha;businessHierarchy.html=newHtml;
+    setBusinessHierarchyStatus("✓ 저장 완료 — 1단계 분야 구조가 저장되었습니다.","saved");
+  }catch(e){setBusinessHierarchyStatus("저장 실패: "+e.message,"err");}
+  finally{btn.disabled=false;btn.textContent="1단계 분야 저장";}
+});
+
+async function loadBusinessCategoryPage(path){
+  if(!path)return;
+
+  setBusinessCategoryStatus(`${path} 분야 페이지를 불러오는 중입니다…`,"info");
+  $("saveBusinessCategoryBtn").disabled=true;
+
+  try{
+    const data=await getFile(path);
     const html=decodeBase64Utf8(data.content);
     const doc=new DOMParser().parseFromString(html,"text/html");
 
-    // The current v4.0 hierarchy UI is provisional.
-    // We only populate a safe category navigator here; detail-page editor remains independent.
-    const links=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>{
-      const href=a.getAttribute("href")||"";
-      return ["startup.html","product.html","brand.html","marketing.html","sales.html","operation.html","logistics.html","data-ai.html"].includes(href);
-    });
+    const heroTitle=doc.querySelector(".page-hero h1");
+    const heroSummary=doc.querySelector(".page-hero h1 + p");
 
-    const seen=new Set();
-    const cats=[];
-    links.forEach(a=>{
-      const href=a.getAttribute("href");
-      if(seen.has(href))return;
-      seen.add(href);
-      const label=(a.querySelector("h3")||a.querySelector("strong")||a).textContent.trim();
-      cats.push({href,label});
-    });
+    $("bcTitle").value=heroTitle ? heroTitle.textContent.trim() : (BUSINESS_CATEGORY_FILES[path]||"");
+    $("bcSummary").value=heroSummary ? heroSummary.textContent.trim() : "";
 
-    if(nav){
-      nav.innerHTML=cats.length
-        ? cats.map(c=>`<button type="button" class="admin-btn light safe-business-cat" data-href="${escapeHtml(c.href)}">${escapeHtml(c.label)}</button>`).join("")
-        : '<div class="helper">사업실무 분야 목록은 다음 통합 버전에서 정리합니다. 아래 상세페이지 편집은 정상적으로 사용할 수 있습니다.</div>';
+    // Find section head near the topic list.
+    let sectionTitle="", sectionSummary="";
+    const sectionHeads=Array.from(doc.querySelectorAll(".section-head"));
+    if(sectionHeads.length){
+      const h=sectionHeads[sectionHeads.length-1];
+      sectionTitle=qText(h,"h2");
+      sectionSummary=qText(h,"p");
+    }
+    $("bcSectionTitle").value=sectionTitle;
+    $("bcSectionSummary").value=sectionSummary;
 
-      nav.querySelectorAll(".safe-business-cat").forEach(btn=>btn.addEventListener("click",()=>{
-        const href=btn.dataset.href;
-        const fileToCat={
-          "startup.html":"startup","product.html":"product","brand.html":"brand","marketing.html":"marketing",
-          "sales.html":"sales","operation.html":"operation","logistics.html":"logistics","data-ai.html":"data-ai"
-        };
-        const cat=fileToCat[href];
-        if(cat && $("pageCategory")){
-          $("pageCategory").value=cat;
-          fillSubcategories("pageCategory","pageSubcategory");
-          if(hint)hint.textContent="분야를 선택했습니다. 아래 상세페이지 선택에서 세부 메뉴를 고른 뒤 페이지 불러오기를 사용하세요.";
-        }
-      }));
+    // Find topic cards regardless of exact class naming.
+    let topicCards=Array.from(doc.querySelectorAll("a.topic-card"));
+    if(!topicCards.length){
+      topicCards=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>{
+        const href=a.getAttribute("href")||"";
+        return href!==path && href!=="business.html" && !Object.keys(BUSINESS_CATEGORY_FILES).includes(href);
+      });
     }
 
-    if(hint && !cats.length){
-      hint.textContent="사업실무 상세페이지 편집 기능은 정상적으로 사용할 수 있습니다.";
-    }
+    businessHierarchy.current={
+      path,
+      sha:data.sha,
+      html,
+      topics:topicCards.map(a=>({
+        title:qText(a,"h3")||qText(a,"strong")||a.textContent.trim(),
+        body:qText(a,"p"),
+        href:a.getAttribute("href")||"",
+        kicker:qText(a,".kicker"),
+        cta:qText(a,".more")||qText(a,"em")
+      }))
+    };
+
+    renderBusinessTopicsEditor();
+    $("businessCategoryHint").textContent=`현재 수정 중: ${$("bcTitle").value || BUSINESS_CATEGORY_FILES[path] || path}`;
+    $("businessCategoryEditNote").textContent=`${$("bcTitle").value || path} 수정 중`;
+    $("saveBusinessCategoryBtn").disabled=false;
+    setBusinessCategoryStatus("분야 페이지를 불러왔습니다. 세부주제도 아래에서 수정할 수 있습니다.","ok");
+
   }catch(e){
-    if(hint)hint.textContent="사업실무 구조 목록은 불러오지 못했지만 아래 상세페이지 불러오기는 사용할 수 있습니다.";
-    console.warn("Business hierarchy fallback:",e);
+    setBusinessCategoryStatus("분야 페이지를 불러오지 못했습니다: "+e.message,"err");
   }
 }
+
+function renderBusinessTopicsEditor(){
+  const mount=$("businessTopicsEditor");
+  if(!mount)return;
+  const topics=businessHierarchy.current?.topics||[];
+
+  if(!topics.length){
+    mount.innerHTML='<div class="helper">현재 세부주제를 찾지 못했습니다.</div>';
+    return;
+  }
+
+  mount.innerHTML=topics.map((t,i)=>`
+    <div class="hier-card" data-index="${i}">
+      <div class="hier-card-head">
+        <strong>${i+1}번 세부주제</strong>
+        <div class="hier-actions">
+          <button type="button" class="admin-btn light bt-up" ${i===0?"disabled":""}>↑</button>
+          <button type="button" class="admin-btn light bt-down" ${i===topics.length-1?"disabled":""}>↓</button>
+          <button type="button" class="admin-btn light bt-open">상세페이지 편집</button>
+          <button type="button" class="admin-btn danger bt-delete" ${topics.length===1?"disabled":""}>삭제</button>
+        </div>
+      </div>
+      <div class="inline-two">
+        <div>
+          <label class="admin-label">세부주제 제목</label>
+          <input class="admin-input bt-title" value="${escapeHtml(t.title||"")}">
+        </div>
+        <div>
+          <label class="admin-label">상세페이지 파일</label>
+          <input class="admin-input bt-href" value="${escapeHtml(t.href||"")}">
+        </div>
+      </div>
+      <label class="admin-label">설명</label>
+      <textarea class="admin-textarea bt-body" style="min-height:70px">${escapeHtml(t.body||"")}</textarea>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll(".hier-card").forEach(row=>{
+    const idx=Number(row.dataset.index);
+    const sync=()=>{
+      const t=businessHierarchy.current.topics[idx];
+      t.title=row.querySelector(".bt-title")?.value||"";
+      t.href=row.querySelector(".bt-href")?.value||"";
+      t.body=row.querySelector(".bt-body")?.value||"";
+    };
+
+    row.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",sync));
+
+    row.querySelector(".bt-up")?.addEventListener("click",()=>{
+      sync();
+      if(idx>0){
+        [businessHierarchy.current.topics[idx-1],businessHierarchy.current.topics[idx]]=
+        [businessHierarchy.current.topics[idx],businessHierarchy.current.topics[idx-1]];
+      }
+      renderBusinessTopicsEditor();
+    });
+
+    row.querySelector(".bt-down")?.addEventListener("click",()=>{
+      sync();
+      if(idx<businessHierarchy.current.topics.length-1){
+        [businessHierarchy.current.topics[idx+1],businessHierarchy.current.topics[idx]]=
+        [businessHierarchy.current.topics[idx],businessHierarchy.current.topics[idx+1]];
+      }
+      renderBusinessTopicsEditor();
+    });
+
+    row.querySelector(".bt-delete")?.addEventListener("click",()=>{
+      if(businessHierarchy.current.topics.length>1){
+        businessHierarchy.current.topics.splice(idx,1);
+        renderBusinessTopicsEditor();
+      }
+    });
+
+    row.querySelector(".bt-open")?.addEventListener("click",()=>{
+      const href=businessHierarchy.current.topics[idx].href;
+      const found=findBusinessPageByHref(href);
+      if(!found){
+        setBusinessCategoryStatus("연결된 상세페이지를 관리자 기본 목록에서 찾지 못했습니다.","err");
+        return;
+      }
+      $("pageCategory").value=found.catKey;
+      fillSubcategories("pageCategory","pageSubcategory",found.subKey);
+      $("loadPageBtn").click();
+      document.querySelector("#panel-business .admin-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+}
+
+$("addBusinessTopicBtn")?.addEventListener("click",()=>{
+  if(!businessHierarchy.current)return;
+  businessHierarchy.current.topics.push({
+    title:"새 세부주제",
+    body:"",
+    href:"",
+    kicker:"",
+    cta:""
+  });
+  renderBusinessTopicsEditor();
+});
+
+$("removeBusinessTopicBtn")?.addEventListener("click",()=>{
+  if(businessHierarchy.current?.topics.length>1){
+    businessHierarchy.current.topics.pop();
+    renderBusinessTopicsEditor();
+  }
+});
+
+$("saveBusinessCategoryBtn")?.addEventListener("click",async()=>{
+  if(!businessHierarchy.current)return;
+  const btn=$("saveBusinessCategoryBtn");
+  btn.disabled=true;
+  btn.textContent="저장 중…";
+
+  try{
+    const cur=businessHierarchy.current;
+    const doc=new DOMParser().parseFromString(cur.html,"text/html");
+
+    const h1=doc.querySelector(".page-hero h1");
+    const p=doc.querySelector(".page-hero h1 + p");
+    if(h1)h1.textContent=$("bcTitle").value.trim();
+    if(p)p.textContent=$("bcSummary").value.trim();
+
+    const sectionHeads=Array.from(doc.querySelectorAll(".section-head"));
+    if(sectionHeads.length){
+      const h=sectionHeads[sectionHeads.length-1];
+      if(h.querySelector("h2"))h.querySelector("h2").textContent=$("bcSectionTitle").value.trim();
+      if(h.querySelector("p"))h.querySelector("p").textContent=$("bcSectionSummary").value.trim();
+    }
+
+    const oldCards=Array.from(doc.querySelectorAll("a.topic-card"));
+    if(oldCards.length){
+      const parent=oldCards[0].parentElement;
+      const template=oldCards[0].cloneNode(true);
+      oldCards.forEach(x=>x.remove());
+
+      cur.topics.forEach(t=>{
+        const node=template.cloneNode(true);
+        const h3=node.querySelector("h3")||node.querySelector("strong");
+        const bp=node.querySelector("p");
+        if(h3)h3.textContent=t.title||"";
+        if(bp)bp.textContent=t.body||"";
+        if(t.href)node.setAttribute("href",t.href);
+        parent.appendChild(node);
+      });
+    }
+
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const result=await putFile(cur.path,encodeBase64Utf8(newHtml),cur.sha,`Update business category: ${cur.path}`);
+    cur.sha=result.content.sha;
+    cur.html=newHtml;
+
+    setBusinessCategoryStatus("✓ 저장 완료 — 분야 페이지와 세부주제가 정상 저장되었습니다.","saved");
+
+  }catch(e){
+    setBusinessCategoryStatus("저장 실패: "+e.message,"err");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="분야 페이지 저장";
+  }
+});
+
+$("reloadBusinessHierarchyBtn")?.addEventListener("click",loadBusinessHierarchy);
+
 
 /* 콘텐츠 */
 async function loadPosts(){
@@ -717,6 +986,131 @@ function openLinkedBusinessPage(href){
 }
 
 
+
+
+/* ---------- v4.2 사이트 전체 구조 관리 ---------- */
+const DEFAULT_SITE_MENUS=[
+  {label:"사업실무",href:"business.html",tab:"business"},
+  {label:"문제별 해결",href:"problems.html",tab:"problems"},
+  {label:"콘텐츠",href:"contents.html",tab:"posts"},
+  {label:"실무자료",href:"resources.html",tab:"resources"},
+  {label:"BIZZIP 소개",href:"about.html",tab:"about"},
+  {label:"문의",href:"contact.html",tab:"contact"}
+];
+
+function getMenuFromIndex(doc){
+  const known=new Set(DEFAULT_SITE_MENUS.map(x=>x.href));
+  const anchors=Array.from(doc.querySelectorAll("header nav a, nav a"));
+  const out=[],seen=new Set();
+  anchors.forEach(a=>{
+    const href=a.getAttribute("href")||"";
+    if(!href || href==="index.html" || href.startsWith("http") || seen.has(href))return;
+    if(!known.has(href))return;
+    seen.add(href);
+    out.push({label:a.textContent.trim()||href,href,tab:(DEFAULT_SITE_MENUS.find(x=>x.href===href)?.tab)||""});
+  });
+  return out.length?out:DEFAULT_SITE_MENUS.map(x=>({...x}));
+}
+
+function renderSiteMenuEditor(){
+  const mount=$("siteMenuEditor"); if(!mount)return;
+  mount.innerHTML=(siteMenuState.items||[]).map((item,i)=>`
+    <div class="hier-card" data-index="${i}">
+      <div class="hier-card-head">
+        <strong>${i+1}번 메인 메뉴</strong>
+        <div class="hier-actions">
+          <button type="button" class="admin-btn light sm-up" ${i===0?"disabled":""}>↑</button>
+          <button type="button" class="admin-btn light sm-down" ${i===siteMenuState.items.length-1?"disabled":""}>↓</button>
+          <button type="button" class="admin-btn light sm-landing">랜딩 수정</button>
+          <button type="button" class="admin-btn danger sm-delete" ${siteMenuState.items.length===1?"disabled":""}>삭제</button>
+        </div>
+      </div>
+      <div class="inline-two">
+        <div><label class="admin-label">메뉴명</label><input class="admin-input sm-label" value="${escapeHtml(item.label||"")}"></div>
+        <div><label class="admin-label">랜딩페이지 파일</label><input class="admin-input sm-href" value="${escapeHtml(item.href||"")}"></div>
+      </div>
+      <label class="admin-label">관리 탭 연결값</label>
+      <input class="admin-input sm-tab" value="${escapeHtml(item.tab||"")}" placeholder="business / problems / posts / resources / about / contact">
+    </div>
+  `).join("");
+
+  mount.querySelectorAll(".hier-card").forEach(row=>{
+    const i=Number(row.dataset.index);
+    const sync=()=>{
+      const x=siteMenuState.items[i];
+      x.label=row.querySelector(".sm-label").value;
+      x.href=row.querySelector(".sm-href").value;
+      x.tab=row.querySelector(".sm-tab").value;
+    };
+    row.querySelectorAll("input").forEach(el=>el.addEventListener("input",sync));
+    row.querySelector(".sm-up")?.addEventListener("click",()=>{sync();if(i>0)[siteMenuState.items[i-1],siteMenuState.items[i]]=[siteMenuState.items[i],siteMenuState.items[i-1]];renderSiteMenuEditor();});
+    row.querySelector(".sm-down")?.addEventListener("click",()=>{sync();if(i<siteMenuState.items.length-1)[siteMenuState.items[i+1],siteMenuState.items[i]]=[siteMenuState.items[i],siteMenuState.items[i+1]];renderSiteMenuEditor();});
+    row.querySelector(".sm-delete")?.addEventListener("click",()=>{if(siteMenuState.items.length>1)siteMenuState.items.splice(i,1);renderSiteMenuEditor();});
+    row.querySelector(".sm-landing")?.addEventListener("click",()=>loadLandingFromStructure(siteMenuState.items[i]));
+  });
+}
+
+async function loadSiteMenuStructure(){
+  try{
+    const data=await getFile("index.html");
+    const h=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(h,"text/html");
+    siteMenuState={sha:data.sha,html:h,items:getMenuFromIndex(doc)};
+    renderSiteMenuEditor();
+    $("saveSiteMenuBtn").disabled=false;
+    setSiteMenuStatus(`현재 메인 메뉴 ${siteMenuState.items.length}개를 불러왔습니다.`,"ok");
+  }catch(e){
+    siteMenuState={sha:"",html:"",items:DEFAULT_SITE_MENUS.map(x=>({...x}))};
+    renderSiteMenuEditor();
+    setSiteMenuStatus("기본 메뉴 구조를 표시했습니다. GitHub 연결 상태를 확인해주세요.","info");
+  }
+}
+
+async function loadLandingFromStructure(item){
+  if(!item?.href)return;
+  const kind= item.href==="business.html"?"business":
+              item.href==="problems.html"?"problems":
+              item.href==="resources.html"?"resources":
+              item.href==="contents.html"?"contents":
+              item.href==="about.html"?"about":
+              item.href==="contact.html"?"contact":"generic";
+  try{
+    const data=await getFile(item.href);
+    const h=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(h,"text/html");
+    landingState={path:item.href,sha:data.sha,html:h,kind,cards:extractLandingCards(doc,kind)};
+    $("ldTitle").value=qText(doc,".page-hero h1");
+    $("ldSummary").value=qText(doc,".page-hero h1 + p");
+    $("ldEyebrow").value=qText(doc,".page-hero .eyebrow");
+    $("landingEditorHint").textContent=`현재 수정 중: ${item.label}`;
+    $("landingEditNote").textContent=`${item.href} 수정 중`;
+    $("saveLandingBtn").disabled=false;
+    renderLandingCards();
+    document.querySelector(".landing-editor")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){setSiteMenuStatus("랜딩페이지를 불러오지 못했습니다: "+e.message,"err");}
+}
+
+$("addSiteMenuBtn")?.addEventListener("click",()=>{siteMenuState.items.push({label:"새 메뉴",href:`page-${Date.now()}.html`,tab:""});renderSiteMenuEditor();});
+$("removeSiteMenuBtn")?.addEventListener("click",()=>{if(siteMenuState.items.length>1)siteMenuState.items.pop();renderSiteMenuEditor();});
+
+$("saveSiteMenuBtn")?.addEventListener("click",async()=>{
+  if(!siteMenuState.sha || !siteMenuState.html)return setSiteMenuStatus("먼저 사이트 구조를 불러와주세요.","err");
+  const btn=$("saveSiteMenuBtn");btn.disabled=true;btn.textContent="저장 중…";
+  try{
+    const doc=new DOMParser().parseFromString(siteMenuState.html,"text/html");
+    const nav=doc.querySelector("header nav, nav");
+    if(!nav)throw new Error("메인 네비게이션을 찾지 못했습니다.");
+    Array.from(nav.querySelectorAll("a")).filter(a=>(a.getAttribute("href")||"")!=="index.html").forEach(a=>a.remove());
+    siteMenuState.items.forEach(item=>{
+      const a=doc.createElement("a");a.href=item.href;a.textContent=item.label;nav.appendChild(a);
+    });
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const r=await putFile("index.html",encodeBase64Utf8(newHtml),siteMenuState.sha,"Update main menu structure");
+    siteMenuState.sha=r.content.sha;siteMenuState.html=newHtml;
+    setSiteMenuStatus("✓ 저장 완료 — 메인 사이트 구조가 저장되었습니다.","saved");
+  }catch(e){setSiteMenuStatus("저장 실패: "+e.message,"err");}
+  finally{btn.disabled=false;btn.textContent="전체 구조 저장";}
+});
 
 /* ---------- 사이트 랜딩페이지 통합 관리 ---------- */
 function extractLandingCards(doc,kind){
@@ -1533,12 +1927,18 @@ function renderContactPreview(){
   const sb=$("ctSectionBody")?.value.trim()||"";
   const methods=getRepeaterData("contactMethods");
   const finish=$("ctFinish")?.value.trim()||"";
+  const manager=$("ctManager")?.value.trim()||"";
+  const email=$("ctEmail")?.value.trim()||"";
+  const kakao=$("ctKakao")?.value.trim()||"";
+  const privacy=$("ctPrivacy")?.value.trim()||"";
   m.innerHTML=`<div class="live-hero"><div class="live-eyebrow">CONTACT</div><h1>${previewEsc(title)}</h1><p>${previewEsc(hero)}</p></div>
   <div class="live-body">${st?`<h2>${previewEsc(st)}</h2>`:""}${sb?`<p>${previewEsc(sb)}</p>`:""}
+  ${(manager||email||kakao)?`<div class="live-box"><strong>문의 연락처</strong><p>${manager?`담당자: ${previewEsc(manager)}<br>`:""}${email?`이메일: ${previewEsc(email)}<br>`:""}${kakao?`카카오톡: ${previewEsc(kakao)}`:""}</p></div>`:""}
   ${methods.map(x=>`<div class="live-card"><strong>${previewEsc(x.title)}</strong><p>${previewEsc(x.body)}</p>${x.linkText?`<div class="live-box">${previewEsc(x.linkText)}</div>`:""}</div>`).join("")}
+  ${privacy?`<div class="live-box"><strong>개인정보 안내</strong><p>${previewEsc(privacy)}</p></div>`:""}
   ${finish?`<div class="live-box"><p>${previewEsc(finish)}</p></div>`:""}</div>`;
 }
-["ctTitle","ctHeroSummary","ctSectionTitle","ctSectionBody","ctFinish"].forEach(id=>{
+["ctTitle","ctHeroSummary","ctSectionTitle","ctSectionBody","ctManager","ctEmail","ctKakao","ctKakaoLink","ctPrivacy","ctFinish"].forEach(id=>{
   const el=$(id);if(el)el.addEventListener("input",renderContactPreview);
 });
 $("addContactMethodBtn").addEventListener("click",()=>addRepeaterItem("contactMethods",{title:"",body:"",linkText:"",href:""},renderContactPreview));
@@ -1558,6 +1958,14 @@ $("loadContactBtn").addEventListener("click",async()=>{
     const mainCard=doc.querySelector("main .panel, main .article, main section .wrap > div");
     $("ctSectionTitle").value=qText(mainCard||doc,"h2");
     $("ctSectionBody").value=qText(mainCard||doc,"p");
+
+    const existingInfo=doc.querySelector(".bizzip-contact-info");
+    $("ctManager").value=qText(existingInfo||doc,"[data-field='manager']")||"BIZZIP 운영담당";
+    $("ctEmail").value=qText(existingInfo||doc,"[data-field='email']");
+    $("ctKakao").value=qText(existingInfo||doc,"[data-field='kakao']");
+    $("ctKakaoLink").value=existingInfo?.querySelector("[data-field='kakao'] a")?.getAttribute("href")||"";
+    $("ctPrivacy").value=qText(existingInfo||doc,".privacy-note")||"문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.";
+
 
     const candidates=Array.from(doc.querySelectorAll("main .feature-box, main .contact-card, main .card, main .panel")).filter(x=>x!==mainCard);
     const methods=candidates.slice(0,4).map(c=>{
@@ -1607,7 +2015,26 @@ $("saveContactBtn").addEventListener("click",async()=>{
     const ps=Array.from(doc.querySelectorAll("main p"));
     if(ps.length && $("ctFinish").value.trim())ps[ps.length-1].textContent=$("ctFinish").value.trim();
 
-    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    
+    let info=doc.querySelector(".bizzip-contact-info");
+    if(!info){
+      info=doc.createElement("div");
+      info.className="bizzip-contact-info";
+      (mainCard||doc.querySelector("main"))?.appendChild(info);
+    }
+    const manager=$("ctManager").value.trim();
+    const email=$("ctEmail").value.trim();
+    const kakao=$("ctKakao").value.trim();
+    const kakaoLink=$("ctKakaoLink").value.trim();
+    const privacy=$("ctPrivacy").value.trim();
+
+    info.innerHTML=`<h3>문의 연락처</h3>
+      ${manager?`<p><strong>담당자</strong> <span data-field="manager">${escapeHtml(manager)}</span></p>`:""}
+      ${email?`<p><strong>이메일</strong> <a data-field="email" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>`:""}
+      ${kakao?`<p><strong>카카오톡</strong> <span data-field="kakao">${kakaoLink?`<a href="${escapeHtml(kakaoLink)}">${escapeHtml(kakao)}</a>`:escapeHtml(kakao)}</span></p>`:""}
+      ${privacy?`<p class="privacy-note">${escapeHtml(privacy)}</p>`:""}`;
+
+const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
     const result=await putFile("contact.html",encodeBase64Utf8(newHtml),currentContact.sha,"Update contact page");
     currentContact.sha=result.content.sha;currentContact.html=newHtml;
     setStatus("문의 페이지를 저장했습니다.","ok");
