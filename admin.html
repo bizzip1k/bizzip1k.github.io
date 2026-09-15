@@ -52,6 +52,120 @@ body{background:#f4f9fa;color:#102b46}
 .fixed-fields .wide{grid-column:1/-1}
 .file-drop{border:1.5px dashed #b7cdd3;border-radius:12px;padding:18px;background:#fbfefe}
 .notice{padding:11px 12px;border-radius:10px;background:#fff8e9;border:1px solid #efdfba;color:#725e2f;font-size:12px;line-height:1.6}
+
+.preview-layout{
+  display:grid;
+  grid-template-columns:minmax(520px,1fr) minmax(420px,.9fr);
+  gap:18px;
+  align-items:start;
+}
+.preview-pane{
+  position:sticky;
+  top:18px;
+  background:#eef6f7;
+  border:1px solid #d9e6e9;
+  border-radius:16px;
+  padding:14px;
+}
+.preview-pane h2{
+  margin:0 0 10px;
+  font-size:16px;
+}
+.preview-note{
+  font-size:11px;
+  color:#70828a;
+  margin-bottom:10px;
+}
+.preview-canvas{
+  background:#fff;
+  border:1px solid #d9e6e9;
+  border-radius:14px;
+  overflow:hidden;
+  min-height:620px;
+  box-shadow:0 8px 26px rgba(16,43,70,.045);
+}
+.preview-hero{
+  padding:28px 28px 20px;
+  background:#f8fbfb;
+  border-bottom:1px solid #e2ecee;
+}
+.preview-eyebrow{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  color:#188577;
+  margin-bottom:18px;
+}
+.preview-hero h1{
+  margin:0 0 10px;
+  font-size:28px;
+  line-height:1.25;
+  letter-spacing:-.8px;
+}
+.preview-hero p{
+  margin:0;
+  color:#6f7f89;
+  font-size:14px;
+  line-height:1.65;
+}
+.preview-body{
+  padding:24px 28px 28px;
+}
+.preview-body h2{
+  margin:18px 0 8px;
+  font-size:18px;
+  color:#173b50;
+}
+.preview-body h2:first-child{
+  margin-top:0;
+}
+.preview-body p{
+  margin:0 0 10px;
+  line-height:1.7;
+  color:#354d59;
+  font-size:14px;
+}
+.preview-body ul{
+  margin:6px 0 14px 20px;
+  padding:0;
+  color:#354d59;
+}
+.preview-body li{
+  margin-bottom:4px;
+  line-height:1.55;
+}
+.preview-box{
+  margin:10px 0;
+  padding:12px 14px;
+  border-radius:10px;
+  background:#f5faf9;
+  border:1px solid #dcebe8;
+}
+.preview-step{
+  margin:8px 0;
+  padding:12px 14px;
+  border:1px solid #e0eaed;
+  border-radius:10px;
+  background:#fbfdfd;
+}
+.preview-step strong{
+  display:block;
+  margin-bottom:4px;
+}
+.preview-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.preview-actions .helper{
+  margin:0;
+}
+@media(max-width:1100px){
+  .preview-layout{grid-template-columns:1fr}
+  .preview-pane{position:static}
+}
+
 @media(max-width:900px){.connect-card{grid-template-columns:1fr}.admin-grid{grid-template-columns:1fr}.form-row,.fixed-fields{grid-template-columns:1fr}.fixed-fields .wide{grid-column:auto}}
 </style>
 </head>
@@ -59,7 +173,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.5.2</div>
+    <div class="admin-badge">ADMIN v3.6</div>
   </div>
 
   <div class="connect-card">
@@ -110,9 +224,26 @@ body{background:#f4f9fa;color:#102b46}
         <button id="loadPageBtn" class="admin-btn primary" style="width:100%;margin-top:12px" disabled>페이지 불러오기</button>
         <div class="helper">44개 세부페이지의 기본 설명을 수정합니다. 최신 콘텐츠 목록은 그대로 유지됩니다.</div>
       </aside>
-      <div class="admin-card">
+      <div class="preview-layout"><div class="admin-card">
         <h2>기본페이지 수정</h2>
         <div class="notice">레이아웃과 메뉴는 건드리지 않고, 현재 페이지의 설명 문구와 실무 내용만 수정합니다.</div>
+<div class="preview-pane">
+  <div class="preview-actions">
+    <h2 style="margin:0">저장 전 미리보기</h2>
+    <span class="helper">입력하는 즉시 반영됩니다. 저장 전에는 사이트에 적용되지 않습니다.</span>
+  </div>
+  <div id="businessPreview" class="preview-canvas">
+    <div class="preview-hero">
+      <div class="preview-eyebrow">BUSINESS PRACTICE</div>
+      <h1>페이지를 불러오면 미리보기가 표시됩니다.</h1>
+      <p>왼쪽 입력 내용을 수정하면 이 영역이 실시간으로 바뀝니다.</p>
+    </div>
+    <div class="preview-body">
+      <p>아직 불러온 페이지가 없습니다.</p>
+    </div>
+  </div>
+</div>
+</div>
         <div class="fixed-fields">
           <div><label class="admin-label">페이지 제목</label><input id="fpTitle" class="admin-input"></div>
           <div><label class="admin-label">상단 한줄 설명</label><input id="fpHeroSummary" class="admin-input"></div>
@@ -328,6 +459,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.5.2"></script>
+<script src="admin.js?v=3.6"></script>
 </body>
 </html>

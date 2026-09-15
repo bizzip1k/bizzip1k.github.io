@@ -183,6 +183,7 @@ $("loadPageBtn").addEventListener("click",async()=>{
     $("pageEditNote").textContent=`수정 중: ${TAXONOMY[cat].label} → ${TAXONOMY[cat].subs[sub].label}`;
     setStatus("페이지를 불러왔습니다.","ok");
     setPageStatus("페이지를 불러왔습니다. 이제 수정 후 ‘페이지 저장’을 누르세요.","ok");
+    renderBusinessPreview();
   }catch(e){
     $("savePageBtn").disabled=true;
     setStatus("페이지를 불러오지 못했습니다: "+e.message,"err");
@@ -669,6 +670,78 @@ $("saveAboutBtn").addEventListener("click",async()=>{
   }finally{
     btn.disabled=false; btn.textContent="BIZZIP 소개 저장";
   }
+});
+
+
+/* ---------- 사업실무 실시간 미리보기 ---------- */
+function previewLines(text){
+  return text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+}
+function previewEsc(text){
+  return escapeHtml(text||"");
+}
+function renderBusinessPreview(){
+  const mount=$("businessPreview");
+  if(!mount)return;
+
+  const title=$("fpTitle")?.value.trim()||"페이지 제목";
+  const hero=$("fpHeroSummary")?.value.trim()||"상단 한줄 설명";
+  const intro=$("fpIntro")?.value.trim()||"";
+  const criteria=previewLines($("fpCriteria")?.value||"");
+  const action=$("fpAction")?.value.trim()||"";
+  const example=$("fpExample")?.value.trim()||"";
+  const mistakes=previewLines($("fpMistakes")?.value||"");
+  const finishTitle=$("fpFinishTitle")?.value.trim()||"";
+  const finishBody=$("fpFinishBody")?.value.trim()||"";
+
+  const steps=[1,2,3,4].map(i=>({
+    title:$("fpStep"+i+"Title")?.value.trim()||"",
+    body:$("fpStep"+i+"Body")?.value.trim()||""
+  }));
+
+  let bodyHtml="";
+  if(intro) bodyHtml+=`<h2>왜 이 내용을 먼저 봐야 할까요?</h2><p>${previewEsc(intro)}</p>`;
+  if(criteria.length){
+    bodyHtml+=`<h2>실무에서 먼저 보는 기준</h2><ul>${criteria.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`;
+  }
+  if(action){
+    bodyHtml+=`<h2>바로 해볼 일</h2><div class="preview-box"><p>${previewEsc(action)}</p></div>`;
+  }
+  if(steps.some(s=>s.title||s.body)){
+    bodyHtml+=`<h2>실행 순서</h2>`;
+    steps.forEach((s,i)=>{
+      if(!s.title&&!s.body)return;
+      bodyHtml+=`<div class="preview-step"><strong>STEP ${i+1}. ${previewEsc(s.title)}</strong><p>${previewEsc(s.body)}</p></div>`;
+    });
+  }
+  if(example){
+    bodyHtml+=`<h2>현장 예시</h2><div class="preview-box"><p>${previewEsc(example)}</p></div>`;
+  }
+  if(mistakes.length){
+    bodyHtml+=`<h2>자주 하는 실수</h2><ul>${mistakes.map(x=>`<li>${previewEsc(x)}</li>`).join("")}</ul>`;
+  }
+  if(finishTitle||finishBody){
+    bodyHtml+=`<div class="preview-box"><strong>${previewEsc(finishTitle)}</strong><p>${previewEsc(finishBody)}</p></div>`;
+  }
+
+  mount.innerHTML=`
+    <div class="preview-hero">
+      <div class="preview-eyebrow">BUSINESS PRACTICE</div>
+      <h1>${previewEsc(title)}</h1>
+      <p>${previewEsc(hero)}</p>
+    </div>
+    <div class="preview-body">${bodyHtml||"<p>내용을 입력하면 이곳에 미리 표시됩니다.</p>"}</div>
+  `;
+}
+
+[
+  "fpTitle","fpHeroSummary","fpIntro","fpCriteria","fpAction",
+  "fpStep1Title","fpStep1Body","fpStep2Title","fpStep2Body",
+  "fpStep3Title","fpStep3Body","fpStep4Title","fpStep4Body",
+  "fpExample","fpMistakes","fpFinishTitle","fpFinishBody"
+].forEach(id=>{
+  const el=$(id);
+  if(el)el.addEventListener("input",renderBusinessPreview);
 });
 
 /* 첨부파일 */
