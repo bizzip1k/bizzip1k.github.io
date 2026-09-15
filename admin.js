@@ -247,30 +247,111 @@ document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",
 }));
 
 $("connectBtn").addEventListener("click",async()=>{
-  token=$("token").value.trim(); if(!token)return setStatus("GitHub token을 입력해주세요.","err");
+  token=$("token").value.trim();
+  if(!token)return setStatus("GitHub token을 입력해주세요.","err");
+
   setStatus("GitHub에 연결하는 중입니다…","info");
+
   try{
+    // 1) Core data first. If these work, connection itself is valid.
     await Promise.all([loadPosts(),loadFiles()]);
-    const reloadBusinessHierarchyBtn=$("reloadBusinessHierarchyBtn");
-    if(reloadBusinessHierarchyBtn) reloadBusinessHierarchyBtn.disabled=false;
-    loadBusinessHierarchy();
-    const loadPageBtn=$("loadPageBtn");
+
+    // 2) Enable every independent editor BEFORE optional hierarchy initializers.
+    const ids=[
+      "loadPageBtn","loadResourceBtn","loadProblemBtn",
+      "loadAboutBtn","loadContactBtn","reloadBusinessHierarchyBtn"
+    ];
+    ids.forEach(id=>{
+      const el=$(id);
+      if(el)el.disabled=false;
+    });
+
     const uploadFileBtn=$("uploadFileBtn");
     const fileInput=$("fileInput");
-    if(loadPageBtn) loadPageBtn.disabled=false;
-    const loadResourceBtn=$("loadResourceBtn");
-    if(loadResourceBtn) loadResourceBtn.disabled=false;
-    const loadProblemBtn=$("loadProblemBtn");
-    if(loadProblemBtn) loadProblemBtn.disabled=false;
-    loadProblemRootStructure();
-    const loadAboutBtn=$("loadAboutBtn");
-    if(loadAboutBtn) loadAboutBtn.disabled=false;
-    const loadContactBtn=$("loadContactBtn");
-    if(loadContactBtn) loadContactBtn.disabled=false;
-    if(uploadFileBtn) uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
-    setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
-  }catch(e){ setStatus("연결하지 못했습니다: "+e.message,"err"); }
+    if(uploadFileBtn)uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
+
+    // 3) Optional hierarchy initializers are isolated.
+    // One failure must never disable the other admin menus.
+    const initErrors=[];
+
+    if(typeof loadProblemRootStructure==="function"){
+      try{ await loadProblemRootStructure(); }
+      catch(e){ initErrors.push("문제별 해결 구조: "+e.message); }
+    }
+
+    if(typeof loadBusinessHierarchy==="function"){
+      try{ await loadBusinessHierarchy(); }
+      catch(e){ initErrors.push("사업실무 구조: "+e.message); }
+    }
+
+    if(initErrors.length){
+      setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다. 일부 구조 기능은 별도 점검이 필요합니다.`,"ok");
+      console.warn(initErrors.join(" | "));
+    }else{
+      setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
+    }
+
+  }catch(e){
+    setStatus("연결하지 못했습니다: "+e.message,"err");
+  }
 });
+
+
+/* ---------- v4.1 temporary safe business hierarchy loader ---------- */
+async function loadBusinessHierarchy(){
+  const hint=$("businessCategoryHint");
+  const nav=$("businessCategoryNav");
+
+  try{
+    const data=await getFile("business.html");
+    const html=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(html,"text/html");
+
+    // The current v4.0 hierarchy UI is provisional.
+    // We only populate a safe category navigator here; detail-page editor remains independent.
+    const links=Array.from(doc.querySelectorAll('a[href$=".html"]')).filter(a=>{
+      const href=a.getAttribute("href")||"";
+      return ["startup.html","product.html","brand.html","marketing.html","sales.html","operation.html","logistics.html","data-ai.html"].includes(href);
+    });
+
+    const seen=new Set();
+    const cats=[];
+    links.forEach(a=>{
+      const href=a.getAttribute("href");
+      if(seen.has(href))return;
+      seen.add(href);
+      const label=(a.querySelector("h3")||a.querySelector("strong")||a).textContent.trim();
+      cats.push({href,label});
+    });
+
+    if(nav){
+      nav.innerHTML=cats.length
+        ? cats.map(c=>`<button type="button" class="admin-btn light safe-business-cat" data-href="${escapeHtml(c.href)}">${escapeHtml(c.label)}</button>`).join("")
+        : '<div class="helper">사업실무 분야 목록은 다음 통합 버전에서 정리합니다. 아래 상세페이지 편집은 정상적으로 사용할 수 있습니다.</div>';
+
+      nav.querySelectorAll(".safe-business-cat").forEach(btn=>btn.addEventListener("click",()=>{
+        const href=btn.dataset.href;
+        const fileToCat={
+          "startup.html":"startup","product.html":"product","brand.html":"brand","marketing.html":"marketing",
+          "sales.html":"sales","operation.html":"operation","logistics.html":"logistics","data-ai.html":"data-ai"
+        };
+        const cat=fileToCat[href];
+        if(cat && $("pageCategory")){
+          $("pageCategory").value=cat;
+          fillSubcategories("pageCategory","pageSubcategory");
+          if(hint)hint.textContent="분야를 선택했습니다. 아래 상세페이지 선택에서 세부 메뉴를 고른 뒤 페이지 불러오기를 사용하세요.";
+        }
+      }));
+    }
+
+    if(hint && !cats.length){
+      hint.textContent="사업실무 상세페이지 편집 기능은 정상적으로 사용할 수 있습니다.";
+    }
+  }catch(e){
+    if(hint)hint.textContent="사업실무 구조 목록은 불러오지 못했지만 아래 상세페이지 불러오기는 사용할 수 있습니다.";
+    console.warn("Business hierarchy fallback:",e);
+  }
+}
 
 /* 콘텐츠 */
 async function loadPosts(){
@@ -1497,3 +1578,5 @@ $("pageSubcategory").addEventListener("change",()=>{
 });
 
 setBusinessSteps([{title:"",body:""}]);
+
+if($("reloadBusinessHierarchyBtn")) $("reloadBusinessHierarchyBtn").addEventListener("click",()=>loadBusinessHierarchy());
