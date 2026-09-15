@@ -7,7 +7,7 @@ const CONFIG = {
 };
 const TAXONOMY = {"startup": {"label": "창업 준비", "subs": {"idea-validation": {"label": "사업 아이디어 검증", "page": "startup-idea-validation.html"}, "market-check": {"label": "시장성 확인", "page": "startup-market-check.html"}, "business-registration": {"label": "사업자등록", "page": "startup-business-registration.html"}, "trademark": {"label": "상표 출원", "page": "startup-trademark.html"}, "domain": {"label": "도메인 확보", "page": "startup-domain.html"}, "office-contract": {"label": "사무실 계약", "page": "startup-office-contract.html"}, "startup-cost": {"label": "초기비용 계산", "page": "startup-startup-cost.html"}, "startup-checklist": {"label": "사업 시작 체크리스트", "page": "startup-startup-checklist.html"}}}, "product": {"label": "상품과 서비스", "subs": {"product-planning": {"label": "상품기획", "page": "product-product-planning.html"}, "costing": {"label": "원가 계산", "page": "product-costing.html"}, "pricing": {"label": "가격 결정", "page": "product-pricing.html"}, "oem": {"label": "OEM 견적 확인", "page": "product-oem.html"}, "package": {"label": "패키지", "page": "product-package.html"}, "launch-test": {"label": "출시 전 검증", "page": "product-launch-test.html"}}}, "brand": {"label": "브랜드", "subs": {"brand-name": {"label": "브랜드명", "page": "brand-brand-name.html"}, "positioning": {"label": "포지셔닝", "page": "brand-positioning.html"}, "message": {"label": "브랜드 메시지", "page": "brand-message.html"}, "visual": {"label": "비주얼 기준", "page": "brand-visual.html"}, "brand-check": {"label": "브랜드 점검", "page": "brand-brand-check.html"}}}, "marketing": {"label": "마케팅", "subs": {"search": {"label": "검색 노출", "page": "marketing-search.html"}, "ads": {"label": "광고 성과", "page": "marketing-ads.html"}, "content": {"label": "콘텐츠 기획", "page": "marketing-content.html"}, "promotion": {"label": "프로모션", "page": "marketing-promotion.html"}, "conversion": {"label": "전환율", "page": "marketing-conversion.html"}}}, "sales": {"label": "판매와 유통", "subs": {"channel-choice": {"label": "판매채널 선택", "page": "sales-channel-choice.html"}, "naver": {"label": "네이버 판매", "page": "sales-naver.html"}, "coupang": {"label": "쿠팡 판매", "page": "sales-coupang.html"}, "offline": {"label": "오프라인 입점", "page": "sales-offline.html"}, "proposal": {"label": "입점 제안서", "page": "sales-proposal.html"}}}, "operation": {"label": "회사 운영", "subs": {"contract": {"label": "계약 확인", "page": "operation-contract.html"}, "expense": {"label": "비용 관리", "page": "operation-expense.html"}, "outsourcing": {"label": "외주 관리", "page": "operation-outsourcing.html"}, "workflow": {"label": "업무 정리", "page": "operation-workflow.html"}, "document": {"label": "문서 관리", "page": "operation-document.html"}}}, "logistics": {"label": "물류와 재고", "subs": {"3pl": {"label": "3PL 선택", "page": "logistics-3pl.html"}, "inventory": {"label": "재고 관리", "page": "logistics-inventory.html"}, "packing": {"label": "포장비", "page": "logistics-packing.html"}, "returns": {"label": "반품 관리", "page": "logistics-returns.html"}, "warehouse-move": {"label": "물류 이관", "page": "logistics-warehouse-move.html"}}}, "data-ai": {"label": "데이터와 AI", "subs": {"sales-data": {"label": "매출 데이터", "page": "data-ai-sales-data.html"}, "customer-data": {"label": "고객 데이터", "page": "data-ai-customer-data.html"}, "free-data": {"label": "무료 데이터", "page": "data-ai-free-data.html"}, "ai-work": {"label": "AI 업무 활용", "page": "data-ai-ai-work.html"}, "automation": {"label": "업무 자동화", "page": "data-ai-automation.html"}}}};
 
-let token="", posts=[], postsSha="", currentPage={path:"",sha:"",html:""}, files=[];
+let token="", posts=[], postsSha="", currentPage={path:"",sha:"",html:""}, currentResource={path:"",sha:"",html:"",downloadPath:""}, files=[];
 const $=id=>document.getElementById(id);
 
 function setStatus(message,type="info"){
@@ -15,6 +15,12 @@ function setStatus(message,type="info"){
 }
 function setPageStatus(message,type="info"){
   const el=$("pageSaveStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.className=`status show ${type}`;
+}
+function setResourceStatus(message,type="info"){
+  const el=$("resourceSaveStatus");
   if(!el)return;
   el.textContent=message;
   el.className=`status show ${type}`;
@@ -78,6 +84,8 @@ $("connectBtn").addEventListener("click",async()=>{
     const uploadFileBtn=$("uploadFileBtn");
     const fileInput=$("fileInput");
     if(loadPageBtn) loadPageBtn.disabled=false;
+    const loadResourceBtn=$("loadResourceBtn");
+    if(loadResourceBtn) loadResourceBtn.disabled=false;
     if(uploadFileBtn) uploadFileBtn.disabled=!(fileInput && fileInput.files && fileInput.files.length);
     setStatus(`연결되었습니다. 콘텐츠 ${posts.length}개와 첨부파일 ${files.length}개를 확인했습니다.`,"ok");
   }catch(e){ setStatus("연결하지 못했습니다: "+e.message,"err"); }
@@ -191,6 +199,191 @@ $("savePageBtn").addEventListener("click",async()=>{
   }finally{
     saveBtn.disabled=false;
     saveBtn.textContent="페이지 저장";
+  }
+});
+
+
+/* ---------- 실무자료 관리 ---------- */
+function listTextFrom(el){
+  return Array.from(el?.querySelectorAll("li")||[]).map(li=>li.textContent.trim()).join("\n");
+}
+function fillListElement(el,text){
+  if(!el)return;
+  const items=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  el.innerHTML=items.map(s=>`<li>${escapeHtml(s)}</li>`).join("");
+}
+function currentDownloadFromDoc(doc){
+  const a=doc.querySelector('a[href^="downloads/"]');
+  return a ? a.getAttribute("href") : "";
+}
+function ensureDownloadButton(doc,path){
+  const article=doc.querySelector("article.article");
+  if(!article)return;
+  let a=article.querySelector('a[href^="downloads/"]');
+  let wrapper=a?.parentElement;
+
+  if(!path){
+    if(wrapper && wrapper.querySelector('a[href^="downloads/"]')) wrapper.remove();
+    return;
+  }
+
+  if(!a){
+    wrapper=doc.createElement("div");
+    wrapper.setAttribute("style","margin-top:24px");
+    a=doc.createElement("a");
+    a.className="btn primary";
+    a.setAttribute("download","");
+    a.textContent="샘플 파일 내려받기";
+    wrapper.appendChild(a);
+    article.appendChild(wrapper);
+  }
+  a.setAttribute("href",path);
+}
+
+$("loadResourceBtn").addEventListener("click",async()=>{
+  const path=$("resourceSelect").value;
+  $("saveResourceBtn").disabled=true;
+  setResourceStatus("실무자료를 불러오는 중입니다…","info");
+  try{
+    const data=await getFile(path);
+    const html=decodeBase64Utf8(data.content);
+    const doc=new DOMParser().parseFromString(html,"text/html");
+    const article=doc.querySelector("article.article");
+    if(!article)throw new Error("실무자료 본문 영역을 찾지 못했습니다.");
+
+    currentResource={path,sha:data.sha,html,downloadPath:currentDownloadFromDoc(doc)};
+
+    $("rsTitle").value=qText(doc,".page-hero h1");
+    $("rsHeroSummary").value=qText(doc,".page-hero h1 + p");
+
+    const h2s=Array.from(article.querySelectorAll(":scope > h2"));
+    const usageH=h2s.find(h=>h.textContent.trim()==="이 자료는 이렇게 씁니다");
+    const stepsH=h2s.find(h=>h.textContent.trim()==="실제로 사용하는 순서");
+
+    $("rsUsage").value=listTextFrom(usageH?.nextElementSibling);
+    $("rsTip").value=qText(article,".practice-box p");
+    $("rsExample").value=qText(article,".example-box p");
+    $("rsSteps").value=listTextFrom(stepsH?.nextElementSibling);
+    $("rsFinishTitle").value=qText(article,".finish-box strong");
+    $("rsFinishBody").value=qText(article,".finish-box p");
+
+    const current=currentResource.downloadPath;
+    $("rsCurrentFile").textContent=current ? current.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
+    $("rsFileName").value=current ? current.replace("downloads/","") : "";
+    $("rsFileInput").value="";
+    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
+
+    $("saveResourceBtn").disabled=false;
+    $("resourceEditNote").textContent=`수정 중: ${$("resourceSelect").selectedOptions[0].textContent}`;
+    setResourceStatus("실무자료를 불러왔습니다. 수정 후 ‘실무자료 저장’을 누르세요.","ok");
+  }catch(e){
+    $("saveResourceBtn").disabled=true;
+    setResourceStatus("실무자료를 불러오지 못했습니다: "+e.message,"err");
+  }
+});
+
+$("resourceSelect").addEventListener("change",()=>{
+  $("saveResourceBtn").disabled=true;
+  $("resourceEditNote").textContent="자료를 다시 불러오세요";
+  setResourceStatus("선택이 바뀌었습니다. ‘자료 불러오기’를 눌러주세요.","info");
+});
+
+$("rsFileInput").addEventListener("change",()=>{
+  const f=$("rsFileInput").files[0];
+  if(!f){
+    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
+    return;
+  }
+  $("rsFileName").value=f.name;
+  $("rsSelectedFileInfo").textContent=`선택됨: ${f.name} · ${humanSize(f.size)}`;
+});
+
+$("saveResourceBtn").addEventListener("click",async()=>{
+  if(!currentResource.path){
+    setResourceStatus("먼저 실무자료를 불러와주세요.","err");
+    return;
+  }
+
+  const btn=$("saveResourceBtn");
+  btn.disabled=true;
+  btn.textContent="저장 중…";
+  setResourceStatus("실무자료와 첨부파일을 저장하는 중입니다…","info");
+
+  try{
+    const doc=new DOMParser().parseFromString(currentResource.html,"text/html");
+    const article=doc.querySelector("article.article");
+    if(!article)throw new Error("실무자료 본문 영역을 찾지 못했습니다.");
+
+    const heroTitle=doc.querySelector(".page-hero h1");
+    const heroSummary=doc.querySelector(".page-hero h1 + p");
+    if(heroTitle)heroTitle.textContent=$("rsTitle").value.trim();
+    if(heroSummary)heroSummary.textContent=$("rsHeroSummary").value.trim();
+
+    const h2s=Array.from(article.querySelectorAll(":scope > h2"));
+    const usageH=h2s.find(h=>h.textContent.trim()==="이 자료는 이렇게 씁니다");
+    const stepsH=h2s.find(h=>h.textContent.trim()==="실제로 사용하는 순서");
+    fillListElement(usageH?.nextElementSibling,$("rsUsage").value);
+
+    const tip=article.querySelector(".practice-box p");
+    if(tip)tip.textContent=$("rsTip").value.trim();
+
+    const ex=article.querySelector(".example-box p");
+    if(ex)ex.textContent=$("rsExample").value.trim();
+
+    fillListElement(stepsH?.nextElementSibling,$("rsSteps").value);
+
+    const ft=article.querySelector(".finish-box strong");
+    const fb=article.querySelector(".finish-box p");
+    if(ft)ft.textContent=$("rsFinishTitle").value.trim();
+    if(fb)fb.textContent=$("rsFinishBody").value.trim();
+
+    let finalDownloadPath=currentResource.downloadPath;
+    const newFile=$("rsFileInput").files[0];
+    let fileName=$("rsFileName").value.trim();
+
+    if(newFile){
+      if(!fileName)fileName=newFile.name;
+      if(fileName.includes("/")||fileName.includes("\\"))throw new Error("첨부파일명에는 / 또는 \\\\ 문자를 사용할 수 없습니다.");
+
+      const uploadPath=`${CONFIG.downloadsDir}/${fileName}`;
+      let existingSha="";
+      try{
+        const existing=await getFile(uploadPath);
+        existingSha=existing.sha;
+      }catch(e){
+        if(!String(e.message).startsWith("404"))throw e;
+      }
+
+      const bytes=new Uint8Array(await newFile.arrayBuffer());
+      await putFile(uploadPath,bytesToBase64(bytes),existingSha,`${existingSha?"Replace":"Add"} resource attachment: ${fileName}`);
+      finalDownloadPath=uploadPath;
+    }else if(fileName){
+      finalDownloadPath=`${CONFIG.downloadsDir}/${fileName}`;
+    }
+
+    ensureDownloadButton(doc,finalDownloadPath);
+
+    const newHtml="<!doctype html>\n"+doc.documentElement.outerHTML;
+    const result=await putFile(currentResource.path,encodeBase64Utf8(newHtml),currentResource.sha,`Update resource page: ${currentResource.path}`);
+
+    currentResource.sha=result.content.sha;
+    currentResource.html=newHtml;
+    currentResource.downloadPath=finalDownloadPath;
+
+    $("rsCurrentFile").textContent=finalDownloadPath ? finalDownloadPath.replace("downloads/","") : "현재 연결된 다운로드 파일이 없습니다.";
+    $("rsFileInput").value="";
+    $("rsSelectedFileInfo").textContent="파일을 바꾸지 않으려면 선택하지 않아도 됩니다.";
+
+    await loadFiles();
+
+    setStatus("실무자료를 저장했습니다.","ok");
+    setResourceStatus("✓ 저장 완료 — 페이지 내용과 다운로드 파일 연결이 GitHub에 정상 저장되었습니다.","saved");
+  }catch(e){
+    setStatus("실무자료 저장에 실패했습니다: "+e.message,"err");
+    setResourceStatus("저장 실패: "+e.message,"err");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="실무자료 저장";
   }
 });
 

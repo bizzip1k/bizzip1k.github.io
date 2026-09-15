@@ -48,7 +48,7 @@ body{background:#f4f9fa;color:#102b46}
 <div class="admin-wrap">
   <div class="admin-top">
     <div class="admin-title"><h1>BIZZIP 관리자</h1><p>콘텐츠, 사업실무 기본페이지와 다운로드 첨부파일을 GitHub에서 직접 관리합니다.</p></div>
-    <div class="admin-badge">ADMIN v3.2</div>
+    <div class="admin-badge">ADMIN v3.3</div>
   </div>
 
   <div class="connect-card">
@@ -61,6 +61,7 @@ body{background:#f4f9fa;color:#102b46}
   <div class="tabs">
     <button class="tab-btn active" data-tab="posts">콘텐츠 관리</button>
     <button class="tab-btn" data-tab="business">사업실무 페이지</button>
+    <button class="tab-btn" data-tab="resources">실무자료 관리</button>
     <button class="tab-btn" data-tab="files">첨부파일 관리</button>
   </div>
 
@@ -123,6 +124,83 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 
+
+  <section id="panel-resources" class="panel">
+    <div class="admin-grid">
+      <aside class="admin-card">
+        <h2>실무자료 선택</h2>
+        <label class="admin-label" for="resourceSelect">자료</label>
+        <select id="resourceSelect" class="admin-select">
+          <option value="resource-start-check.html">사업 시작 체크리스트</option>
+          <option value="resource-pricing.html">원가·판매가 계산표</option>
+          <option value="resource-3pl.html">3PL 비교표</option>
+          <option value="resource-oem.html">OEM 견적 확인 가이드</option>
+          <option value="resource-ad-check.html">광고 성과 점검표</option>
+          <option value="resource-proposal.html">입점 제안서 작성 가이드</option>
+        </select>
+        <button id="loadResourceBtn" class="admin-btn primary" style="width:100%;margin-top:12px" disabled>자료 불러오기</button>
+        <div class="helper">
+          실무자료의 설명, 사용법, 예시, 실행순서, 마무리 문구와 연결된 다운로드 파일을 함께 수정합니다.
+        </div>
+      </aside>
+
+      <div class="admin-card">
+        <h2>실무자료 수정</h2>
+        <div class="notice">
+          기존 페이지 디자인은 그대로 두고 내용과 다운로드 파일만 수정합니다.
+          새 첨부파일을 선택하면 저장할 때 파일 업로드와 다운로드 링크 변경까지 함께 처리합니다.
+        </div>
+
+        <div class="fixed-fields">
+          <div><label class="admin-label">자료 제목</label><input id="rsTitle" class="admin-input"></div>
+          <div><label class="admin-label">상단 한줄 설명</label><input id="rsHeroSummary" class="admin-input"></div>
+
+          <div class="wide"><label class="admin-label">이 자료는 이렇게 씁니다 (한 줄에 한 항목)</label>
+            <textarea id="rsUsage" class="admin-textarea" style="min-height:110px"></textarea></div>
+
+          <div class="wide"><label class="admin-label">사용 팁</label>
+            <textarea id="rsTip" class="admin-textarea" style="min-height:85px"></textarea></div>
+
+          <div class="wide"><label class="admin-label">현장 예시</label>
+            <textarea id="rsExample" class="admin-textarea" style="min-height:85px"></textarea></div>
+
+          <div class="wide"><label class="admin-label">실제로 사용하는 순서 (한 줄에 한 단계)</label>
+            <textarea id="rsSteps" class="admin-textarea" style="min-height:120px"></textarea></div>
+
+          <div class="wide"><label class="admin-label">마무리 제목</label>
+            <input id="rsFinishTitle" class="admin-input"></div>
+
+          <div class="wide"><label class="admin-label">마무리 설명</label>
+            <textarea id="rsFinishBody" class="admin-textarea" style="min-height:85px"></textarea></div>
+        </div>
+
+        <div class="file-drop" style="margin-top:16px">
+          <strong style="display:block;margin-bottom:8px">연결된 다운로드 파일</strong>
+
+          <label class="admin-label">현재 파일</label>
+          <div id="rsCurrentFile" class="guide" style="margin-top:0">페이지를 먼저 불러오세요.</div>
+
+          <label class="admin-label" for="rsFileInput">새 파일 업로드 / 교체</label>
+          <input id="rsFileInput" type="file">
+          <div id="rsSelectedFileInfo" class="helper">파일을 바꾸지 않으려면 선택하지 않아도 됩니다.</div>
+
+          <label class="admin-label" for="rsFileName">사이트에 저장할 파일명</label>
+          <input id="rsFileName" class="admin-input" placeholder="예: 3PL_비교표.xlsx">
+
+          <div class="helper">
+            새 파일을 선택하면 <code>downloads/파일명</code>으로 업로드하고 이 실무자료의 다운로드 버튼도 자동으로 해당 파일에 연결합니다.
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="saveResourceBtn" class="admin-btn teal" disabled>실무자료 저장</button>
+          <span id="resourceEditNote" class="edit-note">자료를 먼저 불러오세요</span>
+        </div>
+        <div id="resourceSaveStatus" class="status" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="panel-files" class="panel">
     <div class="admin-grid">
       <aside class="admin-card"><h2>현재 첨부파일</h2><div id="fileList" class="item-list"><div class="helper">먼저 GitHub에 연결하세요.</div></div></aside>
@@ -141,6 +219,6 @@ body{background:#f4f9fa;color:#102b46}
     </div>
   </section>
 </div>
-<script src="admin.js?v=3.2"></script>
+<script src="admin.js?v=3.3"></script>
 </body>
 </html>
