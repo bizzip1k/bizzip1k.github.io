@@ -1351,6 +1351,103 @@ $("saveAboutBtn").addEventListener("click",async()=>{
   }catch(e){setAboutStatus("저장 실패: "+e.message,"err");}
   finally{btn.disabled=false;btn.textContent="BIZZIP 소개 저장";}
 });
+/* ---------- 반복형 항목 공통: 사업실무 STEP ---------- */
+let businessStepsData=[{title:"",body:""}];
+
+function getBusinessSteps(){
+  const items=Array.from(document.querySelectorAll("#businessSteps .repeater-item"));
+  if(!items.length)return businessStepsData;
+  return items.map(item=>({
+    title:item.querySelector(".step-title-input")?.value.trim()||"",
+    body:item.querySelector(".step-body-input")?.value.trim()||""
+  }));
+}
+
+function setBusinessSteps(steps){
+  businessStepsData=(steps&&steps.length?steps:[{title:"",body:""}]).map(s=>({title:s.title||"",body:s.body||""}));
+  renderBusinessSteps();
+}
+
+function renderBusinessSteps(){
+  const mount=$("businessSteps");
+  if(!mount)return;
+  mount.innerHTML=businessStepsData.map((s,i)=>`
+    <div class="repeater-item" data-index="${i}">
+      <div class="repeater-head">
+        <span class="repeater-title">STEP ${i+1}</span>
+        <div class="repeater-actions">
+          <button type="button" class="admin-btn light move-step-up" ${i===0?"disabled":""}>↑</button>
+          <button type="button" class="admin-btn light move-step-down" ${i===businessStepsData.length-1?"disabled":""}>↓</button>
+          <button type="button" class="admin-btn danger delete-step" ${businessStepsData.length===1?"disabled":""}>삭제</button>
+        </div>
+      </div>
+      <label class="admin-label">제목</label>
+      <input class="admin-input step-title-input" value="${escapeHtml(s.title)}">
+      <label class="admin-label">설명</label>
+      <textarea class="admin-textarea step-body-input" style="min-height:75px">${escapeHtml(s.body)}</textarea>
+    </div>
+  `).join("");
+
+  mount.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input",()=>{
+    businessStepsData=getBusinessSteps();
+    renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".delete-step").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(businessStepsData.length>1)businessStepsData.splice(idx,1);
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".move-step-up").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(idx>0)[businessStepsData[idx-1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx-1]];
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+
+  mount.querySelectorAll(".move-step-down").forEach(btn=>btn.addEventListener("click",()=>{
+    businessStepsData=getBusinessSteps();
+    const idx=Number(btn.closest(".repeater-item").dataset.index);
+    if(idx<businessStepsData.length-1)[businessStepsData[idx+1],businessStepsData[idx]]=[businessStepsData[idx],businessStepsData[idx+1]];
+    renderBusinessSteps();renderBusinessPreview();
+  }));
+}
+
+function syncBusinessStepsToArticle(article){
+  const steps=getBusinessSteps();
+  let existing=Array.from(article.querySelectorAll(".step-card"));
+  if(!existing.length)return;
+
+  const parent=existing[0].parentElement;
+  const template=existing[0].cloneNode(true);
+  existing.forEach(el=>el.remove());
+
+  steps.forEach((s,i)=>{
+    const node=template.cloneNode(true);
+    const st=node.querySelector("strong");
+    const sp=node.querySelector("p");
+    if(st)st.textContent=`STEP ${i+1}. ${s.title}`;
+    if(sp)sp.textContent=s.body;
+    parent.appendChild(node);
+  });
+}
+
+document.addEventListener("click",e=>{
+  if(e.target?.id==="addBusinessStepBtn"){
+    businessStepsData=getBusinessSteps();
+    businessStepsData.push({title:"",body:""});
+    renderBusinessSteps();renderBusinessPreview();
+  }
+  if(e.target?.id==="removeBusinessStepBtn"){
+    businessStepsData=getBusinessSteps();
+    if(businessStepsData.length>1)businessStepsData.pop();
+    renderBusinessSteps();renderBusinessPreview();
+  }
+});
+
+
 /* ---------- 사업실무 실시간 미리보기 ---------- */
 function previewLines(text){
   return text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
