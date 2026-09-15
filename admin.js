@@ -63,6 +63,121 @@ function bytesToBase64(bytes){
 }
 function encodeBase64Utf8(text){ return bytesToBase64(new TextEncoder().encode(text)); }
 function escapeHtml(s){ return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+
+/* ---------- v3.8.1 Generic repeater helpers ---------- */
+function repEsc(v){ return escapeHtml(v||""); }
+
+function makeRepeater(mountId, items, fields, onChange){
+  const mount=$(mountId);
+  if(!mount)return;
+
+  const initial=(items && items.length) ? items : [{}];
+  mount.dataset.items=JSON.stringify(initial);
+
+  const render=()=>{
+    const data=JSON.parse(mount.dataset.items||"[]");
+
+    mount.innerHTML=data.map((item,i)=>`
+      <div class="rep-item" data-index="${i}">
+        <div class="rep-head">
+          <strong>${i+1}번 항목</strong>
+          <div class="rep-actions">
+            <button type="button" class="admin-btn light rep-up" ${i===0?"disabled":""}>↑</button>
+            <button type="button" class="admin-btn light rep-down" ${i===data.length-1?"disabled":""}>↓</button>
+            <button type="button" class="admin-btn danger rep-delete" ${data.length===1?"disabled":""}>삭제</button>
+          </div>
+        </div>
+        ${fields.map(f=>{
+          const val=item[f.key] ?? "";
+          return f.type==="textarea"
+            ? `<label class="admin-label">${f.label}</label>
+               <textarea class="admin-textarea rep-field" data-key="${f.key}" style="min-height:${f.height||70}px">${repEsc(val)}</textarea>`
+            : `<label class="admin-label">${f.label}</label>
+               <input class="admin-input rep-field" data-key="${f.key}" value="${repEsc(val)}">`;
+        }).join("")}
+      </div>
+    `).join("");
+
+    mount.querySelectorAll(".rep-field").forEach(el=>{
+      el.addEventListener("input",()=>{
+        const row=el.closest(".rep-item");
+        const idx=Number(row.dataset.index);
+        const data=JSON.parse(mount.dataset.items||"[]");
+        if(!data[idx])data[idx]={};
+        data[idx][el.dataset.key]=el.value;
+        mount.dataset.items=JSON.stringify(data);
+        if(onChange)onChange();
+      });
+    });
+
+    mount.querySelectorAll(".rep-delete").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const idx=Number(btn.closest(".rep-item").dataset.index);
+        const data=JSON.parse(mount.dataset.items||"[]");
+        if(data.length>1)data.splice(idx,1);
+        mount.dataset.items=JSON.stringify(data);
+        render();
+        if(onChange)onChange();
+      });
+    });
+
+    mount.querySelectorAll(".rep-up").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const idx=Number(btn.closest(".rep-item").dataset.index);
+        const data=JSON.parse(mount.dataset.items||"[]");
+        if(idx>0)[data[idx-1],data[idx]]=[data[idx],data[idx-1]];
+        mount.dataset.items=JSON.stringify(data);
+        render();
+        if(onChange)onChange();
+      });
+    });
+
+    mount.querySelectorAll(".rep-down").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const idx=Number(btn.closest(".rep-item").dataset.index);
+        const data=JSON.parse(mount.dataset.items||"[]");
+        if(idx<data.length-1)[data[idx+1],data[idx]]=[data[idx],data[idx+1]];
+        mount.dataset.items=JSON.stringify(data);
+        render();
+        if(onChange)onChange();
+      });
+    });
+  };
+
+  mount._rerender=render;
+  render();
+}
+
+function getRepeaterData(id){
+  const mount=$(id);
+  if(!mount)return [];
+  try{
+    return JSON.parse(mount.dataset.items||"[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function addRepeaterItem(id,item,onChange){
+  const mount=$(id);
+  if(!mount)return;
+  const data=getRepeaterData(id);
+  data.push(item||{});
+  mount.dataset.items=JSON.stringify(data);
+  if(mount._rerender)mount._rerender();
+  if(onChange)onChange();
+}
+
+function removeLastRepeaterItem(id,onChange){
+  const mount=$(id);
+  if(!mount)return;
+  const data=getRepeaterData(id);
+  if(data.length>1)data.pop();
+  mount.dataset.items=JSON.stringify(data);
+  if(mount._rerender)mount._rerender();
+  if(onChange)onChange();
+}
+
 function ghPath(path){ return `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`; }
 
 async function githubRequest(url,options={}){
@@ -522,10 +637,10 @@ $("problemSelect").addEventListener("change",()=>{
   $("saveProblemBtn").disabled=true;$("problemEditNote").textContent="페이지를 다시 불러오세요";
   setProblemStatus("선택이 바뀌었습니다. ‘문제 페이지 불러오기’를 눌러주세요.","info");
 });
-$("addProblemCardBtn").addEventListener("click",()=>addRepeaterItem("problemCardsEditor",{title:"",body:"",href:""},renderProblemPreview));
-$("removeProblemCardBtn").addEventListener("click",()=>removeLastRepeaterItem("problemCardsEditor",renderProblemPreview));
-$("addQuickCheckBtn").addEventListener("click",()=>addRepeaterItem("quickChecksEditor",{title:"",body:""},renderProblemPreview));
-$("removeQuickCheckBtn").addEventListener("click",()=>removeLastRepeaterItem("quickChecksEditor",renderProblemPreview));
+if($("addProblemCardBtn")) $("addProblemCardBtn").addEventListener("click",()=>addRepeaterItem("problemCardsEditor",{title:"",body:"",href:""},renderProblemPreview));
+if($("removeProblemCardBtn")) $("removeProblemCardBtn").addEventListener("click",()=>removeLastRepeaterItem("problemCardsEditor",renderProblemPreview));
+if($("addQuickCheckBtn")) $("addQuickCheckBtn").addEventListener("click",()=>addRepeaterItem("quickChecksEditor",{title:"",body:""},renderProblemPreview));
+if($("removeQuickCheckBtn")) $("removeQuickCheckBtn").addEventListener("click",()=>removeLastRepeaterItem("quickChecksEditor",renderProblemPreview));
 
 $("saveProblemBtn").addEventListener("click",async()=>{
   if(!currentProblem.path)return setProblemStatus("먼저 문제 페이지를 불러와주세요.","err");
