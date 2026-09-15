@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIZZIP 관리자</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body{background:#f4f9fa}
+  .admin-wrap{max-width:1180px;margin:0 auto;padding:32px 24px 70px}
+  .admin-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
+  .admin-title h1{margin:0;font-size:32px;letter-spacing:-1.2px;color:#102b46}
+  .admin-title p{margin:8px 0 0;color:#6f7f89;font-size:14px}
+  .admin-badge{font-size:12px;font-weight:800;color:#147b70;background:#dff4ef;border:1px solid #c8eae4;padding:8px 12px;border-radius:999px}
+  .admin-grid{display:grid;grid-template-columns:340px 1fr;gap:22px}
+  .admin-card{background:#fff;border:1px solid #d9e6e9;border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(16,43,70,.04)}
+  .admin-card h2{margin:0 0 16px;font-size:19px;color:#102b46}
+  .token-row{display:flex;gap:8px}
+  .admin-input,.admin-select,.admin-textarea{
+    width:100%;box-sizing:border-box;border:1px solid #cfdde1;border-radius:10px;padding:11px 12px;
+    font:inherit;color:#102b46;background:#fff;outline:none
+  }
+  .admin-input:focus,.admin-select:focus,.admin-textarea:focus{border-color:#2a9b87;box-shadow:0 0 0 3px rgba(42,155,135,.10)}
+  .admin-textarea{min-height:250px;resize:vertical;line-height:1.7}
+  .admin-label{display:block;margin:14px 0 7px;font-size:12px;font-weight:800;color:#425966}
+  .admin-btn{
+    border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;font:inherit
+  }
+  .primary{background:#123e58;color:#fff}
+  .teal{background:#168a7c;color:#fff}
+  .light{background:#edf5f6;color:#264c5d}
+  .danger{background:#fff0ef;color:#a63f36;border:1px solid #f0ceca}
+  .admin-btn:disabled{opacity:.45;cursor:not-allowed}
+  .helper{font-size:12px;line-height:1.6;color:#7c8a92;margin-top:8px}
+  .status{margin-top:12px;padding:11px 12px;border-radius:10px;font-size:13px;display:none}
+  .status.show{display:block}
+  .status.ok{background:#e6f6f0;color:#166a5c}
+  .status.err{background:#fff0ef;color:#9c4037}
+  .status.info{background:#edf5fb;color:#355d78}
+  .post-list{display:flex;flex-direction:column;gap:9px;max-height:600px;overflow:auto;padding-right:4px}
+  .post-item{border:1px solid #e0eaed;border-radius:12px;padding:12px;background:#fbfdfd}
+  .post-item strong{display:block;font-size:14px;color:#102b46;margin-bottom:5px}
+  .post-meta{font-size:11px;color:#7e8d95;margin-bottom:10px}
+  .post-actions{display:flex;gap:7px}
+  .post-actions button{padding:7px 9px;font-size:12px}
+  .form-row{display:grid;grid-template-columns:1fr 180px;gap:12px}
+  .form-actions{display:flex;gap:10px;align-items:center;margin-top:18px}
+  .edit-note{font-size:12px;color:#168a7c;font-weight:800;margin-left:auto}
+  .format-guide{margin-top:12px;padding:13px 14px;background:#f5faf9;border-radius:10px;border:1px solid #deece9;font-size:12px;color:#51636b;line-height:1.7}
+  code{background:#eef3f4;padding:2px 5px;border-radius:5px}
+  @media(max-width:850px){.admin-grid{grid-template-columns:1fr}.admin-top{align-items:flex-start}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="admin-top">
+    <div class="admin-title">
+      <h1>BIZZIP 관리자</h1>
+      <p>콘텐츠를 추가하거나 기존 글을 수정해 GitHub에 바로 반영합니다.</p>
+    </div>
+    <div class="admin-badge">ADMIN v1</div>
+  </div>
+
+  <div class="admin-grid">
+    <aside>
+      <div class="admin-card">
+        <h2>1. GitHub 연결</h2>
+        <label class="admin-label" for="token">Fine-grained token</label>
+        <div class="token-row">
+          <input id="token" class="admin-input" type="password" autocomplete="off" placeholder="github_pat_...">
+          <button id="connectBtn" class="admin-btn primary">연결</button>
+        </div>
+        <div class="helper">토큰은 브라우저에 저장하지 않습니다. 페이지를 닫으면 다시 입력해야 합니다.</div>
+        <div id="status" class="status"></div>
+      </div>
+
+      <div class="admin-card" style="margin-top:18px">
+        <h2>2. 등록된 글</h2>
+        <div id="postList" class="post-list">
+          <div class="helper">먼저 GitHub에 연결하세요.</div>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="admin-card">
+        <h2>3. 글 작성 / 수정</h2>
+        <input id="postId" type="hidden">
+
+        <div class="form-row">
+          <div>
+            <label class="admin-label" for="title">제목</label>
+            <input id="title" class="admin-input" placeholder="예: 가격을 정할 때 원가만 보면 안 되는 이유">
+          </div>
+          <div>
+            <label class="admin-label" for="date">발행일</label>
+            <input id="date" class="admin-input" type="date">
+          </div>
+        </div>
+
+        <label class="admin-label" for="category">사업실무 카테고리</label>
+        <select id="category" class="admin-select">
+          <option value="startup">창업 준비</option>
+          <option value="product">상품과 서비스</option>
+          <option value="brand">브랜드</option>
+          <option value="marketing">마케팅</option>
+          <option value="sales">판매와 유통</option>
+          <option value="operation">회사 운영</option>
+          <option value="logistics">물류와 재고</option>
+          <option value="data-ai">데이터와 AI</option>
+        </select>
+
+        <label class="admin-label" for="summary">요약</label>
+        <textarea id="summary" class="admin-textarea" style="min-height:90px" placeholder="목록 카드에 표시될 1~2문장 요약"></textarea>
+
+        <label class="admin-label" for="body">본문</label>
+        <textarea id="body" class="admin-textarea" placeholder="아래 형식 안내를 참고해 작성하세요."></textarea>
+
+        <div class="format-guide">
+          <strong>본문 작성 방식</strong><br>
+          <code>## 소제목</code> → 새로운 소제목<br>
+          일반 문장 → 본문 문단<br>
+          <code>- 확인항목</code> → 체크리스트/목록<br><br>
+          예: <code>## 먼저 확인할 것</code> 다음 줄에 내용을 쓰고, 항목은 <code>- 원가 확인</code>처럼 입력하면 됩니다.
+        </div>
+
+        <div class="form-actions">
+          <button id="newBtn" class="admin-btn light">새 글</button>
+          <button id="saveBtn" class="admin-btn teal" disabled>GitHub에 저장</button>
+          <span id="editNote" class="edit-note">새 글 작성</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="admin.js"></script>
+</body>
+</html>
