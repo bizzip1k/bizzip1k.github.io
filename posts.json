@@ -729,7 +729,8 @@
     "source": "google-drive-standard-manuscript",
     "sourceDocumentId": "1YPusaGLRes_7y9HVxly-XfY3UIysqaqG8V6G_9E9yLE",
     "sourceDocumentTitle": "BIZZIP_003_사업에 쓸 수 있는 시간을 주간표로 그리기",
-    "sitePlacement": "unassigned"
+    "sitePlacement": "unassigned",
+    "publishedAt": "2026-09-20T14:59:43.000Z"
   },
   {
     "id": "BZ-0001",
@@ -970,6 +971,7 @@
     "source": "google-drive-standard-manuscript",
     "sourceDocumentId": "16KaIWykDsZlgSacveOc_V6HBiE8l8UeipGJcAd_M8bk",
     "sourceDocumentTitle": "BIZZIP_001_창업 아이디어보다 먼저 확인해야 할 한 가지",
-    "sitePlacement": "unassigned"
+    "sitePlacement": "unassigned",
+    "publishedAt": "2026-09-20T14:59:42.000Z"
   }
 ]
