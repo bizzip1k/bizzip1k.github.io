@@ -619,3 +619,11 @@ main > section{
     margin-bottom:20px !important;
   }
 }
+
+/* v5.3 - BIZZIP 만드는 사람 */
+.people-section .section-head{margin-bottom:18px}
+.people-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}
+.person-card{display:grid;grid-template-columns:160px 1fr;gap:18px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:var(--shadow)}
+.person-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;display:block}
+.person-body h3{font-size:22px;margin:6px 0 2px}.person-role{font-size:13px;font-weight:800;color:var(--teal);margin-bottom:10px}.person-body p{line-height:1.65}.person-link{margin-top:10px}.person-link a{font-size:13px;font-weight:800;color:var(--teal)}
+@media(max-width:720px){.person-card{grid-template-columns:1fr}.person-photo{max-width:220px}}

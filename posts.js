@@ -5,6 +5,17 @@
     "sales":"판매와 유통","operation":"회사 운영","logistics":"물류와 재고","data-ai":"데이터와 AI"
   };
 
+
+  function ensureHomeMenu() {
+    const menu = document.querySelector("nav.menu");
+    if (!menu || menu.querySelector('a[href="index.html"]')) return;
+    const a = document.createElement("a");
+    a.href = "index.html";
+    a.textContent = "홈";
+    a.className = "";
+    menu.insertBefore(a, menu.firstChild);
+  }
+
   async function getPosts() {
     const res = await fetch("posts.json?v=" + Date.now());
     if (!res.ok) throw new Error("posts.json을 불러오지 못했습니다.");
@@ -49,7 +60,7 @@
   }
 
   function sectionHtml(section) {
-    let html = `<section class="post-section"><h2>${section.heading || ""}</h2>`;
+    let html = `<section class="post-section">${section.heading ? `<h2>${section.heading}</h2>` : ""}`;
     (section.paragraphs || []).forEach(p => html += `<p>${p}</p>`);
     if (section.bullets && section.bullets.length) {
       html += "<ul>";
@@ -75,10 +86,12 @@
 
       const crumb = document.getElementById("post-breadcrumb");
       if (crumb) {
-        let c = `<a href="index.html">홈</a> / <a href="business.html">사업실무</a>`;
-        if (post.category && post.categoryLabel) c += ` / <a href="${post.category}.html">${post.categoryLabel}</a>`;
-        if (post.subcategoryLabel && post.subcategoryPage) c += ` / <a href="${post.subcategoryPage}">${post.subcategoryLabel}</a>`;
-        c += ` / 콘텐츠`;
+        let c = `<a href="index.html">홈</a> / <a href="contents.html">콘텐츠</a>`;
+        if (post.category && post.categoryLabel) {
+          c += ` / <a href="business.html">사업실무</a>`;
+          c += ` / <a href="${post.category}.html">${post.categoryLabel}</a>`;
+          if (post.subcategoryLabel && post.subcategoryPage) c += ` / <a href="${post.subcategoryPage}">${post.subcategoryLabel}</a>`;
+        }
         crumb.innerHTML = c;
       }
 
@@ -94,8 +107,8 @@
         <article class="article">
           ${(post.sections || []).map(sectionHtml).join("")}
           <div class="small-cta">
-            <strong>이 글은 사업실무의 세부 주제와 연결되어 있습니다.</strong>
-            <span>${post.subcategoryLabel ? `${post.categoryLabel} → ${post.subcategoryLabel}` : post.categoryLabel || ""}</span>
+            <strong>${post.category ? "이 글은 사업실무의 세부 주제와 연결되어 있습니다." : "이 글은 최신 BIZZIP 콘텐츠로 등록되었습니다."}</strong>
+            <span>${post.category ? (post.subcategoryLabel ? `${post.categoryLabel} → ${post.subcategoryLabel}` : post.categoryLabel || "") : "관리자에서 사업실무 분류를 지정할 수 있습니다."}</span>
           </div>
         </article>`;
     } catch(e) {
@@ -146,6 +159,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    ensureHomeMenu();
     preserveProblemEntryPath();
     renderLists();
     renderPost();
