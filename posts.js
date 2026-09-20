@@ -283,10 +283,9 @@
   document.addEventListener("DOMContentLoaded", () => {
     ensureHomeMenu();
     preserveProblemEntryPath();
+    configureResourcesLanding();
+    bindFolderSearches();
     renderLists();
     renderPost();
   });
 })();
-
-// v5.3.5 topic-folder initialization
-document.addEventListener("DOMContentLoaded", () => { configureResourcesLanding(); bindFolderSearches(); });
