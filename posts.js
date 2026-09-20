@@ -159,7 +159,7 @@
   }
 
   function postCard(post) {
-    const sub = post.subcategoryLabel ? `<span class="post-subtopic">${post.subcategoryLabel}</span>` : "";
+    const sub = "";
     return `
       <a class="content-card auto-post-card" href="post.html?id=${encodeURIComponent(post.id)}">
         <div class="tag">${post.categoryLabel || CATEGORY_NAMES[post.category] || "BIZZIP"}</div>
@@ -182,6 +182,14 @@
         const category = target.dataset.category || "";
         const subcategory = target.dataset.subcategory || "";
         const unclassified = target.dataset.unclassified === "1";
+
+        // 콘텐츠와 사업실무는 별도 체계로 운영합니다.
+        // 사업실무 페이지에 남아 있는 기존 data-category / data-subcategory 목록은 표시하지 않습니다.
+        if ((category || subcategory) && target.dataset.topicMode !== "contents") {
+          const section = target.closest("section");
+          if (section) section.hidden = true;
+          return;
+        }
         const limit = parseInt(target.dataset.limit || "0", 10);
         let list = posts;
         if (category) list = list.filter(p => p.category === category);
@@ -236,7 +244,7 @@
 
       const category = document.getElementById("post-category");
       if (category) category.textContent =
-        post.subcategoryLabel ? `${post.categoryLabel} / ${post.subcategoryLabel}` : (post.categoryLabel || "");
+        (post.categoryLabel || "");
 
       document.getElementById("post-title").textContent = post.title;
       document.getElementById("post-summary").textContent = post.summary || "";
@@ -247,7 +255,7 @@
           ${(post.sections || []).map(sectionHtml).join("")}
           <div class="small-cta">
             <strong>${post.category ? "이 글은 사업실무의 세부 주제와 연결되어 있습니다." : "이 글은 최신 BIZZIP 콘텐츠로 등록되었습니다."}</strong>
-            <span>${post.category ? (post.subcategoryLabel ? `${post.categoryLabel} → ${post.subcategoryLabel}` : post.categoryLabel || "") : "관리자에서 사업실무 분류를 지정할 수 있습니다."}</span>
+            <span>${post.category ? (post.categoryLabel || "") : "관리자에서 콘텐츠 주제를 지정할 수 있습니다."}</span>
           </div>
         </article>`;
     } catch(e) {

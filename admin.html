@@ -239,7 +239,7 @@ button,input,select,textarea{font:inherit}
         <div class="form-grid">
           <div><label class="label">콘텐츠 랜딩 제목</label><input id="ctLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="ctLandingSummary" class="input"></div><div class="wide"><button id="saveContentsLanding" class="btn light">콘텐츠 랜딩 저장</button></div>
           <div><label class="label">글 제목</label><input id="postTitle" class="input"></div><div><label class="label">발행일</label><input id="postDate" class="input" type="date"></div>
-          <div><label class="label">사업실무 분야</label><select id="postCategory" class="select"></select></div><div><label class="label">세부주제</label><select id="postSubcategory" class="select"></select></div>
+          <div class="wide"><label class="label">콘텐츠 주제</label><select id="postCategory" class="select"></select><div class="hint" style="margin-top:5px">콘텐츠 주제는 사업실무와 별도로 관리됩니다. 사업실무 세부주제에는 자동 연결되지 않습니다.</div></div>
           <div class="wide"><label class="label">요약</label><textarea id="postSummary" class="textarea"></textarea></div>
         </div>
         <div class="section-box"><div class="section-title"><h3>본문 섹션</h3><button id="addPostSection" class="btn light mini">+ 본문 섹션</button></div><div id="postSections" class="repeat"></div></div>
@@ -343,6 +343,6 @@ button,input,select,textarea{font:inherit}
     </div>
   </section>
 </div>
-<script src="admin.js?v=5.3.5"></script>
+<script src="admin.js?v=5.3.8"></script>
 </body>
 </html>
