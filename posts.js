@@ -8,6 +8,23 @@
 
   const CATEGORY_ORDER = ["startup","product","brand","marketing","sales","operation","logistics","data-ai"];
 
+  function postSortTime(p) {
+    if (p && p.publishedAt) {
+      const t = Date.parse(p.publishedAt);
+      if (!Number.isNaN(t)) return t;
+    }
+    if (p && p.date) {
+      const t = Date.parse(String(p.date) + "T00:00:00");
+      if (!Number.isNaN(t)) return t;
+    }
+    return 0;
+  }
+
+  function sortPostsNewestFirst(a, b) {
+    return postSortTime(b) - postSortTime(a);
+  }
+
+
   function escHtml(v) {
     return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
   }
@@ -158,7 +175,7 @@
     if (!targets.length) return;
     try {
       let posts = await getPosts();
-      posts.sort((a,b) => String(b.date).localeCompare(String(a.date)));
+      posts.sort(sortPostsNewestFirst);
       configureContentsLanding(posts);
 
       targets.forEach(target => {
