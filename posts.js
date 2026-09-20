@@ -175,6 +175,7 @@
     if (!targets.length) return;
     try {
       let posts = await getPosts();
+      posts = posts.filter(p => !p.deleted);
       posts.sort(sortPostsNewestFirst);
       configureContentsLanding(posts);
 
@@ -223,7 +224,7 @@
     try {
       const id = new URLSearchParams(location.search).get("id");
       const posts = await getPosts();
-      const post = posts.find(p => p.id === id);
+      const post = posts.find(p => p.id === id && !p.deleted);
       if (!post) {
         mount.innerHTML = `<div class="article"><h2>글을 찾을 수 없습니다.</h2><p>콘텐츠 목록에서 다시 선택해주세요.</p></div>`;
         return;

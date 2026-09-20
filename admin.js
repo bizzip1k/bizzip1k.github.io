@@ -218,30 +218,65 @@ const CONTENT_TOPICS=[
 ];
 function contentAdminCats(){return CONTENT_TOPICS.slice()}
 function renderPostFolders(){
- const cats=contentAdminCats(),counts={};cats.forEach(x=>counts[x.key]=0);let unclassified=0;
- S.contents.posts.forEach(p=>p.category?(counts[p.category]=(counts[p.category]||0)+1):unclassified++);
- const folders=[{key:"all",label:"전체",count:S.contents.posts.length},{key:"unclassified",label:"미분류",count:unclassified},...cats.map(x=>({...x,count:counts[x.key]||0}))];
+ const cats=contentAdminCats(),counts={};cats.forEach(x=>counts[x.key]=0);let unclassified=0,deleted=0,active=0;
+ S.contents.posts.forEach(p=>{if(p.deleted){deleted++;return}active++;p.category?(counts[p.category]=(counts[p.category]||0)+1):unclassified++});
+ const folders=[{key:"all",label:"전체",count:active},{key:"unclassified",label:"미분류",count:unclassified},...cats.map(x=>({...x,count:counts[x.key]||0})),{key:"deleted",label:"삭제됨",count:deleted}];
  $("postFolderBar").innerHTML=folders.map(x=>`<button class="admin-folder ${S.contents.filterCategory===x.key?"active":""}" data-key="${esc(x.key)}"><strong>${esc(x.label)}</strong><small>${x.count}개</small></button>`).join("");
  $("postFolderBar").querySelectorAll(".admin-folder").forEach(b=>b.onclick=()=>{S.contents.filterCategory=b.dataset.key;renderPostFolders();renderPostList()});
 }
 function renderPostList(){
  const filter=S.contents.filterCategory||"all",q=($("postAdminSearch")?.value||"").trim().toLowerCase();
- let arr=S.contents.posts.slice().filter(p=>filter==="all"||filter==="unclassified"?!p.category:p.category===filter);
+ let arr=S.contents.posts.slice().filter(p=>{
+   if(filter==="deleted")return !!p.deleted;
+   if(p.deleted)return false;
+   if(filter==="all")return true;
+   if(filter==="unclassified")return !p.category;
+   return p.category===filter;
+ });
  if(q)arr=arr.filter(p=>(p.title||"").toLowerCase().includes(q)||(p.summary||"").toLowerCase().includes(q));
  arr.sort(sortPostsNewestFirst);
- $("postList").innerHTML=arr.length?arr.map(p=>{const i=S.contents.posts.findIndex(x=>x.id===p.id);return `<div class="list-row"><div><strong>${esc(p.title)}</strong><small>${esc(p.date||"")} · ${esc(p.categoryLabel||"미분류")}</small></div><button class="btn light mini ep" data-i="${i}">수정</button></div>`}).join(""):`<div class="hint">이 폴더에는 콘텐츠가 없습니다.</div>`;
+ $("postList").innerHTML=arr.length?arr.map(p=>{const i=S.contents.posts.findIndex(x=>x.id===p.id);return `<div class="list-row ${S.contents.edit===i?"active":""}" data-post-i="${i}"><div><strong>${esc(p.title)}</strong><small>${esc(p.date||"")} · ${p.deleted?"삭제됨":esc(p.categoryLabel||"미분류")}</small></div><button class="btn light mini ep" data-i="${i}">${p.deleted?"열기":"수정"}</button></div>`}).join(""):`<div class="hint">이 폴더에는 콘텐츠가 없습니다.</div>`;
  $("postList").querySelectorAll(".ep").forEach(b=>b.onclick=()=>editPost(+b.dataset.i))
 }
 $("postAdminSearch").oninput=renderPostList;
 function fillPostCategories(){const cats=contentAdminCats();$("postCategory").innerHTML=`<option value="">미분류 (최신 콘텐츠에만 표시)</option>`+cats.map(x=>`<option value="${esc(x.key)}">${esc(x.label)}</option>`).join("")}
-function newPost(){S.contents.edit=-1;$("postTitle").value="";$("postDate").value=today();$("postSummary").value="";const f=S.contents.filterCategory||"all";$("postCategory").value=(f!=="all"&&f!=="unclassified")?f:"";S.contents.editSections=[{heading:"새 소제목",paragraphs:[""],bullets:[]}];renderPostSections();$("savePost").disabled=false;previewPost()}
+function newPost(){S.contents.edit=-1;$("postTitle").value="";$("postDate").value=today();$("postSummary").value="";const f=S.contents.filterCategory||"all";$("postCategory").value=(f!=="all"&&f!=="unclassified"&&f!=="deleted")?f:"";S.contents.editSections=[{heading:"새 소제목",paragraphs:[""],bullets:[]}];renderPostSections();$("savePost").disabled=false;$("deletePost").disabled=true;$("deletePost").style.display="none";previewPost()}
 $("newPost").onclick=newPost;
-async function editPost(i){S.contents.edit=i;const p=S.contents.posts[i];$("postTitle").value=p.title||"";$("postDate").value=p.date||today();$("postSummary").value=p.summary||"";$("postCategory").value=p.category||"";S.contents.editSections=JSON.parse(JSON.stringify(p.sections||[]));if(!S.contents.editSections.length)S.contents.editSections=[{heading:"본문",paragraphs:[""],bullets:[]}];renderPostSections();$("savePost").disabled=false;previewPost()}
+async function editPost(i){S.contents.edit=i;const p=S.contents.posts[i];$("postTitle").value=p.title||"";$("postDate").value=p.date||today();$("postSummary").value=p.summary||"";$("postCategory").value=p.category||"";S.contents.editSections=JSON.parse(JSON.stringify(p.sections||[]));if(!S.contents.editSections.length)S.contents.editSections=[{heading:"본문",paragraphs:[""],bullets:[]}];renderPostList();renderPostSections();$("savePost").disabled=false;$("deletePost").disabled=false;$("deletePost").style.display="inline-flex";$("deletePost").textContent=p.deleted?"콘텐츠 복원":"콘텐츠 삭제";previewPost();requestAnimationFrame(()=>{document.querySelector(`#postList .list-row[data-post-i="${i}"]`)?.scrollIntoView({block:"nearest"})})}
 function renderPostSections(){$("postSections").innerHTML=(S.contents.editSections||[]).map((s,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-head"><strong>본문 섹션 ${i+1}</strong><div class="actions"><button class="btn light mini psec-up">↑</button><button class="btn light mini psec-down">↓</button><button class="btn danger mini psec-del">삭제</button></div></div><label class="label">소제목</label><input class="input psec-head" value="${esc(s.heading||"")}"><label class="label">문단 (한 줄에 한 문단)</label><textarea class="textarea psec-par">${esc((s.paragraphs||[]).join("\n"))}</textarea><label class="label">목록 (한 줄에 한 항목)</label><textarea class="textarea psec-bul">${esc((s.bullets||[]).join("\n"))}</textarea></div>`).join("");$("postSections").querySelectorAll(".repeat-row").forEach(r=>{const i=+r.dataset.i,sync=()=>{S.contents.editSections[i]={heading:r.querySelector(".psec-head").value,paragraphs:lines(r.querySelector(".psec-par").value),bullets:lines(r.querySelector(".psec-bul").value)};previewPost()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".psec-up").onclick=()=>move(S.contents.editSections,i,-1,renderPostSections,previewPost);r.querySelector(".psec-down").onclick=()=>move(S.contents.editSections,i,1,renderPostSections,previewPost);r.querySelector(".psec-del").onclick=()=>{S.contents.editSections.splice(i,1);renderPostSections();previewPost()}})}
 $("addPostSection").onclick=()=>{S.contents.editSections=S.contents.editSections||[];S.contents.editSections.push({heading:"새 소제목",paragraphs:[""],bullets:[]});renderPostSections();previewPost()};
 function previewPost(){$("postPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BIZZIP CONTENT</div><h1>${esc($("postTitle").value)}</h1><p>${esc($("postSummary").value)}</p></div><div class="pv-section article-preview">${(S.contents.editSections||[]).map(s=>`<h3>${esc(s.heading||"")}</h3>${(s.paragraphs||[]).map(p=>`<p>${esc(p)}</p>`).join("")}${(s.bullets||[]).length?`<ul>${s.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}`).join("")}</div>`}
 bind(["postTitle","postSummary"],previewPost);
 $("savePost").onclick=async()=>{try{const old=S.contents.edit>=0?S.contents.posts[S.contents.edit]:{};const cat=$("postCategory").value,catLabel=cat?($("postCategory").selectedOptions[0]?.textContent||""):"";const p={...old,id:old.id||`post-${Date.now()}`,title:$("postTitle").value.trim(),date:$("postDate").value,publishedAt:(S.contents.edit>=0?(S.contents.posts[S.contents.edit].publishedAt||new Date().toISOString()):new Date().toISOString()),category:cat,categoryLabel:catLabel,summary:$("postSummary").value.trim(),sections:S.contents.editSections||[],subcategory:"",subcategoryLabel:"",subcategoryPage:""};if(S.contents.edit>=0)S.contents.posts[S.contents.edit]=p;else S.contents.posts.push(p);const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,"Update BIZZIP posts");S.contents.sha=r.content.sha;renderPostFolders();renderPostList();stat("contentsStatus","✓ 콘텐츠 본문까지 저장했습니다.","ok")}catch(e){stat("contentsStatus","저장 실패: "+e.message,"err")}};
+
+$("deletePost").onclick=async()=>{
+  if(S.contents.edit<0)return;
+  const p=S.contents.posts[S.contents.edit];
+  if(!p)return;
+  try{
+    if(p.deleted){
+      p.deleted=false;
+      delete p.deletedAt;
+      const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,`Restore BIZZIP content ${p.id}`);
+      S.contents.sha=r.content.sha;
+      $("deletePost").textContent="콘텐츠 삭제";
+      renderPostFolders();renderPostList();
+      stat("contentsStatus","✓ 콘텐츠를 복원했습니다.","ok");
+      return;
+    }
+    if(!confirm(`"${p.title}" 콘텐츠를 삭제할까요?\n\n사이트에서는 즉시 숨겨지며, 관리자 '삭제됨'에서 다시 복원할 수 있습니다.`))return;
+    p.deleted=true;
+    p.deletedAt=new Date().toISOString();
+    const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,`Delete BIZZIP content ${p.id}`);
+    S.contents.sha=r.content.sha;
+    S.contents.filterCategory="deleted";
+    renderPostFolders();renderPostList();
+    $("deletePost").textContent="콘텐츠 복원";
+    stat("contentsStatus","✓ 콘텐츠를 삭제했습니다. '삭제됨'에서 복원할 수 있습니다.","ok");
+  }catch(e){
+    stat("contentsStatus","삭제 실패: "+e.message,"err");
+  }
+};
 $("saveContentsLanding").onclick=async()=>{try{const d=doc(S.contents.landingHtml);setText(d,".page-hero h1",$("ctLandingTitle").value);setText(d,".page-hero h1 + p",$("ctLandingSummary").value);const h=out(d),r=await put("contents.html",h,S.contents.landingSha,"Update contents landing");S.contents.landingSha=r.content.sha;S.contents.landingHtml=h;stat("contentsStatus","✓ 콘텐츠 랜딩을 저장했습니다.","ok")}catch(e){stat("contentsStatus","저장 실패: "+e.message,"err")}};
 
 

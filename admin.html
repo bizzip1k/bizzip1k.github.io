@@ -100,6 +100,68 @@ button,input,select,textarea{font:inherit}
 @media(max-width:1000px){.admin-folder-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.admin-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* ===== v5.3.9 콘텐츠 관리자 레이아웃 안정화 ===== */
+#panel-contents .three{
+  grid-template-columns:minmax(320px,360px) minmax(430px,1fr) minmax(360px,.9fr);
+  gap:14px;
+}
+#panel-contents .sticky{
+  position:static;
+  top:auto;
+}
+#panel-contents #postList{
+  max-height:68vh;
+  min-height:180px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:4px 3px 12px 1px;
+  scroll-padding-top:8px;
+  scroll-padding-bottom:12px;
+}
+#panel-contents #postList .list-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 58px;
+  align-items:center;
+  gap:9px;
+  min-height:58px;
+  padding:9px 8px 9px 10px;
+}
+#panel-contents #postList .list-row > div{
+  min-width:0;
+}
+#panel-contents #postList .list-row strong{
+  display:block;
+  line-height:1.4;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+#panel-contents #postList .list-row small{
+  line-height:1.35;
+}
+#panel-contents #postList .ep{
+  width:58px;
+  min-width:58px;
+  white-space:nowrap;
+  writing-mode:horizontal-tb;
+  word-break:keep-all;
+  padding:6px 7px;
+  justify-self:end;
+}
+#panel-contents #postList .list-row.active{border-color:var(--teal);background:#f1fbfa}
+#panel-contents #postList .list-row:first-child{margin-top:1px}
+#panel-contents #postList .list-row:last-child{margin-bottom:2px}
+#panel-contents .card{min-width:0}
+#panel-contents #postPreview{min-width:0}
+@media(max-width:1180px){
+  #panel-contents .three{grid-template-columns:300px minmax(380px,1fr)}
+  #panel-contents .three>.preview{grid-column:1/-1}
+}
+@media(max-width:820px){
+  #panel-contents .three{grid-template-columns:1fr}
+  #panel-contents #postList{max-height:420px}
+}
+
 </style>
 </head>
 <body>
@@ -226,7 +288,7 @@ button,input,select,textarea{font:inherit}
   <section id="panel-contents" class="panel">
     <div class="panel-head"><div><h2>콘텐츠</h2><p>posts.json의 실제 sections 구조를 그대로 읽어오고 수정합니다.</p></div></div>
     <div class="section-box">
-      <div class="section-title"><h3>1단계 주제 폴더</h3><span class="hint">사업실무의 8개 분야와 자동 연동됩니다. 폴더를 선택하면 해당 글만 아래에 표시됩니다.</span></div>
+      <div class="section-title"><h3>1단계 주제 폴더</h3><span class="hint">콘텐츠 전용 8개 주제입니다. 폴더를 선택하면 해당 콘텐츠만 아래에 표시됩니다.</span></div>
       <div id="postFolderBar" class="admin-folder-grid"></div>
     </div>
     <div class="three">
@@ -243,7 +305,10 @@ button,input,select,textarea{font:inherit}
           <div class="wide"><label class="label">요약</label><textarea id="postSummary" class="textarea"></textarea></div>
         </div>
         <div class="section-box"><div class="section-title"><h3>본문 섹션</h3><button id="addPostSection" class="btn light mini">+ 본문 섹션</button></div><div id="postSections" class="repeat"></div></div>
-        <button id="savePost" class="btn primary" disabled style="margin-top:10px">콘텐츠 저장</button>
+        <div class="actions" style="margin-top:10px">
+          <button id="savePost" class="btn primary" disabled>콘텐츠 저장</button>
+          <button id="deletePost" class="btn danger" disabled style="display:none">콘텐츠 삭제</button>
+        </div>
         <div id="contentsStatus" class="status"></div>
       </div>
       <div class="card preview"><div class="section-title"><h3>콘텐츠 미리보기</h3><span class="hint">실제 sections 반영</span></div><div id="postPreview" class="preview-canvas"></div></div>
@@ -343,6 +408,6 @@ button,input,select,textarea{font:inherit}
     </div>
   </section>
 </div>
-<script src="admin.js?v=5.3.8"></script>
+<script src="admin.js?v=5.4.0"></script>
 </body>
 </html>
