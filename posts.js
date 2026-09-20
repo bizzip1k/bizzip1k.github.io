@@ -6,6 +6,125 @@
   };
 
 
+  const CATEGORY_ORDER = ["startup","product","brand","marketing","sales","operation","logistics","data-ai"];
+
+  function escHtml(v) {
+    return String(v ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+  }
+
+  function contentTopicCard(key, label, count, desc) {
+    const url = `contents.html?topic=${encodeURIComponent(key)}`;
+    return `<a class="topic-folder-card" href="${url}">
+      <div class="topic-folder-icon">📁</div>
+      <div class="topic-folder-copy"><strong>${escHtml(label)}</strong><p>${escHtml(desc || "")}</p></div>
+      <span class="topic-folder-count">${count}</span>
+    </a>`;
+  }
+
+  function renderContentTopicHub(posts) {
+    const hub = document.querySelector("[data-content-topic-hub]");
+    if (!hub) return;
+    const counts = {};
+    CATEGORY_ORDER.forEach(k => counts[k] = 0);
+    let unclassified = 0;
+    posts.forEach(p => p.category && counts[p.category] !== undefined ? counts[p.category]++ : unclassified++);
+    const desc = {
+      "startup":"사업을 시작하기 전에 확인할 실무",
+      "product":"상품과 서비스를 기획하고 출시하는 실무",
+      "brand":"이름, 포지셔닝, 메시지와 브랜드 관리",
+      "marketing":"검색, 광고, 콘텐츠와 전환 관리",
+      "sales":"판매채널, 입점과 유통 실무",
+      "operation":"계약, 비용, 외주와 회사 운영",
+      "logistics":"3PL, 재고, 포장과 반품 관리",
+      "data-ai":"데이터 분석, AI 활용과 업무 자동화"
+    };
+    hub.innerHTML =
+      CATEGORY_ORDER.map(k => contentTopicCard(k, CATEGORY_NAMES[k], counts[k] || 0, desc[k])).join("") +
+      contentTopicCard("unclassified","미분류",unclassified,"새로 등록되어 아직 주제를 지정하지 않은 콘텐츠");
+  }
+
+  function configureContentsLanding(posts) {
+    const target = document.querySelector('[data-post-list][data-topic-mode="contents"]');
+    if (!target) return;
+    renderContentTopicHub(posts);
+    const params = new URLSearchParams(location.search);
+    const topic = params.get("topic") || "";
+    const title = document.getElementById("contentListTitle");
+    const summary = document.getElementById("contentListSummary");
+    if (topic === "unclassified") {
+      target.dataset.unclassified = "1";
+      target.dataset.limit = "0";
+      if (title) title.textContent = "미분류 콘텐츠";
+      if (summary) summary.textContent = "아직 주제가 지정되지 않은 콘텐츠입니다.";
+    } else if (topic && CATEGORY_NAMES[topic]) {
+      target.dataset.category = topic;
+      target.dataset.limit = "0";
+      if (title) title.textContent = CATEGORY_NAMES[topic] + " 콘텐츠";
+      if (summary) summary.textContent = "선택한 주제에 등록된 콘텐츠입니다.";
+    } else if (topic === "all") {
+      target.dataset.limit = "0";
+      if (title) title.textContent = "전체 콘텐츠";
+      if (summary) summary.textContent = "등록된 모든 콘텐츠를 최신순으로 보여드립니다.";
+    }
+  }
+
+  function getResourceTopics() {
+    const el = document.getElementById("resource-topics-data");
+    if (!el) return [];
+    try { return JSON.parse(el.textContent || "[]"); } catch(e) { return []; }
+  }
+
+  function configureResourcesLanding() {
+    const hub = document.querySelector("[data-resource-topic-hub]");
+    const grid = document.querySelector("[data-resource-list]");
+    if (!hub || !grid) return;
+    const topics = getResourceTopics();
+    const cards = Array.from(grid.querySelectorAll(".resource-card"));
+    const counts = {};
+    topics.forEach(t => counts[t.id] = 0);
+    cards.forEach(c => { const t = c.dataset.topic || ""; counts[t] = (counts[t] || 0) + 1; });
+    hub.innerHTML = topics.map(t => `<a class="topic-folder-card" href="resources.html?topic=${encodeURIComponent(t.id)}">
+      <div class="topic-folder-icon">📁</div>
+      <div class="topic-folder-copy"><strong>${escHtml(t.label)}</strong><p>${escHtml(t.desc || "")}</p></div>
+      <span class="topic-folder-count">${counts[t.id] || 0}</span>
+    </a>`).join("");
+
+    const params = new URLSearchParams(location.search);
+    const topic = params.get("topic") || "";
+    const selected = topics.find(t => t.id === topic);
+    const title = document.getElementById("resourceListTitle");
+    const summary = document.getElementById("resourceListSummary");
+    cards.forEach((c,i) => {
+      const show = selected ? c.dataset.topic === selected.id : i < 6;
+      c.hidden = !show;
+    });
+    if (selected) {
+      if (title) title.textContent = selected.label + " 자료";
+      if (summary) summary.textContent = selected.desc || "선택한 주제의 실무자료입니다.";
+    }
+  }
+
+  function bindFolderSearches() {
+    const cs = document.getElementById("contentSearch");
+    if (cs) cs.addEventListener("input", () => {
+      const q = cs.value.trim().toLowerCase();
+      document.querySelectorAll('[data-post-list][data-topic-mode="contents"] .content-card').forEach(c => {
+        c.hidden = !!q && !c.textContent.toLowerCase().includes(q);
+      });
+    });
+    const rs = document.getElementById("resourceSearch");
+    if (rs) rs.addEventListener("input", () => {
+      const q = rs.value.trim().toLowerCase();
+      document.querySelectorAll("[data-resource-list] .resource-card").forEach(c => {
+        const topic = new URLSearchParams(location.search).get("topic") || "";
+        const topicMatch = !topic || c.dataset.topic === topic;
+        const searchMatch = !q || c.textContent.toLowerCase().includes(q);
+        c.hidden = !(topicMatch && searchMatch);
+      });
+    });
+  }
+
+
   function ensureHomeMenu() {
     const menu = document.querySelector("nav.menu");
     if (!menu || menu.querySelector('a[href="index.html"]')) return;
@@ -40,14 +159,17 @@
     try {
       let posts = await getPosts();
       posts.sort((a,b) => String(b.date).localeCompare(String(a.date)));
+      configureContentsLanding(posts);
 
       targets.forEach(target => {
         const category = target.dataset.category || "";
         const subcategory = target.dataset.subcategory || "";
+        const unclassified = target.dataset.unclassified === "1";
         const limit = parseInt(target.dataset.limit || "0", 10);
         let list = posts;
         if (category) list = list.filter(p => p.category === category);
         if (subcategory) list = list.filter(p => p.subcategory === subcategory);
+        if (unclassified) list = list.filter(p => !p.category);
         if (limit > 0) list = list.slice(0, limit);
 
         target.innerHTML = list.length
@@ -165,3 +287,6 @@
     renderPost();
   });
 })();
+
+// v5.3.5 topic-folder initialization
+document.addEventListener("DOMContentLoaded", () => { configureResourcesLanding(); bindFolderSearches(); });

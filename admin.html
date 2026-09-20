@@ -87,6 +87,19 @@ button,input,select,textarea{font:inherit}
 .detail-pv-step small{display:block;font-size:11px;line-height:1.45;color:var(--muted);margin-top:4px}
 @media(max-width:720px){.detail-pv-step-grid{grid-template-columns:1fr}}
 
+
+.admin-folder-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.admin-folder{
+  border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 10px;text-align:left;cursor:pointer;
+  min-height:58px;color:var(--text)
+}
+.admin-folder.active{border-color:var(--teal);background:#eefaf8}
+.admin-folder strong{display:block;font-size:12px}
+.admin-folder small{display:block;margin-top:3px;font-size:10px;color:var(--muted)}
+.resource-topic-select{width:100%;height:32px;border:1px solid var(--line);border-radius:7px;background:#fff;padding:0 7px;font-size:11px}
+@media(max-width:1000px){.admin-folder-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.admin-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -212,8 +225,16 @@ button,input,select,textarea{font:inherit}
   <!-- CONTENTS -->
   <section id="panel-contents" class="panel">
     <div class="panel-head"><div><h2>콘텐츠</h2><p>posts.json의 실제 sections 구조를 그대로 읽어오고 수정합니다.</p></div></div>
+    <div class="section-box">
+      <div class="section-title"><h3>1단계 주제 폴더</h3><span class="hint">사업실무의 8개 분야와 자동 연동됩니다. 폴더를 선택하면 해당 글만 아래에 표시됩니다.</span></div>
+      <div id="postFolderBar" class="admin-folder-grid"></div>
+    </div>
     <div class="three">
-      <div class="card sticky"><div class="section-title"><h3>등록 콘텐츠</h3><button id="newPost" class="btn light mini">+ 새 글</button></div><div id="postList" class="list"></div></div>
+      <div class="card sticky">
+        <div class="section-title"><h3>2단계 콘텐츠 목록</h3><button id="newPost" class="btn light mini">+ 새 글</button></div>
+        <input id="postAdminSearch" class="input" type="search" placeholder="제목 검색" style="margin-bottom:8px">
+        <div id="postList" class="list"></div>
+      </div>
       <div class="card">
         <div class="form-grid">
           <div><label class="label">콘텐츠 랜딩 제목</label><input id="ctLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="ctLandingSummary" class="input"></div><div class="wide"><button id="saveContentsLanding" class="btn light">콘텐츠 랜딩 저장</button></div>
@@ -238,9 +259,16 @@ button,input,select,textarea{font:inherit}
         <div><label class="label">랜딩 설명</label><input id="rsLandingSummary" class="input"></div>
       </div>
 
+      <div class="section-box">
+        <div class="section-title"><h3>1단계 자료 주제 폴더</h3><div class="actions"><button id="addResourceTopic" class="btn light mini">+ 폴더</button><span class="hint">폴더명과 설명을 수정하고 순서를 바꿀 수 있습니다.</span></div></div>
+        <div id="resourceTopicRows" class="repeat"></div>
+        <div id="resourceFolderBar" class="admin-folder-grid" style="margin-top:10px"></div>
+      </div>
+
       <div class="hierarchy-workspace section-box">
         <div>
-          <div class="section-title"><h3>실무자료 카드</h3><div class="actions"><button id="addResourceCard" class="btn light mini">+ 자료</button><button id="saveResourceLanding" class="btn primary" disabled>랜딩 저장</button></div></div>
+          <div class="section-title"><h3>2단계 실무자료 목록</h3><div class="actions"><button id="addResourceCard" class="btn light mini">+ 자료</button><button id="saveResourceLanding" class="btn primary" disabled>랜딩 저장</button></div></div>
+          <input id="resourceAdminSearch" class="input" type="search" placeholder="자료명 검색" style="margin-bottom:8px">
           <div id="resourceCards" class="two-row-3"></div>
         </div>
         <div class="hierarchy-preview">
@@ -315,6 +343,6 @@ button,input,select,textarea{font:inherit}
     </div>
   </section>
 </div>
-<script src="admin.js?v=5.3.4"></script>
+<script src="admin.js?v=5.3.5"></script>
 </body>
 </html>

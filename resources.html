@@ -4,6 +4,7 @@
 <meta name="description" content="BIZZIP은 사업 현장에서 필요한 실무 지식과 자료를 제공합니다.">
 <title>실무자료 | BIZZIP</title>
 <link rel="stylesheet" href="style.css">
+<script type="application/json" id="resource-topics-data">[{"id": "business-prep", "label": "사업 준비", "desc": "사업 시작과 준비 단계에서 사용하는 자료"}, {"id": "product-cost", "label": "상품기획·원가", "desc": "상품기획, 원가, 가격, OEM 관련 자료"}, {"id": "marketing-sales", "label": "마케팅·판매", "desc": "광고, 판매채널, 입점과 영업 관련 자료"}, {"id": "contract-operation", "label": "계약·운영", "desc": "계약, 비용, 외주와 문서 운영 자료"}, {"id": "logistics-inventory", "label": "물류·재고", "desc": "3PL, 재고, 포장, 반품 관련 자료"}, {"id": "data-analysis", "label": "데이터·분석", "desc": "매출, 고객, 성과분석과 데이터 활용 자료"}, {"id": "forms-checklists", "label": "양식·체크리스트", "desc": "바로 내려받아 활용하는 양식과 점검표"}]</script>
 </head><body>
 
 <header><div class="wrap nav">
@@ -18,7 +19,16 @@
 <main>
 <section class="page-hero"><div class="wrap"><div class="breadcrumb"><a href="index.html">홈</a> / 실무자료</div><div class="eyebrow">PRACTICAL RESOURCES</div><h1>실무자료</h1><p>사업할 때 실제로 필요한 체크리스트, 양식, 계산표, 가이드를 모읍니다.</p></div></section>
 <section><div class="wrap">
-  <div class="resource-grid"><a class="resource-card resource-card-link" href="resource-start-check.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>CSV</b></div><h3>사업 시작 체크리스트</h3><p>사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-pricing.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>CSV</b></div><h3>원가·판매가 계산표</h3><p>제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-3pl.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>3PL 비교표</h3><p>물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-oem.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>OEM 견적 확인 가이드</h3><p>견적서에서 단가 외에 꼭 봐야 하는 항목을 정리합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-ad-check.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>광고 성과 점검표</h3><p>광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-proposal.html"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>입점 제안서 작성 가이드</h3><p>유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.</p><span class="download-link">내용 보기 →</span></a></div>
+  <div class="section-head folder-section-head">
+    <div><h2>주제별 실무자료</h2><p>자료의 용도에 맞는 폴더를 먼저 선택하면 필요한 자료를 빠르게 찾을 수 있습니다.</p></div>
+  </div>
+  <div class="topic-folder-grid" data-resource-topic-hub></div>
+
+  <div class="folder-list-head">
+    <div><h2 id="resourceListTitle">최근 실무자료</h2><p id="resourceListSummary">최근 등록된 실무자료를 먼저 보여드립니다.</p></div>
+    <label class="folder-search"><span>자료 찾기</span><input id="resourceSearch" type="search" placeholder="자료명이나 설명 검색"></label>
+  </div>
+  <div class="resource-grid" data-resource-list><a class="resource-card resource-card-link" href="resource-start-check.html" data-topic="business-prep" data-topic-label="사업 준비"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>CSV</b></div><h3>사업 시작 체크리스트</h3><p>사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-pricing.html" data-topic="product-cost" data-topic-label="상품기획·원가"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>CSV</b></div><h3>원가·판매가 계산표</h3><p>제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-3pl.html" data-topic="logistics-inventory" data-topic-label="물류·재고"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>3PL 비교표</h3><p>물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-oem.html" data-topic="product-cost" data-topic-label="상품기획·원가"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>OEM 견적 확인 가이드</h3><p>견적서에서 단가 외에 꼭 봐야 하는 항목을 정리합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-ad-check.html" data-topic="marketing-sales" data-topic-label="마케팅·판매"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>광고 성과 점검표</h3><p>광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.</p><span class="download-link">내용 보기 →</span></a><a class="resource-card resource-card-link" href="resource-proposal.html" data-topic="marketing-sales" data-topic-label="마케팅·판매"><div class="resource-meta"><span class="tag">PRACTICAL</span><b>GUIDE</b></div><h3>입점 제안서 작성 가이드</h3><p>유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.</p><span class="download-link">내용 보기 →</span></a></div>
   <div class="note"><strong>BIZZIP 실무자료 원칙</strong><span>자료 + 사용법 + 판단 기준을 함께 제공합니다.</span></div>
 </div></section>
 </main>
@@ -29,5 +39,5 @@
   <div>bizzip.co.kr</div>
 </div></footer>
 
-<script src="posts.js"></script>
+<script src="posts.js?v=5.3.5"></script>
 </body></html>
