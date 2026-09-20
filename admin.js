@@ -88,12 +88,25 @@ $("saveIndex").onclick=async()=>{try{const d=doc(S.index.html);setText(d,".hero 
 /* generic detail editor */
 function detailEditorHtml(prefix){return `<div class="form-grid">
  <div><label class="label">제목</label><input id="${prefix}Title" class="input"></div><div><label class="label">상단 설명</label><input id="${prefix}Summary" class="input"></div>
- <div class="wide"><label class="label">도입</label><textarea id="${prefix}Intro" class="textarea"></textarea></div>
+
+ <div class="wide section-box"><label class="label">도입 섹션 제목</label><input id="${prefix}IntroHeading" class="input"></div>
+ <div class="wide"><label class="label">도입문</label><textarea id="${prefix}Intro" class="textarea"></textarea></div>
+
+ <div class="wide section-box"><label class="label">실무 기준 섹션 제목</label><input id="${prefix}CriteriaHeading" class="input"></div>
  <div class="wide"><label class="label">실무 기준 (한 줄에 한 항목)</label><textarea id="${prefix}Criteria" class="textarea"></textarea></div>
- <div class="wide"><label class="label">바로 해볼 일</label><textarea id="${prefix}Action" class="textarea"></textarea></div>
- <div class="wide"><div class="section-title"><label class="label">실행 STEP</label><button id="${prefix}AddStep" class="btn light mini">+ STEP</button></div><div id="${prefix}Steps" class="repeat"></div></div>
- <div class="wide"><label class="label">현장 예시</label><textarea id="${prefix}Example" class="textarea"></textarea></div>
- <div class="wide"><label class="label">자주 하는 실수 (한 줄에 한 항목)</label><textarea id="${prefix}Mistakes" class="textarea"></textarea></div>
+
+ <div><label class="label">바로 해볼 일 제목</label><input id="${prefix}ActionHeading" class="input"></div>
+ <div><label class="label">바로 해볼 일 본문</label><textarea id="${prefix}Action" class="textarea"></textarea></div>
+
+ <div class="wide section-box"><div class="section-title"><div style="flex:1"><label class="label">실행 순서 섹션 제목</label><input id="${prefix}StepHeading" class="input"></div><button id="${prefix}AddStep" class="btn light mini">+ STEP</button></div><div id="${prefix}Steps" class="repeat"></div></div>
+
+ <div class="wide section-box"><label class="label">현장 상황 섹션 제목</label><input id="${prefix}ExampleHeading" class="input"></div>
+ <div><label class="label">예시 라벨</label><input id="${prefix}ExampleLabel" class="input"></div>
+ <div><label class="label">현장 예시 본문</label><textarea id="${prefix}Example" class="textarea"></textarea></div>
+
+ <div><label class="label">자주 하는 실수 제목</label><input id="${prefix}MistakeHeading" class="input"></div>
+ <div><label class="label">자주 하는 실수 (한 줄에 한 항목)</label><textarea id="${prefix}Mistakes" class="textarea"></textarea></div>
+
  <div><label class="label">마무리 제목</label><input id="${prefix}FinishTitle" class="input"></div><div><label class="label">마무리 본문</label><textarea id="${prefix}FinishBody" class="textarea"></textarea></div>
  <div class="wide"><button id="${prefix}Save" class="btn primary" disabled>상세페이지 저장</button></div></div>`}
 $("bizDetailEditor").innerHTML=detailEditorHtml("bd");
@@ -101,15 +114,52 @@ $("problemDetailEditor").innerHTML=detailEditorHtml("pd");
 
 function loadDetailInto(prefix,st,d,h,path,sha){
  st.path=path;st.sha=sha;st.html=h;st.steps=Array.from(d.querySelectorAll(".step-card")).map(x=>({title:text(x,"strong"),body:text(x,"p")}));
- $(`${prefix}Title`).value=text(d,".page-hero h1");$(`${prefix}Summary`).value=text(d,".page-hero h1 + p");$(`${prefix}Intro`).value=text(d,".detail-intro");
+ const article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
+ $(`${prefix}Title`).value=text(d,".page-hero h1");
+ $(`${prefix}Summary`).value=text(d,".page-hero h1 + p");
+ $(`${prefix}IntroHeading`).value=h2s[0]?.textContent.trim()||"왜 이 내용을 먼저 봐야 할까요?";
+ $(`${prefix}Intro`).value=text(d,".detail-intro");
+ $(`${prefix}CriteriaHeading`).value=h2s[1]?.textContent.trim()||"실무에서 먼저 보는 기준";
  const uls=Array.from(d.querySelectorAll(".article > ul"));$(`${prefix}Criteria`).value=uls[0]?Array.from(uls[0].querySelectorAll("li")).map(x=>x.textContent.trim()).join("\n"):"";
- $(`${prefix}Action`).value=text(d,".practice-box p");$(`${prefix}Example`).value=text(d,".example-box p");$(`${prefix}Mistakes`).value=Array.from(d.querySelectorAll(".mistake-box li")).map(x=>x.textContent.trim()).join("\n");
- $(`${prefix}FinishTitle`).value=text(d,".finish-box strong");$(`${prefix}FinishBody`).value=text(d,".finish-box p");renderDetailSteps(prefix,st);renderDetailPreview(prefix,st);$(`${prefix}Save`).disabled=false;
+ $(`${prefix}ActionHeading`).value=text(d,".practice-box strong")||"바로 해볼 일";
+ $(`${prefix}Action`).value=text(d,".practice-box p");
+ $(`${prefix}StepHeading`).value=h2s[2]?.textContent.trim()||"실행 순서";
+ $(`${prefix}ExampleHeading`).value=h2s[3]?.textContent.trim()||"현장에서 자주 생기는 상황";
+ $(`${prefix}ExampleLabel`).value=text(d,".example-box strong")||"예시";
+ $(`${prefix}Example`).value=text(d,".example-box p");
+ $(`${prefix}MistakeHeading`).value=text(d,".mistake-box strong")||"자주 하는 실수";
+ $(`${prefix}Mistakes`).value=Array.from(d.querySelectorAll(".mistake-box li")).map(x=>x.textContent.trim()).join("\n");
+ $(`${prefix}FinishTitle`).value=text(d,".finish-box strong");$(`${prefix}FinishBody`).value=text(d,".finish-box p");
+ renderDetailSteps(prefix,st);renderDetailPreview(prefix,st);$(`${prefix}Save`).disabled=false;
 }
 function renderDetailSteps(prefix,st){$(`${prefix}Steps`).innerHTML=(st.steps||[]).map((x,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-head"><strong>STEP ${i+1}</strong><div class="actions"><button class="btn light mini ds-up">↑</button><button class="btn light mini ds-down">↓</button><button class="btn danger mini ds-del">삭제</button></div></div><input class="input ds-title" value="${esc(x.title)}"><textarea class="textarea ds-body" style="min-height:55px;margin-top:5px">${esc(x.body)}</textarea></div>`).join("");$(`${prefix}Steps`).querySelectorAll(".repeat-row").forEach(r=>{const i=+r.dataset.i,sync=()=>{st.steps[i]={title:r.querySelector(".ds-title").value,body:r.querySelector(".ds-body").value};renderDetailPreview(prefix,st)};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".ds-up").onclick=()=>move(st.steps,i,-1,()=>renderDetailSteps(prefix,st),()=>renderDetailPreview(prefix,st));r.querySelector(".ds-down").onclick=()=>move(st.steps,i,1,()=>renderDetailSteps(prefix,st),()=>renderDetailPreview(prefix,st));r.querySelector(".ds-del").onclick=()=>{st.steps.splice(i,1);renderDetailSteps(prefix,st);renderDetailPreview(prefix,st)}})}
-function renderDetailPreview(prefix,st){const m=prefix==="bd"?$("bizDetailPreview"):$("problemDetailPreview");m.innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BUSINESS PRACTICE</div><h1>${esc($(`${prefix}Title`).value)}</h1><p>${esc($(`${prefix}Summary`).value)}</p></div><div class="pv-section article-preview"><p>${esc($(`${prefix}Intro`).value)}</p><h3>실무에서 먼저 보는 기준</h3><ul>${lines($(`${prefix}Criteria`).value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><h3>실행 순서</h3>${(st.steps||[]).map((x,i)=>`<div class="pv-item"><strong>STEP ${i+1}. ${esc(x.title)}</strong><small>${esc(x.body)}</small></div>`).join("")}<h3>현장 예시</h3><p>${esc($(`${prefix}Example`).value)}</p></div>`}
-async function saveDetail(prefix,st,statusId){try{const d=doc(st.html);setText(d,".page-hero h1",$(`${prefix}Title`).value);setText(d,".page-hero h1 + p",$(`${prefix}Summary`).value);setText(d,".detail-intro",$(`${prefix}Intro`).value);const ul=d.querySelector(".article > ul");if(ul)ul.innerHTML=lines($(`${prefix}Criteria`).value).map(x=>`<li>${esc(x)}</li>`).join("");setText(d,".practice-box p",$(`${prefix}Action`).value);const sg=d.querySelector(".step-grid");if(sg)sg.innerHTML=(st.steps||[]).map((x,i)=>`<div class="step-card"><b>STEP ${i+1}</b><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></div>`).join("");setText(d,".example-box p",$(`${prefix}Example`).value);const mu=d.querySelector(".mistake-box ul");if(mu)mu.innerHTML=lines($(`${prefix}Mistakes`).value).map(x=>`<li>${esc(x)}</li>`).join("");setText(d,".finish-box strong",$(`${prefix}FinishTitle`).value);setText(d,".finish-box p",$(`${prefix}FinishBody`).value);const h=out(d),r=await put(st.path,h,st.sha,`Update detail ${st.path}`);st.sha=r.content.sha;st.html=h;stat(statusId,"✓ 상세페이지를 저장했습니다.","ok")}catch(e){stat(statusId,"상세페이지 저장 실패: "+e.message,"err")}}
-["bd","pd"].forEach(p=>{bind([`${p}Title`,`${p}Summary`,`${p}Intro`,`${p}Criteria`,`${p}Action`,`${p}Example`,`${p}Mistakes`,`${p}FinishTitle`,`${p}FinishBody`],()=>renderDetailPreview(p,p==="bd"?S.business.detail:S.problems.detail));$(`${p}AddStep`).onclick=()=>{const st=p==="bd"?S.business.detail:S.problems.detail;st.steps=st.steps||[];st.steps.push({title:"새 단계",body:""});renderDetailSteps(p,st);renderDetailPreview(p,st)}});
+function renderDetailPreview(prefix,st){const m=prefix==="bd"?$("bizDetailPreview"):$("problemDetailPreview");m.innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BUSINESS PRACTICE</div><h1>${esc($(`${prefix}Title`).value)}</h1><p>${esc($(`${prefix}Summary`).value)}</p></div><div class="pv-section article-preview">
+<h3>${esc($(`${prefix}IntroHeading`).value)}</h3><p>${esc($(`${prefix}Intro`).value)}</p>
+<h3>${esc($(`${prefix}CriteriaHeading`).value)}</h3><ul>${lines($(`${prefix}Criteria`).value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+<div class="detail-pv-box detail-pv-practice"><strong>${esc($(`${prefix}ActionHeading`).value)}</strong><p>${esc($(`${prefix}Action`).value)}</p></div>
+<h3>${esc($(`${prefix}StepHeading`).value)}</h3><div class="detail-pv-step-grid">${(st.steps||[]).map((x,i)=>`<div class="detail-pv-step"><b>STEP ${i+1}</b><strong>${esc(x.title)}</strong><small>${esc(x.body)}</small></div>`).join("")}</div>
+<h3>${esc($(`${prefix}ExampleHeading`).value)}</h3><div class="detail-pv-box"><strong>${esc($(`${prefix}ExampleLabel`).value)}</strong><p>${esc($(`${prefix}Example`).value)}</p></div>
+<div class="detail-pv-box detail-pv-mistake"><strong>${esc($(`${prefix}MistakeHeading`).value)}</strong><ul>${lines($(`${prefix}Mistakes`).value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+<div class="detail-pv-box detail-pv-finish"><strong>${esc($(`${prefix}FinishTitle`).value)}</strong><p>${esc($(`${prefix}FinishBody`).value)}</p></div>
+</div>`}
+async function saveDetail(prefix,st,statusId){try{
+ const d=doc(st.html),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
+ setText(d,".page-hero h1",$(`${prefix}Title`).value);setText(d,".page-hero h1 + p",$(`${prefix}Summary`).value);
+ if(h2s[0])h2s[0].textContent=$(`${prefix}IntroHeading`).value;
+ setText(d,".detail-intro",$(`${prefix}Intro`).value);
+ if(h2s[1])h2s[1].textContent=$(`${prefix}CriteriaHeading`).value;
+ const ul=d.querySelector(".article > ul");if(ul)ul.innerHTML=lines($(`${prefix}Criteria`).value).map(x=>`<li>${esc(x)}</li>`).join("");
+ setText(d,".practice-box strong",$(`${prefix}ActionHeading`).value);setText(d,".practice-box p",$(`${prefix}Action`).value);
+ if(h2s[2])h2s[2].textContent=$(`${prefix}StepHeading`).value;
+ const sg=d.querySelector(".step-grid");if(sg)sg.innerHTML=(st.steps||[]).map((x,i)=>`<div class="step-card"><b>STEP ${i+1}</b><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></div>`).join("");
+ if(h2s[3])h2s[3].textContent=$(`${prefix}ExampleHeading`).value;
+ setText(d,".example-box strong",$(`${prefix}ExampleLabel`).value);setText(d,".example-box p",$(`${prefix}Example`).value);
+ setText(d,".mistake-box strong",$(`${prefix}MistakeHeading`).value);
+ const mu=d.querySelector(".mistake-box ul");if(mu)mu.innerHTML=lines($(`${prefix}Mistakes`).value).map(x=>`<li>${esc(x)}</li>`).join("");
+ setText(d,".finish-box strong",$(`${prefix}FinishTitle`).value);setText(d,".finish-box p",$(`${prefix}FinishBody`).value);
+ const h=out(d),r=await put(st.path,h,st.sha,`Update detail ${st.path}`);st.sha=r.content.sha;st.html=h;stat(statusId,"✓ 상세페이지를 저장했습니다.","ok")
+ }catch(e){stat(statusId,"상세페이지 저장 실패: "+e.message,"err")}}
+["bd","pd"].forEach(p=>{bind([`${p}Title`,`${p}Summary`,`${p}IntroHeading`,`${p}Intro`,`${p}CriteriaHeading`,`${p}Criteria`,`${p}ActionHeading`,`${p}Action`,`${p}StepHeading`,`${p}ExampleHeading`,`${p}ExampleLabel`,`${p}Example`,`${p}MistakeHeading`,`${p}Mistakes`,`${p}FinishTitle`,`${p}FinishBody`],()=>renderDetailPreview(p,p==="bd"?S.business.detail:S.problems.detail));$(`${p}AddStep`).onclick=()=>{const st=p==="bd"?S.business.detail:S.problems.detail;st.steps=st.steps||[];st.steps.push({title:"새 단계",body:""});renderDetailSteps(p,st);renderDetailPreview(p,st)}});
 $("bdSave").onclick=()=>saveDetail("bd",S.business.detail,"businessStatus");$("pdSave").onclick=()=>saveDetail("pd",S.problems.detail,"problemStatus");
 
 
@@ -184,16 +234,48 @@ function previewResourceLanding(){
 async function loadResources(){const g=await get("resources.html"),h=d64(g.content),d=doc(h);S.resources.sha=g.sha;S.resources.html=h;$("rsLandingTitle").value=text(d,".page-hero h1");$("rsLandingSummary").value=text(d,".page-hero h1 + p");S.resources.cards=Array.from(d.querySelectorAll(".resource-card")).map(a=>({title:text(a,"h3"),summary:text(a,"p"),href:a.getAttribute("href")||""}));renderResourceCards();previewResourceLanding();$("saveResourceLanding").disabled=false;if(S.resources.cards.length)await selectResource(0)}
 function renderResourceCards(){$("resourceCards").innerHTML=S.resources.cards.map((x,i)=>`<div class="tile ${i===S.resources.selected?"active":""}" data-i="${i}"><input class="input rc-title" value="${esc(x.title)}"><input class="input rc-href" value="${esc(x.href)}"><textarea class="textarea rc-summary" style="min-height:55px">${esc(x.summary)}</textarea><div class="actions"><button class="btn dark mini rc-edit">상세 편집</button><button class="btn light mini rc-left">←</button><button class="btn light mini rc-right">→</button><button class="btn danger mini rc-del">삭제</button></div></div>`).join("");$("resourceCards").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{const x=S.resources.cards[i];x.title=r.querySelector(".rc-title").value;x.href=r.querySelector(".rc-href").value;x.summary=r.querySelector(".rc-summary").value;previewResourceLanding()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".rc-edit").onclick=()=>{sync();selectResource(i)};r.querySelector(".rc-left").onclick=()=>move(S.resources.cards,i,-1,renderResourceCards);r.querySelector(".rc-right").onclick=()=>move(S.resources.cards,i,1,renderResourceCards);r.querySelector(".rc-del").onclick=()=>{S.resources.cards.splice(i,1);renderResourceCards();previewResourceLanding()}})}
 $("addResourceCard").onclick=()=>{S.resources.cards.push({title:"새 자료",summary:"",href:`resource-${Date.now()}.html`});renderResourceCards();previewResourceLanding()};
-async function selectResource(i){S.resources.selected=i;renderResourceCards();const x=S.resources.cards[i];try{const g=await get(x.href),h=d64(g.content),d=doc(h);const a=d.querySelector(".article a[download]");S.resources.detail={sha:g.sha,html:h,path:x.href,file:a?.getAttribute("href")||"",fileSha:""};$("rsTitle").value=text(d,".page-hero h1");$("rsSummary").value=text(d,".page-hero h1 + p");const ul=d.querySelector(".article > ul");$("rsUsage").value=ul?Array.from(ul.querySelectorAll("li")).map(n=>n.textContent.trim()).join("\n"):"";$("rsTip").value=text(d,".practice-box p");$("rsExample").value=text(d,".example-box p");$("rsSteps").value=Array.from(d.querySelectorAll(".resource-steps li")).map(n=>n.textContent.trim()).join("\n");$("rsFinishTitle").value=text(d,".finish-box strong");$("rsFinishBody").value=text(d,".finish-box p");updateResourceFileBox();$("saveResourceDetail").disabled=false;previewResource()}catch(e){stat("resourcesStatus","자료 상세를 불러오지 못했습니다: "+e.message,"err")}}
+async function selectResource(i){S.resources.selected=i;renderResourceCards();const x=S.resources.cards[i];try{
+ const g=await get(x.href),h=d64(g.content),d=doc(h);const a=d.querySelector(".article a[download]"),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
+ S.resources.detail={sha:g.sha,html:h,path:x.href,file:a?.getAttribute("href")||"",fileSha:""};
+ $("rsTitle").value=text(d,".page-hero h1");$("rsSummary").value=text(d,".page-hero h1 + p");
+ $("rsUsageHeading").value=h2s[0]?.textContent.trim()||"이 자료는 이렇게 씁니다";
+ const ul=d.querySelector(".article > ul");$("rsUsage").value=ul?Array.from(ul.querySelectorAll("li")).map(n=>n.textContent.trim()).join("\n"):"";
+ $("rsTipHeading").value=text(d,".practice-box strong")||"사용 팁";$("rsTip").value=text(d,".practice-box p");
+ $("rsExampleHeading").value=h2s[1]?.textContent.trim()||"예를 들어 이렇게 확인합니다";
+ $("rsExampleLabel").value=text(d,".example-box strong")||"현장 예시";$("rsExample").value=text(d,".example-box p");
+ $("rsStepsHeading").value=h2s[2]?.textContent.trim()||"실제로 사용하는 순서";
+ $("rsSteps").value=Array.from(d.querySelectorAll(".resource-steps li")).map(n=>n.textContent.trim()).join("\n");
+ $("rsFinishTitle").value=text(d,".finish-box strong");$("rsFinishBody").value=text(d,".finish-box p");
+ updateResourceFileBox();$("saveResourceDetail").disabled=false;previewResource()
+ }catch(e){stat("resourcesStatus","자료 상세를 불러오지 못했습니다: "+e.message,"err")}}
 function updateResourceFileBox(){const p=S.resources.detail.file||"";$("rsFileName").textContent=p||"연결 파일 없음";$("rsDownloadFile").disabled=!p;$("rsDeleteFile").disabled=!p}
 $("rsDownloadFile").onclick=()=>{const p=S.resources.detail.file;if(p)window.open(`https://${CFG.owner}.github.io/${p}`,"_blank")};
 $("rsReplaceFile").onchange=async()=>{const f=$("rsReplaceFile").files[0];if(!f)return;try{const old=S.resources.detail.file;let oldSha="";if(old){try{oldSha=(await get(old)).sha}catch(e){}}const target=old?old:`downloads/${f.name}`;const bytes=new Uint8Array(await f.arrayBuffer());await putBytes(target,bytes,oldSha,`Replace resource file ${target}`);S.resources.detail.file=target;updateResourceFileBox();stat("resourcesStatus","✓ 파일을 업로드/교체했습니다. 자료 상세 저장을 누르면 링크도 확정됩니다.","ok")}catch(e){stat("resourcesStatus","파일 교체 실패: "+e.message,"err")}};
 $("rsDeleteFile").onclick=async()=>{const p=S.resources.detail.file;if(!p||!confirm("현재 연결 파일을 삭제할까요?"))return;try{const g=await get(p);await del(p,g.sha,`Delete resource file ${p}`);S.resources.detail.file="";updateResourceFileBox();stat("resourcesStatus","✓ 파일을 삭제했습니다. 자료 상세 저장을 누르면 페이지 링크도 제거됩니다.","ok")}catch(e){stat("resourcesStatus","파일 삭제 실패: "+e.message,"err")}};
-function previewResource(){$("resourcePreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">PRACTICAL RESOURCE</div><h1>${esc($("rsTitle").value)}</h1><p>${esc($("rsSummary").value)}</p></div><div class="pv-section article-preview"><h3>이 자료는 이렇게 씁니다</h3><ul>${lines($("rsUsage").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><h3>사용 팁</h3><p>${esc($("rsTip").value)}</p><h3>현장 예시</h3><p>${esc($("rsExample").value)}</p><h3>실행순서</h3><ol>${lines($("rsSteps").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ol><h3>${esc($("rsFinishTitle").value)}</h3><p>${esc($("rsFinishBody").value)}</p></div>`}
+function previewResource(){$("resourcePreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">PRACTICAL RESOURCE</div><h1>${esc($("rsTitle").value)}</h1><p>${esc($("rsSummary").value)}</p></div><div class="pv-section article-preview">
+<h3>${esc($("rsUsageHeading").value)}</h3><ul>${lines($("rsUsage").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+<div class="detail-pv-box detail-pv-practice"><strong>${esc($("rsTipHeading").value)}</strong><p>${esc($("rsTip").value)}</p></div>
+<h3>${esc($("rsExampleHeading").value)}</h3><div class="detail-pv-box"><strong>${esc($("rsExampleLabel").value)}</strong><p>${esc($("rsExample").value)}</p></div>
+<h3>${esc($("rsStepsHeading").value)}</h3><ol>${lines($("rsSteps").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+<div class="detail-pv-box detail-pv-finish"><strong>${esc($("rsFinishTitle").value)}</strong><p>${esc($("rsFinishBody").value)}</p></div>
+</div>`}
 bind(["rsLandingTitle","rsLandingSummary"],previewResourceLanding);
-bind(["rsTitle","rsSummary","rsUsage","rsTip","rsExample","rsSteps","rsFinishTitle","rsFinishBody"],previewResource);
+bind(["rsTitle","rsSummary","rsUsageHeading","rsUsage","rsTipHeading","rsTip","rsExampleHeading","rsExampleLabel","rsExample","rsStepsHeading","rsSteps","rsFinishTitle","rsFinishBody"],previewResource);
 $("saveResourceLanding").onclick=async()=>{try{const d=doc(S.resources.html);setText(d,".page-hero h1",$("rsLandingTitle").value);setText(d,".page-hero h1 + p",$("rsLandingSummary").value);const old=Array.from(d.querySelectorAll(".resource-card")),p=old[0]?.parentElement,t=old[0]?.cloneNode(true);if(p&&t){old.forEach(x=>x.remove());S.resources.cards.forEach(x=>{const n=t.cloneNode(true);n.href=x.href;setText(n,"h3",x.title);setText(n,"p",x.summary);p.appendChild(n)})}const h=out(d),r=await put("resources.html",h,S.resources.sha,"Update resources landing");S.resources.sha=r.content.sha;S.resources.html=h;stat("resourcesStatus","✓ 실무자료 랜딩을 저장했습니다.","ok")}catch(e){stat("resourcesStatus","저장 실패: "+e.message,"err")}};
-$("saveResourceDetail").onclick=async()=>{try{const st=S.resources.detail,d=doc(st.html);setText(d,".page-hero h1",$("rsTitle").value);setText(d,".page-hero h1 + p",$("rsSummary").value);const ul=d.querySelector(".article > ul");if(ul)ul.innerHTML=lines($("rsUsage").value).map(x=>`<li>${esc(x)}</li>`).join("");setText(d,".practice-box p",$("rsTip").value);setText(d,".example-box p",$("rsExample").value);const ol=d.querySelector(".resource-steps");if(ol)ol.innerHTML=lines($("rsSteps").value).map(x=>`<li>${esc(x)}</li>`).join("");setText(d,".finish-box strong",$("rsFinishTitle").value);setText(d,".finish-box p",$("rsFinishBody").value);let a=d.querySelector(".article a[download]");if(st.file){if(!a){a=d.createElement("a");a.className="btn primary";a.setAttribute("download","");a.textContent="샘플 파일 내려받기";d.querySelector(".article")?.appendChild(a)}a.href=st.file}else if(a){a.parentElement?.remove()}const h=out(d),r=await put(st.path,h,st.sha,`Update resource ${st.path}`);st.sha=r.content.sha;st.html=h;stat("resourcesStatus","✓ 자료 상세내용과 파일 연결을 저장했습니다.","ok")}catch(e){stat("resourcesStatus","저장 실패: "+e.message,"err")}};
+$("saveResourceDetail").onclick=async()=>{try{
+ const st=S.resources.detail,d=doc(st.html),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
+ setText(d,".page-hero h1",$("rsTitle").value);setText(d,".page-hero h1 + p",$("rsSummary").value);
+ if(h2s[0])h2s[0].textContent=$("rsUsageHeading").value;
+ const ul=d.querySelector(".article > ul");if(ul)ul.innerHTML=lines($("rsUsage").value).map(x=>`<li>${esc(x)}</li>`).join("");
+ setText(d,".practice-box strong",$("rsTipHeading").value);setText(d,".practice-box p",$("rsTip").value);
+ if(h2s[1])h2s[1].textContent=$("rsExampleHeading").value;
+ setText(d,".example-box strong",$("rsExampleLabel").value);setText(d,".example-box p",$("rsExample").value);
+ if(h2s[2])h2s[2].textContent=$("rsStepsHeading").value;
+ const ol=d.querySelector(".resource-steps");if(ol)ol.innerHTML=lines($("rsSteps").value).map(x=>`<li>${esc(x)}</li>`).join("");
+ setText(d,".finish-box strong",$("rsFinishTitle").value);setText(d,".finish-box p",$("rsFinishBody").value);
+ let a=d.querySelector(".article a[download]");if(st.file){if(!a){a=d.createElement("a");a.className="btn primary";a.setAttribute("download","");a.textContent="샘플 파일 내려받기";d.querySelector(".article")?.appendChild(a)}a.href=st.file}else if(a){a.parentElement?.remove()}
+ const h=out(d),r=await put(st.path,h,st.sha,`Update resource ${st.path}`);st.sha=r.content.sha;st.html=h;stat("resourcesStatus","✓ 자료 상세내용과 파일 연결을 저장했습니다.","ok")
+ }catch(e){stat("resourcesStatus","저장 실패: "+e.message,"err")}};
 
 /* ABOUT */
 async function loadAbout(){

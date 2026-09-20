@@ -74,6 +74,19 @@ button,input,select,textarea{font:inherit}
 
 @media(max-width:1120px){.workspace,.three{grid-template-columns:1fr}.preview,.sticky{position:static}.connect{min-width:0;flex:1}.topbar{flex-direction:column;align-items:stretch}.pv-grid{grid-template-columns:1fr}}
 @media(max-width:720px){.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.tile-grid,.tree-grid,.index-card-grid{grid-template-columns:1fr}}
+
+.detail-pv-box{border:1px solid var(--line);border-radius:9px;padding:10px;margin-top:10px;background:#fff}
+.detail-pv-box strong{display:block;font-size:12px;margin-bottom:4px}
+.detail-pv-box p{margin:0}
+.detail-pv-practice,.detail-pv-finish{background:#f2fbfa}
+.detail-pv-mistake{background:#fff7ef}
+.detail-pv-step-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}
+.detail-pv-step{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff}
+.detail-pv-step b{display:block;font-size:9px;color:var(--teal);margin-bottom:4px}
+.detail-pv-step strong{display:block;font-size:12px}
+.detail-pv-step small{display:block;font-size:11px;line-height:1.45;color:var(--muted);margin-top:4px}
+@media(max-width:720px){.detail-pv-step-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -241,9 +254,12 @@ button,input,select,textarea{font:inherit}
           <div>
             <div class="form-grid">
               <div><label class="label">자료 제목</label><input id="rsTitle" class="input"></div><div><label class="label">상단 설명</label><input id="rsSummary" class="input"></div>
+              <div class="wide section-box"><label class="label">사용법 섹션 제목</label><input id="rsUsageHeading" class="input"></div>
               <div class="wide"><label class="label">사용법 (한 줄에 한 항목)</label><textarea id="rsUsage" class="textarea"></textarea></div>
-              <div class="wide"><label class="label">사용 팁</label><textarea id="rsTip" class="textarea"></textarea></div>
-              <div class="wide"><label class="label">현장 예시</label><textarea id="rsExample" class="textarea"></textarea></div>
+              <div><label class="label">사용 팁 제목</label><input id="rsTipHeading" class="input"></div><div><label class="label">사용 팁 본문</label><textarea id="rsTip" class="textarea"></textarea></div>
+              <div class="wide section-box"><label class="label">예시 섹션 제목</label><input id="rsExampleHeading" class="input"></div>
+              <div><label class="label">예시 라벨</label><input id="rsExampleLabel" class="input"></div><div><label class="label">현장 예시 본문</label><textarea id="rsExample" class="textarea"></textarea></div>
+              <div class="wide section-box"><label class="label">실행순서 섹션 제목</label><input id="rsStepsHeading" class="input"></div>
               <div class="wide"><label class="label">실행순서 (한 줄에 한 항목)</label><textarea id="rsSteps" class="textarea"></textarea></div>
               <div><label class="label">마무리 제목</label><input id="rsFinishTitle" class="input"></div><div><label class="label">마무리 본문</label><textarea id="rsFinishBody" class="textarea"></textarea></div>
             </div>
@@ -299,6 +315,6 @@ button,input,select,textarea{font:inherit}
     </div>
   </section>
 </div>
-<script src="admin.js?v=5.3"></script>
+<script src="admin.js?v=5.3.4"></script>
 </body>
 </html>
