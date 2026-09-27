@@ -236,9 +236,7 @@
       if (crumb) {
         let c = `<a href="index.html">홈</a> / <a href="contents.html">콘텐츠</a>`;
         if (post.category && post.categoryLabel) {
-          c += ` / <a href="business.html">사업실무</a>`;
-          c += ` / <a href="${post.category}.html">${post.categoryLabel}</a>`;
-          if (post.subcategoryLabel && post.subcategoryPage) c += ` / <a href="${post.subcategoryPage}">${post.subcategoryLabel}</a>`;
+          c += ` / <a href="contents.html?topic=${encodeURIComponent(post.category)}">${post.categoryLabel}</a>`;
         }
         crumb.innerHTML = c;
       }
@@ -255,7 +253,7 @@
         <article class="article">
           ${(post.sections || []).map(sectionHtml).join("")}
           <div class="small-cta">
-            <strong>${post.category ? "이 글은 사업실무의 세부 주제와 연결되어 있습니다." : "이 글은 최신 BIZZIP 콘텐츠로 등록되었습니다."}</strong>
+            <strong>${post.category ? `이 글은 BIZZIP 콘텐츠의 ${post.categoryLabel || ""} 주제에 분류되어 있습니다.` : "이 글은 최신 BIZZIP 콘텐츠로 등록되었습니다."}</strong>
             <span>${post.category ? (post.categoryLabel || "") : "관리자에서 콘텐츠 주제를 지정할 수 있습니다."}</span>
           </div>
         </article>`;
