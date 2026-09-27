@@ -327,7 +327,64 @@ async function loadProblems(){const g=await get("problems.html"),h=d64(g.content
 function renderProblemRoots(){$("problemRoots").innerHTML=S.problems.roots.map((x,i)=>`<div class="tile ${i===S.problems.selected?"active":""}" data-i="${i}"><textarea class="textarea pr-title" style="min-height:62px">${esc(x.title)}</textarea><input class="input pr-href" value="${esc(x.href)}"><div class="actions"><button class="btn dark mini pr-edit">2단계</button><button class="btn light mini pr-left">←</button><button class="btn light mini pr-right">→</button><button class="btn danger mini pr-del">삭제</button></div></div>`).join("");$("problemRoots").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{S.problems.roots[i].title=r.querySelector(".pr-title").value;S.problems.roots[i].href=r.querySelector(".pr-href").value;previewProblemHierarchy()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".pr-edit").onclick=()=>{sync();selectProblemRoot(i)};r.querySelector(".pr-left").onclick=()=>move(S.problems.roots,i,-1,renderProblemRoots);r.querySelector(".pr-right").onclick=()=>move(S.problems.roots,i,1,renderProblemRoots);r.querySelector(".pr-del").onclick=()=>{S.problems.roots.splice(i,1);renderProblemRoots();previewProblemHierarchy()}})}
 $("addProblemRoot").onclick=()=>{S.problems.roots.push({title:"새 큰 문제",href:`problem-${Date.now()}.html`});renderProblemRoots();previewProblemHierarchy()};
 async function selectProblemRoot(i){S.problems.selected=i;renderProblemRoots();const x=S.problems.roots[i];try{const g=await get(x.href),h=d64(g.content),d=doc(h);S.problems.page={sha:g.sha,html:h,subs:Array.from(d.querySelectorAll(".problem-subcard")).map(a=>({title:text(a,"h3"),summary:text(a,"p"),href:a.getAttribute("href")||""}))};$("prPageTitle").value=text(d,".page-hero h1");$("prPageSummary").value=text(d,".page-hero h1 + p");$("prSectionTitle").value=text(d,".section-head h2");$("prSectionSummary").value=text(d,".section-head p");renderProblemSubs();previewProblemHierarchy();$("saveProblemPage").disabled=false}catch(e){stat("problemStatus","문제 페이지를 불러오지 못했습니다: "+e.message,"err")}}
-function renderProblemSubs(){$("problemSubs").innerHTML=(S.problems.page.subs||[]).map((x,i)=>`<div class="tile" data-i="${i}"><input class="input ps-title" value="${esc(x.title)}"><input class="input ps-href" value="${esc(x.href)}"><textarea class="textarea ps-summary" style="min-height:55px">${esc(x.summary)}</textarea><div class="actions"><button class="btn dark mini ps-detail">상세 편집</button><button class="btn light mini ps-left">←</button><button class="btn light mini ps-right">→</button><button class="btn danger mini ps-del">삭제</button></div></div>`).join("");$("problemSubs").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{const x=S.problems.page.subs[i];x.title=r.querySelector(".ps-title").value;x.href=r.querySelector(".ps-href").value;x.summary=r.querySelector(".ps-summary").value;previewProblemHierarchy()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".ps-detail").onclick=async()=>{sync();try{const x=S.problems.page.subs[i],g=await get(x.href),h=d64(g.content),d=doc(h);$("problemDetailPath").textContent=x.href;loadDetailInto("pd",S.problems.detail,d,h,x.href,g.sha)}catch(e){stat("problemStatus","연결 상세페이지를 불러오지 못했습니다: "+e.message,"err")}};r.querySelector(".ps-left").onclick=()=>move(S.problems.page.subs,i,-1,renderProblemSubs);r.querySelector(".ps-right").onclick=()=>move(S.problems.page.subs,i,1,renderProblemSubs);r.querySelector(".ps-del").onclick=()=>{S.problems.page.subs.splice(i,1);renderProblemSubs();previewProblemHierarchy()}})}
+
+async function openProblemLinkedDetail(path){
+  try{
+    if(!path)throw new Error("연결된 상세페이지 주소가 없습니다.");
+
+    // 문제별 해결의 3단계는 별도 문서를 복제해서 편집하지 않고,
+    // 실제 연결 대상인 사업실무 상세 HTML을 사업실무의 표준 편집기로 연다.
+    let categoryIndex=-1, topicIndex=-1, categoryPage=null;
+
+    for(let ci=0;ci<S.business.categories.length;ci++){
+      const cat=S.business.categories[ci];
+      try{
+        const cg=await get(cat.href), ch=d64(cg.content), cd=doc(ch);
+        const topics=Array.from(cd.querySelectorAll(".topic-card")).map(a=>({
+          title:text(a,"h3"), summary:text(a,"p"), href:a.getAttribute("href")||""
+        }));
+        const ti=topics.findIndex(t=>t.href===path);
+        if(ti>=0){
+          categoryIndex=ci; topicIndex=ti;
+          categoryPage={sha:cg.sha,html:ch,topics};
+          break;
+        }
+      }catch(_){}
+    }
+
+    if(categoryIndex<0)throw new Error(`사업실무에서 연결 대상(${path})을 찾지 못했습니다.`);
+
+    // 사업실무 관리자 상태도 같은 위치로 맞춘다.
+    S.business.selected=categoryIndex;
+    S.business.cat=categoryPage;
+    renderBizCategories();
+
+    const catDoc=doc(categoryPage.html);
+    $("bizCatTitle").value=text(catDoc,".page-hero h1");
+    $("bizCatSummary").value=text(catDoc,".page-hero h1 + p");
+    $("bizCatSectionTitle").value=text(catDoc,".section-head h2");
+    $("bizCatSectionSummary").value=text(catDoc,".section-head p");
+    renderBizTopics();
+    previewBusinessHierarchy();
+    $("saveBizCategory").disabled=false;
+
+    const g=await get(path), h=d64(g.content), d=doc(h);
+    $("bizDetailPath").textContent=path;
+    loadBusinessDetailFlexible(S.business.detail,d,h,path,g.sha);
+
+    // 실제 편집기가 있는 사업실무 탭으로 이동
+    document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.panel==="business"));
+    document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="panel-business"));
+    stat("businessStatus","문제별 해결에서 연결된 3단계 상세페이지를 열었습니다.","ok");
+
+    const target=$("bizDetailEditor")?.closest(".section-box") || $("bizDetailEditor");
+    target?.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){
+    stat("problemStatus","3단계 상세페이지를 열지 못했습니다: "+e.message,"err");
+  }
+}
+
+function renderProblemSubs(){$("problemSubs").innerHTML=(S.problems.page.subs||[]).map((x,i)=>`<div class="tile" data-i="${i}"><input class="input ps-title" value="${esc(x.title)}"><input class="input ps-href" value="${esc(x.href)}"><textarea class="textarea ps-summary" style="min-height:55px">${esc(x.summary)}</textarea><div class="actions"><button class="btn dark mini ps-detail">상세 편집</button><button class="btn light mini ps-left">←</button><button class="btn light mini ps-right">→</button><button class="btn danger mini ps-del">삭제</button></div></div>`).join("");$("problemSubs").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{const x=S.problems.page.subs[i];x.title=r.querySelector(".ps-title").value;x.href=r.querySelector(".ps-href").value;x.summary=r.querySelector(".ps-summary").value;previewProblemHierarchy()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".ps-detail").onclick=async()=>{sync();const x=S.problems.page.subs[i];$("problemDetailPath").textContent=x.href||"연결 주소 없음";await openProblemLinkedDetail(x.href)};r.querySelector(".ps-left").onclick=()=>move(S.problems.page.subs,i,-1,renderProblemSubs);r.querySelector(".ps-right").onclick=()=>move(S.problems.page.subs,i,1,renderProblemSubs);r.querySelector(".ps-del").onclick=()=>{S.problems.page.subs.splice(i,1);renderProblemSubs();previewProblemHierarchy()}})}
 $("addProblemSub").onclick=()=>{S.problems.page.subs=S.problems.page.subs||[];S.problems.page.subs.push({title:"새 관련 문제",summary:"",href:""});renderProblemSubs();previewProblemHierarchy()};
 $("saveProblemLanding").onclick=async()=>{try{const d=doc(S.problems.html);setText(d,".page-hero h1",$("prLandingTitle").value);setText(d,".page-hero h1 + p",$("prLandingSummary").value);const old=Array.from(d.querySelectorAll(".problem-card")),p=old[0]?.parentElement,t=old[0]?.cloneNode(true);if(p&&t){old.forEach(x=>x.remove());S.problems.roots.forEach((x,i)=>{const n=t.cloneNode(true);n.href=x.href;setText(n,"span",String(i+1).padStart(2,"0"));setText(n,"strong",x.title);p.appendChild(n)})}const h=out(d),r=await put("problems.html",h,S.problems.sha,"Update problems landing");S.problems.sha=r.content.sha;S.problems.html=h;stat("problemStatus","✓ 문제별 해결 랜딩/1단계를 저장했습니다.","ok")}catch(e){stat("problemStatus","저장 실패: "+e.message,"err")}};
 $("saveProblemPage").onclick=async()=>{try{const root=S.problems.roots[S.problems.selected],d=doc(S.problems.page.html);setText(d,".page-hero h1",$("prPageTitle").value);setText(d,".page-hero h1 + p",$("prPageSummary").value);setText(d,".section-head h2",$("prSectionTitle").value);setText(d,".section-head p",$("prSectionSummary").value);const grid=d.querySelector(".problem-subgrid");if(grid){grid.innerHTML="";S.problems.page.subs.forEach(x=>{const a=d.createElement("a");a.className="problem-subcard";a.href=x.href;a.innerHTML=`<div class="kicker">관련 문제</div><h3>${esc(x.title)}</h3><p>${esc(x.summary)}</p><div class="more">관련 내용 보기 →</div>`;grid.appendChild(a)})}const h=out(d),r=await put(root.href,h,S.problems.page.sha,`Update problem ${root.title}`);S.problems.page.sha=r.content.sha;S.problems.page.html=h;stat("problemStatus","✓ 선택 문제/2단계를 저장했습니다.","ok")}catch(e){stat("problemStatus","저장 실패: "+e.message,"err")}};
