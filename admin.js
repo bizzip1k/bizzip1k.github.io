@@ -779,7 +779,10 @@ async function loadAbout(){
  $("abConsultingTitle").value=text(secs[0],".section-head h2");$("abConsultingSummary").value=text(secs[0],".section-head p");
  $("abBrandTitle").value=text(secs[1],".section-head h2");$("abBrandSummary").value=text(secs[1],".section-head p");
  $("abBookTitle").value=text(secs[2],".section-head h2");$("abBookSummary").value=text(secs[2],".section-head p");
- S.about.consulting=readProjects(secs[0]);S.about.brands=readProjects(secs[1]);S.about.books=Array.from(secs[2]?.querySelectorAll(".book-card")||[]).map(a=>({year:text(a,".year"),title:text(a,"h3"),desc:text(a,"p"),href:a.getAttribute("href")||"",image:a.querySelector("img")?.getAttribute("src")||""}));
+ S.about.consulting=readProjects(secs[0]);S.about.brands=readProjects(secs[1]);S.about.books=Array.from(secs[2]?.querySelectorAll(".book-card")||[]).map(a=>{
+ const p=a.querySelector("p"),desc=p?.textContent?.trim()||"";
+ return {year:text(a,".year"),title:text(a,"h3"),desc,descOriginal:desc,descHtml:p?.innerHTML||"",href:a.getAttribute("href")||"",image:a.querySelector("img")?.getAttribute("src")||""}
+});
  renderAbout();previewAbout();$("saveAbout").disabled=false
 }
 function readProjects(sec){return Array.from(sec?.querySelectorAll(".project-card")||[]).map(x=>{const st=text(x,"p strong"),all=text(x,"p");return{year:text(x,".year"),name:text(x,"h3"),topic:st,desc:all.replace(st,"").trim()}})}
@@ -788,23 +791,110 @@ function renderAbout(){
  renderRep("consultingRows",S.about.consulting,[["year","기간"],["name","기업명"],["topic","주제"],["desc","설명"]],previewAbout);renderRep("brandRows",S.about.brands,[["year","연도"],["name","브랜드"],["topic","주제"],["desc","설명"]],previewAbout);renderRep("bookRows",S.about.books,[["year","연도"],["title","도서명"],["desc","설명"],["href","링크"],["image","표지 이미지 URL"]],previewAbout)
 }
 $("addPerson").onclick=()=>{S.about.people.push({image:"",tag:"TEAM",name:"새 사람",role:"",body:"",career:"",linkLabel:"",link:""});renderAbout();previewAbout()};
-$("addConsulting").onclick=()=>{S.about.consulting.push({year:"",name:"",topic:"",desc:""});renderAbout()};$("addBrandProject").onclick=()=>{S.about.brands.push({year:"",name:"",topic:"",desc:""});renderAbout()};$("addBook").onclick=()=>{S.about.books.push({year:"",title:"",desc:"",href:"",image:""});renderAbout()};
+$("addConsulting").onclick=()=>{S.about.consulting.push({year:"",name:"",topic:"",desc:""});renderAbout()};$("addBrandProject").onclick=()=>{S.about.brands.push({year:"",name:"",topic:"",desc:""});renderAbout()};$("addBook").onclick=()=>{S.about.books.push({year:"",title:"",desc:"",descOriginal:"",descHtml:"",href:"",image:""});renderAbout();previewAbout()};
 function previewAbout(){$("aboutPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">ABOUT BIZZIP</div><h1>${esc($("abTitle").value)}</h1><p>${esc($("abSummary").value)}</p></div><div class="pv-section"><h2>${esc($("abPeopleTitle").value)}</h2><p>${esc($("abPeopleSummary").value)}</p><div class="pv-grid">${S.about.people.map(x=>`<div class="pv-item"><strong>${esc(x.name)}</strong><small>${esc(x.role)}</small><small>${esc(x.body)}</small></div>`).join("")}</div></div><div class="pv-section"><h2>${esc($("abConsultingTitle").value)}</h2><div class="pv-grid">${S.about.consulting.map(x=>`<div class="pv-item"><strong>${esc(x.name)}</strong><small>${esc(x.topic)}</small></div>`).join("")}</div></div><div class="pv-section"><h2>${esc($("abBrandTitle").value)}</h2><div class="pv-grid">${S.about.brands.map(x=>`<div class="pv-item"><strong>${esc(x.name)}</strong><small>${esc(x.topic)}</small></div>`).join("")}</div></div><div class="pv-section"><h2>${esc($("abBookTitle").value)}</h2><div class="pv-grid">${S.about.books.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.desc)}</small></div>`).join("")}</div></div>`}
 bind(["abTitle","abSummary","abPeopleTitle","abPeopleSummary","abConsultingTitle","abConsultingSummary","abBrandTitle","abBrandSummary","abBookTitle","abBookSummary"],previewAbout);
 $("saveAbout").onclick=async()=>{try{
  const d=doc(S.about.html);setText(d,".page-hero h1",$("abTitle").value);setText(d,".page-hero h1 + p",$("abSummary").value);
  let ps=d.querySelector(".people-section");if(!ps){ps=d.createElement("section");ps.className="people-section";ps.innerHTML=`<div class="wrap"><div class="section-head"><h2></h2><p></p></div><div class="people-grid"></div></div>`;d.querySelector("main")?.insertBefore(ps,d.querySelector("main")?.children[1]||null)}
  setText(ps,".section-head h2",$("abPeopleTitle").value);setText(ps,".section-head p",$("abPeopleSummary").value);const pg=ps.querySelector(".people-grid");if(pg)pg.innerHTML=S.about.people.map(x=>`<article class="person-card"><div class="person-photo">${x.image?`<img src="${esc(x.image)}" alt="${esc(x.name)}">`:""}</div><div class="person-body"><div class="tag">${esc(x.tag)}</div><h3>${esc(x.name)}</h3><div class="person-role">${esc(x.role)}</div><p>${esc(x.body)}</p><div class="list">${lines(x.career).map(c=>`<div>${esc(c)}</div>`).join("")}</div><div class="person-link">${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkLabel||"자세히 보기")} →</a>`:""}</div></div></article>`).join("");
- const secs=Array.from(d.querySelectorAll(".about-section"));setText(secs[0],".section-head h2",$("abConsultingTitle").value);setText(secs[0],".section-head p",$("abConsultingSummary").value);setText(secs[1],".section-head h2",$("abBrandTitle").value);setText(secs[1],".section-head p",$("abBrandSummary").value);setText(secs[2],".section-head h2",$("abBookTitle").value);setText(secs[2],".section-head p",$("abBookSummary").value);syncProjects(secs[0],S.about.consulting);syncProjects(secs[1],S.about.brands);const bg=secs[2]?.querySelector(".book-grid");if(bg)bg.innerHTML=S.about.books.map(x=>`<a class="book-card book-link book-with-cover" href="${esc(x.href)}" target="_blank" rel="noopener">${x.image?`<img class="book-cover" src="${esc(x.image)}" alt="${esc(x.title)} 표지">`:""}<div class="book-body"><span class="year">${esc(x.year)}</span><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p><span class="book-more">네이버 도서에서 보기 →</span></div></a>`).join("");const h=out(d),r=await put("about.html",h,S.about.sha,"Update about");S.about.sha=r.content.sha;S.about.html=h;stat("aboutStatus","✓ BIZZIP 소개 전체 내용을 저장했습니다.","ok")
+ const secs=Array.from(d.querySelectorAll(".about-section"));setText(secs[0],".section-head h2",$("abConsultingTitle").value);setText(secs[0],".section-head p",$("abConsultingSummary").value);setText(secs[1],".section-head h2",$("abBrandTitle").value);setText(secs[1],".section-head p",$("abBrandSummary").value);setText(secs[2],".section-head h2",$("abBookTitle").value);setText(secs[2],".section-head p",$("abBookSummary").value);syncProjects(secs[0],S.about.consulting);syncProjects(secs[1],S.about.brands);const bg=secs[2]?.querySelector(".book-grid");if(bg)bg.innerHTML=S.about.books.map(x=>{
+ const descHtml=(x.descHtml&&x.desc===x.descOriginal)?x.descHtml:esc(x.desc);
+ return `<a class="book-card book-link book-with-cover" href="${esc(x.href)}" target="_blank" rel="noopener">${x.image?`<img class="book-cover" src="${esc(x.image)}" alt="${esc(x.title)} 표지">`:""}<div class="book-body"><span class="year">${esc(x.year)}</span><h3>${esc(x.title)}</h3><p>${descHtml}</p><span class="book-more">네이버 도서에서 보기 →</span></div></a>`
+}).join("");const h=out(d),r=await put("about.html",h,S.about.sha,"Update about");S.about.sha=r.content.sha;S.about.html=h;stat("aboutStatus","✓ BIZZIP 소개 전체 내용을 저장했습니다.","ok")
  }catch(e){stat("aboutStatus","저장 실패: "+e.message,"err")}};
 
+function textWithoutStrong(el){
+ if(!el)return "";
+ const c=el.cloneNode(true);
+ c.querySelectorAll("strong").forEach(n=>n.remove());
+ return (c.textContent||"").replace(/\s+/g," ").trim()
+}
+function textWithBreaks(el){
+ if(!el)return "";
+ const c=el.cloneNode(true);
+ c.querySelectorAll("br").forEach(br=>br.replaceWith("\n"));
+ return (c.textContent||"").split("\n").map(x=>x.trim()).filter(Boolean).join("\n")
+}
+function setHtmlWithBreaks(el,value){
+ if(!el)return;
+ el.innerHTML=String(value||"").split(/\r?\n/).map(v=>esc(v.trim())).filter(Boolean).join("<br>")
+}
+function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||"").trim())}
+function validHttpUrl(v){
+ if(!v)return true;
+ try{const u=new URL(v);return u.protocol==="https:"||u.protocol==="http:"}catch(_){return false}
+}
+
 /* CONTACT */
-async function loadContact(){const g=await get("contact.html"),h=d64(g.content),d=doc(h);S.contact.sha=g.sha;S.contact.html=h;$("coTitle").value=text(d,".page-hero h1");$("coSummary").value=text(d,".page-hero h1 + p");$("coMainTitle").value=text(d,".contact-main h2").replace(/\s+/g," ");$("coMainBody").value=text(d,".contact-main p");$("coEmail").value=(d.querySelector(".contact-mail")?.getAttribute("href")||"").replace("mailto:","");const info=d.querySelector(".bizzip-contact-info");$("coManager").value=text(info,"[data-manager]")||"BIZZIP 운영담당";$("coKakao").value=text(info,"[data-kakao]");$("coKakaoUrl").value=info?.querySelector("[data-kakao] a")?.getAttribute("href")||"";$("coPrivacy").value=text(info,".privacy-note")||"문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.";$("coGuideTitle").value=text(d,".contact-guide h3");$("coGuideItems").value=Array.from(d.querySelectorAll(".contact-guide ol li")).map(x=>x.textContent.trim()).join("\n");S.contact.types=Array.from(d.querySelectorAll(".contact-option")).map(x=>({label:text(x,".label"),title:text(x,"h3"),body:text(x,"p")}));renderContactTypes();previewContact();$("saveContact").disabled=false}
+async function loadContact(){
+ const g=await get("contact.html"),h=d64(g.content),d=doc(h);
+ S.contact.sha=g.sha;S.contact.html=h;
+ $("coTitle").value=text(d,".page-hero h1");
+ $("coSummary").value=text(d,".page-hero h1 + p");
+ $("coMainTitle").value=textWithBreaks(d.querySelector(".contact-main h2"));
+ $("coMainBody").value=text(d,".contact-main p");
+ $("coEmail").value=(d.querySelector(".contact-mail")?.getAttribute("href")||"").replace("mailto:","");
+
+ const info=d.querySelector(".bizzip-contact-info");
+ $("coManager").value=textWithoutStrong(info?.querySelector("[data-manager]"))||"BIZZIP 운영담당";
+ $("coKakao").value=textWithoutStrong(info?.querySelector("[data-kakao]"));
+ $("coKakaoUrl").value=info?.querySelector("[data-kakao] a")?.getAttribute("href")||"";
+ $("coPrivacy").value=text(info,".privacy-note")||"문의 시 회신에 필요한 최소한의 정보만 보내주세요. 주민등록번호, 계좌번호, 건강정보 등 불필요한 민감정보는 보내지 마세요. 문의 내용과 연락처는 문의 확인 및 회신 목적으로만 사용합니다.";
+
+ const guide=d.querySelector(".contact-guide:not(.bizzip-contact-info)");
+ $("coGuideTitle").value=text(guide,"h3");
+ $("coGuideItems").value=Array.from(guide?.querySelectorAll("ol li")||[]).map(x=>x.textContent.trim()).join("\n");
+
+ S.contact.types=Array.from(d.querySelectorAll(".contact-option")).map(x=>({
+   label:text(x,".label"),title:text(x,"h3"),body:text(x,"p")
+ }));
+ renderContactTypes();previewContact();$("saveContact").disabled=false
+}
 function renderContactTypes(){renderRep("contactTypeRows",S.contact.types,[["label","라벨"],["title","유형 제목"],["body","설명"]],previewContact)}
 $("addContactType").onclick=()=>{S.contact.types.push({label:"INQUIRY",title:"새 문의 유형",body:""});renderContactTypes()};
 function previewContact(){$("contactPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">CONTACT</div><h1>${esc($("coTitle").value)}</h1><p>${esc($("coSummary").value)}</p></div><div class="pv-section"><h2>${esc($("coMainTitle").value)}</h2><p>${esc($("coMainBody").value)}</p><div class="pv-item"><strong>${esc($("coManager").value)}</strong><small>${esc($("coEmail").value)}${$("coKakao").value?" / "+esc($("coKakao").value):""}</small></div></div><div class="pv-section"><div class="pv-grid">${S.contact.types.map(x=>`<div class="pv-item"><strong>${esc(x.title)}</strong><small>${esc(x.body)}</small></div>`).join("")}</div><h2 style="margin-top:12px">${esc($("coGuideTitle").value)}</h2><ol>${lines($("coGuideItems").value).map(x=>`<li>${esc(x)}</li>`).join("")}</ol><p class="hint">${esc($("coPrivacy").value)}</p></div>`}
 bind(["coTitle","coSummary","coMainTitle","coMainBody","coManager","coEmail","coKakao","coKakaoUrl","coGuideTitle","coGuideItems","coPrivacy"],previewContact);
-$("saveContact").onclick=async()=>{try{const d=doc(S.contact.html);setText(d,".page-hero h1",$("coTitle").value);setText(d,".page-hero h1 + p",$("coSummary").value);const h2=d.querySelector(".contact-main h2");if(h2)h2.textContent=$("coMainTitle").value;setText(d,".contact-main p",$("coMainBody").value);const mail=d.querySelector(".contact-mail");if(mail){mail.href=`mailto:${$("coEmail").value}`;mail.textContent=$("coEmail").value+" →"}const side=d.querySelector(".contact-side");if(side)side.innerHTML=S.contact.types.map(x=>`<div class="contact-option"><div class="label">${esc(x.label)}</div><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join("");setText(d,".contact-guide h3",$("coGuideTitle").value);const ol=d.querySelector(".contact-guide ol");if(ol)ol.innerHTML=lines($("coGuideItems").value).map(x=>`<li>${esc(x)}</li>`).join("");let info=d.querySelector(".bizzip-contact-info");if(!info){info=d.createElement("div");info.className="bizzip-contact-info contact-guide";d.querySelector(".contact-guide")?.before(info)}info.innerHTML=`<h3>문의 연락처</h3><p data-manager><strong>담당자</strong> ${esc($("coManager").value)}</p><p><strong>이메일</strong> <a href="mailto:${esc($("coEmail").value)}">${esc($("coEmail").value)}</a></p>${$("coKakao").value?`<p data-kakao><strong>카카오톡</strong> ${$("coKakaoUrl").value?`<a href="${esc($("coKakaoUrl").value)}">${esc($("coKakao").value)}</a>`:esc($("coKakao").value)}</p>`:""}<p class="privacy-note">${esc($("coPrivacy").value)}</p>`;const h=out(d),r=await put("contact.html",h,S.contact.sha,"Update contact");S.contact.sha=r.content.sha;S.contact.html=h;stat("contactStatus","✓ 문의 페이지 전체 내용을 저장했습니다.","ok")}catch(e){stat("contactStatus","저장 실패: "+e.message,"err")}};
+$("saveContact").onclick=async()=>{try{
+ const email=$("coEmail").value.trim(),kakaoUrl=$("coKakaoUrl").value.trim();
+ if(!validEmail(email)){stat("contactStatus","올바른 이메일 주소를 입력해주세요.","err");$("coEmail").focus();return}
+ if(kakaoUrl&&!validHttpUrl(kakaoUrl)){stat("contactStatus","카카오톡 연결주소는 http:// 또는 https:// 주소로 입력해주세요.","err");$("coKakaoUrl").focus();return}
+
+ const d=doc(S.contact.html);
+ setText(d,".page-hero h1",$("coTitle").value.trim());
+ setText(d,".page-hero h1 + p",$("coSummary").value.trim());
+ setHtmlWithBreaks(d.querySelector(".contact-main h2"),$("coMainTitle").value);
+ setText(d,".contact-main p",$("coMainBody").value.trim());
+
+ const mail=d.querySelector(".contact-mail");
+ if(mail){mail.href=`mailto:${email}`;mail.textContent=email+" →"}
+
+ const side=d.querySelector(".contact-side");
+ if(side)side.innerHTML=S.contact.types.map(x=>`<div class="contact-option"><div class="label">${esc(x.label)}</div><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join("");
+
+ const guide=d.querySelector(".contact-guide:not(.bizzip-contact-info)");
+ if(guide){
+   setText(guide,"h3",$("coGuideTitle").value.trim());
+   const ol=guide.querySelector("ol");
+   if(ol)ol.innerHTML=lines($("coGuideItems").value).map(x=>`<li>${esc(x)}</li>`).join("");
+ }
+
+ let info=d.querySelector(".bizzip-contact-info");
+ if(!info){
+   info=d.createElement("div");
+   info.className="bizzip-contact-info contact-guide";
+   guide?.before(info)
+ }
+ info.innerHTML=`<h3>문의 연락처</h3>
+ <p data-manager><strong>담당자</strong> ${esc($("coManager").value.trim())}</p>
+ <p><strong>이메일</strong> <a href="mailto:${esc(email)}">${esc(email)}</a></p>
+ ${$("coKakao").value.trim()?`<p data-kakao><strong>카카오톡</strong> ${kakaoUrl?`<a href="${esc(kakaoUrl)}">${esc($("coKakao").value.trim())}</a>`:esc($("coKakao").value.trim())}</p>`:""}
+ <p class="privacy-note">${esc($("coPrivacy").value.trim())}</p>`;
+
+ const h=out(d),r=await put("contact.html",h,S.contact.sha,"Update contact");
+ S.contact.sha=r.content.sha;S.contact.html=h;
+ stat("contactStatus","✓ 문의 페이지 전체 내용을 저장했습니다.","ok")
+}catch(e){stat("contactStatus","저장 실패: "+e.message,"err")}};
 
 /* repeat helpers */
 function renderRep(id,arr,fields,preview){$(id).innerHTML=arr.map((x,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-head"><strong>${i+1}번</strong><div class="actions"><button class="btn light mini rr-up">↑</button><button class="btn light mini rr-down">↓</button><button class="btn danger mini rr-del">삭제</button></div></div>${fields.map(([k,l])=>`<label class="label">${l}</label>${["desc","body","career"].includes(k)?`<textarea class="textarea rr-field" data-k="${k}" style="min-height:55px">${esc(x[k]||"")}</textarea>`:`<input class="input rr-field" data-k="${k}" value="${esc(x[k]||"")}">`}`).join("")}</div>`).join("");$(id).querySelectorAll(".repeat-row").forEach(r=>{const i=+r.dataset.i;r.querySelectorAll(".rr-field").forEach(e=>e.oninput=()=>{arr[i][e.dataset.k]=e.value;preview&&preview()});r.querySelector(".rr-up").onclick=()=>move(arr,i,-1,()=>renderRep(id,arr,fields,preview),preview);r.querySelector(".rr-down").onclick=()=>move(arr,i,1,()=>renderRep(id,arr,fields,preview),preview);r.querySelector(".rr-del").onclick=()=>{arr.splice(i,1);renderRep(id,arr,fields,preview);preview&&preview()}})}
