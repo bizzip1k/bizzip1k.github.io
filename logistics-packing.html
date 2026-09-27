@@ -4,6 +4,7 @@
 <meta name="description" content="포장재와 작업비, 파손률까지 포함해 계산합니다.">
 <title>포장비 | BIZZIP</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="business-guide.css">
 </head><body>
 
 <header><div class="wrap nav">
@@ -11,7 +12,7 @@
   <a class="logo" href="index.html"><img src="bizzip-logo.png" alt="BIZZIP"></a>
   <div class="brand-copy"><strong>내 사업에 사소한 일은 없습니다. 비즈집</strong></div>
 </div>
-  <nav class="menu"><a href="index.html">홈</a><a href="business.html" class="active">사업실무</a><a href="problems.html">문제별 해결</a><a href="contents.html">콘텐츠</a><a href="resources.html">실무자료</a><a href="about.html">BIZZIP 소개</a><a href="contact.html">문의</a></nav>
+  <nav class="menu"><a href="business.html" class="active">사업실무</a><a href="problems.html" class="">문제별 해결</a><a href="contents.html" class="">콘텐츠</a><a href="resources.html" class="">실무자료</a><a href="about.html" class="">BIZZIP 소개</a><a href="contact.html" class="">문의</a></nav>
 </div></header>
 
 
@@ -20,22 +21,46 @@
   <div class="breadcrumb"><a href="index.html">홈</a> / <a href="business.html">사업실무</a> / <a href="logistics.html">물류와 재고</a> / 포장비</div>
   <div class="eyebrow">물류와 재고</div>
   <h1>포장비</h1>
-  <p>포장재와 작업비, 파손률까지 포함해 계산합니다.</p>
+  <p>포장재 단가뿐 아니라 작업시간, 부피, 완충재와 택배요금까지 합쳐 주문 한 건의 포장비를 계산합니다.</p>
 </div></section>
 
 <section><div class="wrap article-shell">
   <article class="article">
-    <!-- ===== 본문 수정 영역 시작 ===== -->
-<h2>왜 이 내용을 먼저 봐야 할까요?</h2>
-<p class="detail-intro">포장은 고객경험과 파손률, 택배비를 동시에 결정합니다. 포장재 단가만 줄이면 오히려 반품이나 배송비가 늘 수 있습니다.</p>
-<h2>실무에서 먼저 보는 기준</h2><ul><li>포장재 단가 외에 작업시간과 완충재, 스티커 등 소모품을 포함합니다.</li><li>제품 파손률과 고객이 버리기 쉬운 정도도 포장 기준에 넣습니다.</li><li>택배 규격이 한 단계 올라가는 크기인지 확인합니다.</li></ul>
-<div class="practice-box"><strong>바로 해볼 일</strong><p>현재 상황을 숫자와 사실로 한 번 적어보세요. “대략 이럴 것 같다”는 판단 대신 지금 확인 가능한 비용, 수량, 기간, 고객 반응을 적으면 다음 행동이 훨씬 선명해집니다.</p></div>
-<h2>실행 순서</h2><div class="step-grid"><div class="step-card"><b>STEP 1</b><strong>월 물량 확인</strong><p>최근 평균 주문량과 상품별 출고구조를 먼저 봅니다.</p></div><div class="step-card"><b>STEP 2</b><strong>총비용 계산</strong><p>입고부터 반품까지 발생하는 비용을 모두 합칩니다.</p></div><div class="step-card"><b>STEP 3</b><strong>예외상황 확인</strong><p>합포장, 사은품, 교환, 긴급출고 같은 예외를 점검합니다.</p></div><div class="step-card"><b>STEP 4</b><strong>SLA 합의</strong><p>오배송과 지연이 생겼을 때 대응시간과 책임을 정합니다.</p></div></div>
-<h2>현장에서 자주 생기는 상황</h2><div class="example-box"><strong>예시</strong><p>박스 단가 150원 절감보다 규격 축소로 택배비가 500원 줄어드는 것이 훨씬 큰 효과일 수 있습니다.</p></div>
-<div class="mistake-box"><strong>자주 하는 실수</strong><ul><li>택배비만 보고 물류업체를 결정하는 것</li><li>재고수량만 보고 판매속도를 보지 않는 것</li><li>이관·반품 같은 예외업무의 책임기준을 정하지 않는 것</li></ul></div>
-<div class="finish-box"><strong>이 정도까지 확인하면 다음 단계로 넘어가도 됩니다.</strong><p>포장비에 대한 결정 기준과 담당자, 실행일이 정해지고 결과를 다시 확인할 숫자 한두 개가 정해졌다면 실행을 시작해도 좋습니다. 처음부터 완벽한 답을 찾기보다 작은 실행과 확인을 반복하는 것이 실제 사업에서는 더 안전합니다.</p></div>
-<!-- ===== 본문 수정 영역 끝 ===== -->
-  </article>
+    <!-- ===== BIZZIP 사업실무 가이드 영역 시작 ===== -->
+    <div class="biz-flex-sections">
+      <section class="biz-flex-section" data-kind="notice">
+        <h2 class="biz-section-title">먼저 확인하세요</h2>
+        <div class="biz-section-body"><p>포장비는 박스 가격만 보면 작아 보이지만 주문이 늘면 큰 변동비가 됩니다.</p><p>자재 수, 작업시간, 배송규격을 함께 줄여야 실제 비용이 내려갑니다.</p></div>
+        <div class="biz-section-items"></div>
+      </section>
+      <section class="biz-flex-section" data-kind="cards">
+        <h2 class="biz-section-title">포장비에서 먼저 볼 것</h2>
+        <div class="biz-section-body"></div>
+        <div class="biz-section-items"><div class="biz-section-item"><strong class="biz-item-title">자재비</strong><p class="biz-item-body">박스, 테이프, 완충재, 라벨을 모두 합칩니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">작업비</strong><p class="biz-item-body">한 주문을 포장하는 데 걸리는 시간을 비용으로 봅니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">배송규격</strong><p class="biz-item-body">박스 크기와 무게가 택배단가에 미치는 영향을 봅니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">파손비</strong><p class="biz-item-body">포장을 줄였을 때 증가할 수 있는 파손과 반품도 고려합니다.</p><a class="biz-item-link" href="" hidden></a></div></div>
+      </section>
+      <section class="biz-flex-section" data-kind="steps">
+        <h2 class="biz-section-title">실제로 이렇게 계산합니다</h2>
+        <div class="biz-section-body"></div>
+        <div class="biz-section-items"><div class="biz-section-item"><strong class="biz-item-title">주문 한 건의 포장재를 전부 펼쳐놓습니다</strong><p class="biz-item-body">숨은 부자재를 확인합니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">자재별 단가를 기록합니다</strong><p class="biz-item-body">묶음구매 단가와 최소수량을 함께 봅니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">포장시간을 실제 측정합니다</strong><p class="biz-item-body">여러 건을 재서 평균시간을 봅니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">박스 규격을 상품별로 정리합니다</strong><p class="biz-item-body">과도한 빈 공간을 줄입니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">파손률과 고객경험을 같이 봅니다</strong><p class="biz-item-body">비용절감 때문에 품질이 나빠지지 않게 합니다.</p><a class="biz-item-link" href="" hidden></a></div></div>
+      </section>
+      <section class="biz-flex-section" data-kind="checklist">
+        <h2 class="biz-section-title">한번 체크해 봅니다</h2>
+        <div class="biz-section-body"></div>
+        <div class="biz-section-items"><div class="biz-section-item"><strong class="biz-item-title">부자재까지 모두 원가에 포함했는가</strong><p class="biz-item-body"></p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">포장시간을 측정했는가</strong><p class="biz-item-body"></p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">박스 크기가 택배비를 높이지 않는가</strong><p class="biz-item-body"></p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">파손률을 함께 확인하는가</strong><p class="biz-item-body"></p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">포장재 재고를 과도하게 보유하고 있지 않은가</strong><p class="biz-item-body"></p><a class="biz-item-link" href="" hidden></a></div></div>
+      </section>
+      <section class="biz-flex-section" data-kind="faq">
+        <h2 class="biz-section-title">여기서 많이 막힙니다</h2>
+        <div class="biz-section-body"></div>
+        <div class="biz-section-items"><div class="biz-section-item"><strong class="biz-item-title">박스 단가만 낮추면 되지 않나요</strong><p class="biz-item-body">조립이 어려우면 작업시간이 늘어 총비용이 오를 수 있습니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">포장을 최소화하면 무조건 절약되나요</strong><p class="biz-item-body">파손과 고객불만 비용이 늘 수 있습니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">고급 포장이 재구매에 도움이 되나요</strong><p class="biz-item-body">상품과 고객 기대에 따라 다릅니다. 후기와 반응으로 확인합니다.</p><a class="biz-item-link" href="" hidden></a></div></div>
+      </section>
+      <section class="biz-flex-section" data-kind="decision">
+        <h2 class="biz-section-title">BIZZIP에서는 여기까지 한 번 더 봅니다</h2>
+        <div class="biz-section-body"></div>
+        <div class="biz-section-items"><div class="biz-section-item"><strong class="biz-item-title">한 주문 포장에 실제 얼마가 드는가?</strong><p class="biz-item-body">자재와 작업시간을 합칩니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">포장규격을 줄이면 배송비도 줄어드는가?</strong><p class="biz-item-body">택배요금 기준을 확인합니다.</p><a class="biz-item-link" href="" hidden></a></div><div class="biz-section-item"><strong class="biz-item-title">고객이 버리기 불편한 포장은 아닌가?</strong><p class="biz-item-body">사용 후 경험도 봅니다.</p><a class="biz-item-link" href="" hidden></a></div></div>
+      </section>
+    </div>
+    <!-- ===== BIZZIP 사업실무 가이드 영역 끝 ===== -->
+</article>
 
   <aside class="sidebar"><h3>물류와 재고의 다른 주제</h3><a href="logistics-3pl.html">3PL 선택</a><a href="logistics-inventory.html">재고 관리</a><a href="logistics-packing.html">포장비</a><a href="logistics-returns.html">반품 관리</a><a href="logistics-warehouse-move.html">물류 이관</a></aside>
 </div></section>
