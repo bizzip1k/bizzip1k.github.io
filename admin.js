@@ -41,7 +41,6 @@ async function putBytes(path,bytes,sha,message){let b="";for(let i=0;i<bytes.len
 function move(a,i,d,render,preview){const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render();preview&&preview()}
 function bind(ids,fn){ids.forEach(id=>$(id)?.addEventListener("input",fn))}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
-  hideProblemReturnGuide();
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));
   document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===`panel-${b.dataset.panel}`));
   window.scrollTo({top:0,behavior:"smooth"});
@@ -156,52 +155,6 @@ function businessDetailEditorHtml(){return `<div class="form-grid">
 
 $("bizDetailEditor").innerHTML=businessDetailEditorHtml();
 $("problemDetailEditor").innerHTML=detailEditorHtml("pd");
-
-let problemReturnContext=null;
-(function setupProblemReturnGuide(){
-  const host=$("bizDetailEditor");
-  if(!host || $("problemReturnGuide"))return;
-  const box=document.createElement("div");
-  box.id="problemReturnGuide";
-  box.style.display="none";
-  box.style.margin="0 0 14px";
-  box.style.padding="12px 14px";
-  box.style.border="1px solid #b9ddd8";
-  box.style.borderRadius="10px";
-  box.style.background="#f1fbf9";
-  box.innerHTML=`
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <strong style="display:block;margin-bottom:4px">문제별 해결에서 연결된 사업실무 상세페이지를 편집 중입니다.</strong>
-        <span id="problemReturnText" class="hint">이 페이지가 실제 원본이며, 여기서 수정하면 문제별 해결의 연결 화면에도 반영됩니다.</span>
-      </div>
-      <button id="problemReturnBtn" class="btn light mini" type="button">← 문제별 해결로 돌아가기</button>
-    </div>`;
-  host.parentElement.insertBefore(box,host);
-  $("problemReturnBtn").onclick=()=>returnToProblemEditor();
-})();
-function showProblemReturnGuide(title,path){
-  problemReturnContext={title:title||"",path:path||""};
-  const box=$("problemReturnGuide"),txt=$("problemReturnText");
-  if(txt)txt.textContent=title
-    ? `문제별 해결의 '${title}'에서 연결된 원본 페이지입니다. 여기서 수정하면 연결 내용에 그대로 반영됩니다.`
-    : "문제별 해결에서 연결된 원본 페이지입니다. 여기서 수정하면 연결 내용에 그대로 반영됩니다.";
-  if(box)box.style.display="";
-}
-function hideProblemReturnGuide(){
-  problemReturnContext=null;
-  const box=$("problemReturnGuide");
-  if(box)box.style.display="none";
-}
-function returnToProblemEditor(){
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.panel==="problems"));
-  document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="panel-problems"));
-  const target=$("problemSubs")?.closest(".section-box") || $("problemSubs");
-  target?.scrollIntoView({behavior:"smooth",block:"start"});
-  const title=problemReturnContext?.title||"";
-  hideProblemReturnGuide();
-  stat("problemStatus",title?`✓ '${title}' 관련 문제 편집 위치로 돌아왔습니다.`:"✓ 문제별 해결 편집 위치로 돌아왔습니다.","ok");
-}
 
 function paragraphsFrom(el){
  if(!el)return "";
@@ -470,7 +423,6 @@ async function openProblemLinkedDetail(path,sourceTitle){
       x.classList.toggle("active",x.id==="panel-business");
     });
 
-    showProblemReturnGuide(sourceTitle||categoryPage.topics[topicIndex].title,path);
     stat("businessStatus",`✓ 문제별 해결에서 연결된 '${categoryPage.topics[topicIndex].title}' 상세페이지를 열었습니다.`,"ok");
 
     const target=$("bizDetailEditor")?.closest(".section-box") || $("bizDetailEditor");
