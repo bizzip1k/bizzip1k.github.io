@@ -514,7 +514,14 @@ function renderPostList(){
    if(filter==="unclassified")return !p.category;
    return p.category===filter;
  });
- if(q)arr=arr.filter(p=>(p.title||"").toLowerCase().includes(q)||(p.summary||"").toLowerCase().includes(q));
+ if(q)arr=arr.filter(p=>{
+   const body=(p.sections||[]).flatMap(s=>[
+     s.heading||"",
+     ...(s.paragraphs||[]),
+     ...(s.bullets||[])
+   ]).join(" ");
+   return [p.title||"",p.summary||"",p.categoryLabel||"",body].join(" ").toLowerCase().includes(q);
+ });
  arr.sort(sortPostsNewestFirst);
  $("postList").innerHTML=arr.length?arr.map(p=>{const i=S.contents.posts.findIndex(x=>x.id===p.id);return `<div class="list-row ${S.contents.edit===i?"active":""}" data-post-i="${i}"><div><strong>${esc(p.title)}</strong><small>${esc(p.date||"")} · ${p.deleted?"삭제됨":esc(p.categoryLabel||"미분류")}</small></div><button class="btn light mini ep" data-i="${i}">${p.deleted?"열기":"수정"}</button></div>`}).join(""):`<div class="hint">이 폴더에는 콘텐츠가 없습니다.</div>`;
  $("postList").querySelectorAll(".ep").forEach(b=>b.onclick=()=>editPost(+b.dataset.i))
@@ -528,7 +535,63 @@ function renderPostSections(){$("postSections").innerHTML=(S.contents.editSectio
 $("addPostSection").onclick=()=>{S.contents.editSections=S.contents.editSections||[];S.contents.editSections.push({heading:"새 소제목",paragraphs:[""],bullets:[]});renderPostSections();previewPost()};
 function previewPost(){$("postPreview").innerHTML=`<div class="pv-hero"><div class="pv-eyebrow">BIZZIP CONTENT</div><h1>${esc($("postTitle").value)}</h1><p>${esc($("postSummary").value)}</p></div><div class="pv-section article-preview">${(S.contents.editSections||[]).map(s=>`<h3>${esc(s.heading||"")}</h3>${(s.paragraphs||[]).map(p=>`<p>${esc(p)}</p>`).join("")}${(s.bullets||[]).length?`<ul>${s.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}`).join("")}</div>`}
 bind(["postTitle","postSummary"],previewPost);
-$("savePost").onclick=async()=>{try{const old=S.contents.edit>=0?S.contents.posts[S.contents.edit]:{};const cat=$("postCategory").value,catLabel=cat?($("postCategory").selectedOptions[0]?.textContent||""):"";const p={...old,id:old.id||`post-${Date.now()}`,title:$("postTitle").value.trim(),date:$("postDate").value,publishedAt:(S.contents.edit>=0?(S.contents.posts[S.contents.edit].publishedAt||new Date().toISOString()):new Date().toISOString()),category:cat,categoryLabel:catLabel,summary:$("postSummary").value.trim(),sections:S.contents.editSections||[],subcategory:"",subcategoryLabel:"",subcategoryPage:""};if(S.contents.edit>=0)S.contents.posts[S.contents.edit]=p;else S.contents.posts.push(p);const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,"Update BIZZIP posts");S.contents.sha=r.content.sha;renderPostFolders();renderPostList();stat("contentsStatus","✓ 콘텐츠 본문까지 저장했습니다.","ok")}catch(e){stat("contentsStatus","저장 실패: "+e.message,"err")}};
+$("savePost").onclick=async()=>{
+  try{
+    const title=$("postTitle").value.trim();
+    const date=$("postDate").value;
+    if(!title){
+      stat("contentsStatus","글 제목을 입력해주세요.","err");
+      $("postTitle").focus();
+      return;
+    }
+    if(!date){
+      stat("contentsStatus","발행일을 선택해주세요.","err");
+      $("postDate").focus();
+      return;
+    }
+
+    const isNew=S.contents.edit<0;
+    const old=isNew?{}:S.contents.posts[S.contents.edit];
+    const cat=$("postCategory").value;
+    const catLabel=cat?($("postCategory").selectedOptions[0]?.textContent||""):"";
+    const p={
+      ...old,
+      id:old.id||`post-${Date.now()}`,
+      title,
+      date,
+      publishedAt:isNew?new Date().toISOString():(old.publishedAt||new Date().toISOString()),
+      category:cat,
+      categoryLabel:catLabel,
+      summary:$("postSummary").value.trim(),
+      sections:JSON.parse(JSON.stringify(S.contents.editSections||[])),
+      subcategory:"",
+      subcategoryLabel:"",
+      subcategoryPage:""
+    };
+
+    if(isNew){
+      S.contents.posts.push(p);
+      S.contents.edit=S.contents.posts.length-1;
+    }else{
+      S.contents.posts[S.contents.edit]=p;
+    }
+
+    const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,"Update BIZZIP posts");
+    S.contents.sha=r.content.sha;
+
+    renderPostFolders();
+    renderPostList();
+    $("deletePost").disabled=false;
+    $("deletePost").style.display="inline-flex";
+    $("deletePost").textContent=p.deleted?"콘텐츠 복원":"콘텐츠 삭제";
+
+    stat("contentsStatus",isNew
+      ?"✓ 새 콘텐츠를 저장했습니다. 이후 수정은 같은 콘텐츠에 반영됩니다."
+      :"✓ 콘텐츠 본문까지 저장했습니다.","ok");
+  }catch(e){
+    stat("contentsStatus","저장 실패: "+e.message,"err");
+  }
+};
 
 $("deletePost").onclick=async()=>{
   if(S.contents.edit<0)return;
@@ -541,8 +604,10 @@ $("deletePost").onclick=async()=>{
       const r=await put(CFG.posts,JSON.stringify(S.contents.posts,null,2),S.contents.sha,`Restore BIZZIP content ${p.id}`);
       S.contents.sha=r.content.sha;
       $("deletePost").textContent="콘텐츠 삭제";
+      S.contents.filterCategory=p.category||"unclassified";
       renderPostFolders();renderPostList();
-      stat("contentsStatus","✓ 콘텐츠를 복원했습니다.","ok");
+      requestAnimationFrame(()=>{document.querySelector(`#postList .list-row[data-post-i="${S.contents.edit}"]`)?.scrollIntoView({block:"nearest"})});
+      stat("contentsStatus","✓ 콘텐츠를 복원했습니다. 원래 주제 폴더로 이동했습니다.","ok");
       return;
     }
     if(!confirm(`"${p.title}" 콘텐츠를 삭제할까요?\n\n사이트에서는 즉시 숨겨지며, 관리자 '삭제됨'에서 다시 복원할 수 있습니다.`))return;
