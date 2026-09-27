@@ -454,10 +454,11 @@ function renderResourceCards(){
 }
 $("resourceAdminSearch").oninput=renderResourceCards;
 $("addResourceCard").onclick=()=>{const f=S.resources.filterTopic||"all",topic=(f!=="all"&&f!=="unclassified")?f:"";S.resources.cards.push({title:"새 자료",summary:"",href:`resource-${Date.now()}.html`,topic,topicLabel:(S.resources.topics.find(t=>t.id===topic)||{}).label||""});renderResourceFolderBar();renderResourceCards();previewResourceLanding()};
-async function selectResource(i){S.resources.selected=i;renderResourceCards();const x=S.resources.cards[i];try{
- const g=await get(x.href),h=d64(g.content),d=doc(h);const a=d.querySelector(".article a[download]"),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
- S.resources.detail={sha:g.sha,html:h,path:x.href,file:a?.getAttribute("href")||"",fileSha:""};
- $("rsTitle").value=text(d,".page-hero h1");$("rsSummary").value=text(d,".page-hero h1 + p");
+function loadResourceDetailEditor(i,h,sha){
+ const x=S.resources.cards[i],d=doc(h),a=d.querySelector(".article a[download]"),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
+ S.resources.detail={sha:sha||"",html:h,path:x.href,file:a?.getAttribute("href")||"",fileSha:""};
+ $("rsTitle").value=text(d,".page-hero h1")||x.title||"";
+ $("rsSummary").value=text(d,".page-hero h1 + p")||x.summary||"";
  $("rsUsageHeading").value=h2s[0]?.textContent.trim()||"이 자료는 이렇게 씁니다";
  const ul=d.querySelector(".article > ul");$("rsUsage").value=ul?Array.from(ul.querySelectorAll("li")).map(n=>n.textContent.trim()).join("\n"):"";
  $("rsTipHeading").value=text(d,".practice-box strong")||"사용 팁";$("rsTip").value=text(d,".practice-box p");
@@ -467,7 +468,26 @@ async function selectResource(i){S.resources.selected=i;renderResourceCards();co
  $("rsSteps").value=Array.from(d.querySelectorAll(".resource-steps li")).map(n=>n.textContent.trim()).join("\n");
  $("rsFinishTitle").value=text(d,".finish-box strong");$("rsFinishBody").value=text(d,".finish-box p");
  updateResourceFileBox();$("saveResourceDetail").disabled=false;previewResource()
- }catch(e){stat("resourcesStatus","자료 상세를 불러오지 못했습니다: "+e.message,"err")}}
+}
+async function selectResource(i){
+ S.resources.selected=i;renderResourceCards();const x=S.resources.cards[i];
+ try{
+   const g=await get(x.href),h=d64(g.content);
+   loadResourceDetailEditor(i,h,g.sha);
+ }catch(e){
+   if(!String(e.message||"").startsWith("404 ")){stat("resourcesStatus","자료 상세를 불러오지 못했습니다: "+e.message,"err");return}
+   try{
+     const tg=await get("resource-start-check.html"),td=doc(d64(tg.content));
+     setText(td,".page-hero h1",x.title||"새 자료");
+     setText(td,".page-hero h1 + p",x.summary||"");
+     const crumb=td.querySelector(".breadcrumb");
+     if(crumb)crumb.innerHTML=`<a href="index.html">홈</a> / <a href="resources.html">실무자료</a> / ${esc(x.title||"새 자료")}`;
+     td.querySelector(".article a[download]")?.parentElement?.remove();
+     loadResourceDetailEditor(i,out(td),"");
+     stat("resourcesStatus","새 자료 상세페이지 초안을 만들었습니다. 내용을 입력한 뒤 '자료 상세 저장'을 누르면 새 페이지가 생성됩니다.","info");
+   }catch(te){stat("resourcesStatus","새 자료 상세 초안을 만들지 못했습니다: "+te.message,"err")}
+ }
+}
 function updateResourceFileBox(){const p=S.resources.detail.file||"";$("rsFileName").textContent=p||"연결 파일 없음";$("rsDownloadFile").disabled=!p;$("rsDeleteFile").disabled=!p}
 $("rsDownloadFile").onclick=()=>{const p=S.resources.detail.file;if(p)window.open(`https://${CFG.owner}.github.io/${p}`,"_blank")};
 $("rsReplaceFile").onchange=async()=>{const f=$("rsReplaceFile").files[0];if(!f)return;try{const old=S.resources.detail.file;let oldSha="";if(old){try{oldSha=(await get(old)).sha}catch(e){}}const target=old?old:`downloads/${f.name}`;const bytes=new Uint8Array(await f.arrayBuffer());await putBytes(target,bytes,oldSha,`Replace resource file ${target}`);S.resources.detail.file=target;updateResourceFileBox();stat("resourcesStatus","✓ 파일을 업로드/교체했습니다. 자료 상세 저장을 누르면 링크도 확정됩니다.","ok")}catch(e){stat("resourcesStatus","파일 교체 실패: "+e.message,"err")}};

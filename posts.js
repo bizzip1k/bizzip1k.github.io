@@ -125,9 +125,31 @@
     const cs = document.getElementById("contentSearch");
     if (cs) cs.addEventListener("input", () => {
       const q = cs.value.trim().toLowerCase();
-      document.querySelectorAll('[data-post-list][data-topic-mode="contents"] .content-card').forEach(c => {
-        c.hidden = !!q && !c.textContent.toLowerCase().includes(q);
-      });
+      const target = document.querySelector('[data-post-list][data-topic-mode="contents"]');
+      const posts = (window.__bizzipContentPosts || []).slice();
+      if (!target || !posts.length) return;
+
+      const topic = new URLSearchParams(location.search).get("topic") || "";
+      let list = posts;
+      if (topic === "unclassified") list = list.filter(p => !p.category);
+      else if (topic && topic !== "all" && CATEGORY_NAMES[topic]) list = list.filter(p => p.category === topic);
+
+      if (q) {
+        list = list.filter(p => {
+          const body = (p.sections || []).flatMap(s => [
+            s.heading || "",
+            ...(s.paragraphs || []),
+            ...(s.bullets || [])
+          ]).join(" ");
+          return [p.title || "", p.summary || "", body].join(" ").toLowerCase().includes(q);
+        });
+      } else if (!topic) {
+        list = list.slice(0, parseInt(target.dataset.limit || "12", 10) || 12);
+      }
+
+      target.innerHTML = list.length
+        ? list.map(postCard).join("")
+        : `<div class="empty-posts">${q ? "검색 결과가 없습니다." : "아직 이 주제에 등록된 콘텐츠가 없습니다."}</div>`;
     });
     const rs = document.getElementById("resourceSearch");
     if (rs) rs.addEventListener("input", () => {
@@ -162,11 +184,11 @@
     const sub = "";
     return `
       <a class="content-card auto-post-card" href="post.html?id=${encodeURIComponent(post.id)}">
-        <div class="tag">${post.categoryLabel || CATEGORY_NAMES[post.category] || "BIZZIP"}</div>
+        <div class="tag">${escHtml(post.categoryLabel || CATEGORY_NAMES[post.category] || "BIZZIP")}</div>
         ${sub}
-        <h3>${post.title}</h3>
-        <p>${post.summary || ""}</p>
-        <div class="post-date">${post.date || ""}</div>
+        <h3>${escHtml(post.title || "")}</h3>
+        <p>${escHtml(post.summary || "")}</p>
+        <div class="post-date">${escHtml(post.date || "")}</div>
       </a>`;
   }
 
@@ -177,6 +199,7 @@
       let posts = await getPosts();
       posts = posts.filter(p => !p.deleted);
       posts.sort(sortPostsNewestFirst);
+      window.__bizzipContentPosts = posts.slice();
       configureContentsLanding(posts);
 
       targets.forEach(target => {
@@ -208,11 +231,11 @@
   }
 
   function sectionHtml(section) {
-    let html = `<section class="post-section">${section.heading ? `<h2>${section.heading}</h2>` : ""}`;
-    (section.paragraphs || []).forEach(p => html += `<p>${p}</p>`);
+    let html = `<section class="post-section">${section.heading ? `<h2>${escHtml(section.heading)}</h2>` : ""}`;
+    (section.paragraphs || []).forEach(p => html += `<p>${escHtml(p)}</p>`);
     if (section.bullets && section.bullets.length) {
       html += "<ul>";
-      section.bullets.forEach(item => html += `<li>${item}</li>`);
+      section.bullets.forEach(item => html += `<li>${escHtml(item)}</li>`);
       html += "</ul>";
     }
     return html + "</section>";
