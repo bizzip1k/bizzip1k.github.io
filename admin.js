@@ -346,11 +346,57 @@ function previewProblemHierarchy(){
 async function loadProblems(){const g=await get("problems.html"),h=d64(g.content),d=doc(h);S.problems.sha=g.sha;S.problems.html=h;$("prLandingTitle").value=text(d,".page-hero h1");$("prLandingSummary").value=text(d,".page-hero h1 + p");S.problems.roots=Array.from(d.querySelectorAll(".problem-card")).map(a=>({title:text(a,"strong"),href:a.getAttribute("href")||""}));renderProblemRoots();previewProblemHierarchy();$("saveProblemLanding").disabled=false;if(S.problems.roots.length)await selectProblemRoot(0)}
 function renderProblemRoots(){$("problemRoots").innerHTML=S.problems.roots.map((x,i)=>`<div class="tile ${i===S.problems.selected?"active":""}" data-i="${i}"><textarea class="textarea pr-title" style="min-height:62px">${esc(x.title)}</textarea><input class="input pr-href" value="${esc(x.href)}"><div class="actions"><button class="btn dark mini pr-edit">2단계</button><button class="btn light mini pr-left">←</button><button class="btn light mini pr-right">→</button><button class="btn danger mini pr-del">삭제</button></div></div>`).join("");$("problemRoots").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{S.problems.roots[i].title=r.querySelector(".pr-title").value;S.problems.roots[i].href=r.querySelector(".pr-href").value;previewProblemHierarchy()};r.querySelectorAll("input,textarea").forEach(x=>x.oninput=sync);r.querySelector(".pr-edit").onclick=()=>{sync();selectProblemRoot(i)};r.querySelector(".pr-left").onclick=()=>move(S.problems.roots,i,-1,renderProblemRoots);r.querySelector(".pr-right").onclick=()=>move(S.problems.roots,i,1,renderProblemRoots);r.querySelector(".pr-del").onclick=()=>{S.problems.roots.splice(i,1);renderProblemRoots();previewProblemHierarchy()}})}
 $("addProblemRoot").onclick=()=>{S.problems.roots.push({title:"새 큰 문제",href:`problem-${Date.now()}.html`});renderProblemRoots();previewProblemHierarchy()};
-async function selectProblemRoot(i){S.problems.selected=i;renderProblemRoots();const x=S.problems.roots[i];try{const g=await get(x.href),h=d64(g.content),d=doc(h);S.problems.page={sha:g.sha,html:h,subs:Array.from(d.querySelectorAll(".problem-subcard")).map(a=>({title:text(a,"h3"),summary:text(a,"p"),href:a.getAttribute("href")||""}))};$("prPageTitle").value=text(d,".page-hero h1");$("prPageSummary").value=text(d,".page-hero h1 + p");$("prSectionTitle").value=text(d,".section-head h2");$("prSectionSummary").value=text(d,".section-head p");renderProblemSubs();previewProblemHierarchy();$("saveProblemPage").disabled=false}catch(e){stat("problemStatus","문제 페이지를 불러오지 못했습니다: "+e.message,"err")}}
+async function selectProblemRoot(i){
+ S.problems.selected=i;renderProblemRoots();const x=S.problems.roots[i];
+ try{
+   const g=await get(x.href),h=d64(g.content),d=doc(h);
+   S.problems.page={sha:g.sha,html:h,subs:Array.from(d.querySelectorAll(".problem-subcard")).map(a=>({title:text(a,"h3"),summary:text(a,"p"),href:a.getAttribute("href")||""}))};
+   $("prPageTitle").value=text(d,".page-hero h1");
+   $("prPageSummary").value=text(d,".page-hero h1 + p");
+   $("prSectionTitle").value=text(d,".section-head h2");
+   $("prSectionSummary").value=text(d,".section-head p");
+   renderProblemSubs();previewProblemHierarchy();$("saveProblemPage").disabled=false;
+ }catch(e){
+   if(!String(e.message||"").startsWith("404 ")){
+     stat("problemStatus","문제 페이지를 불러오지 못했습니다: "+e.message,"err");return;
+   }
+   try{
+     const tg=await get("problem-start.html"),th=d64(tg.content),td=doc(th);
+     setText(td,".page-hero h1",x.title||"새 큰 문제");
+     setText(td,".page-hero h1 + p","이 문제와 연결되는 세부 문제를 정리합니다.");
+     setText(td,".section-head h2","관련 문제");
+     setText(td,".section-head p","아래 세부 문제를 선택하면 연결된 실무 페이지로 이동합니다.");
+     const crumb=td.querySelector(".breadcrumb");
+     if(crumb)crumb.innerHTML=`<a href="index.html">홈</a> / <a href="problems.html">문제별 해결</a> / ${esc(x.title||"새 큰 문제")}`;
+     const grid=td.querySelector(".problem-subgrid");
+     if(grid)grid.innerHTML="";
+     const h=out(td);
+     S.problems.page={sha:"",html:h,subs:[]};
+     $("prPageTitle").value=x.title||"새 큰 문제";
+     $("prPageSummary").value="이 문제와 연결되는 세부 문제를 정리합니다.";
+     $("prSectionTitle").value="관련 문제";
+     $("prSectionSummary").value="아래 세부 문제를 선택하면 연결된 실무 페이지로 이동합니다.";
+     renderProblemSubs();previewProblemHierarchy();$("saveProblemPage").disabled=false;
+     stat("problemStatus","새 문제 페이지 초안을 만들었습니다. 내용을 입력한 뒤 '선택 문제 저장'을 누르면 새 페이지가 생성됩니다.","info");
+   }catch(te){
+     stat("problemStatus","새 문제 페이지 초안을 만들지 못했습니다: "+te.message,"err");
+   }
+ }
+}
 
 async function openProblemLinkedDetail(path,sourceTitle){
   try{
     if(!path)throw new Error("연결된 상세페이지 주소가 없습니다.");
+
+    if(path==="resources.html"){
+      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.panel==="resources"));
+      document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="panel-resources"));
+      stat("resourcesStatus",`✓ 문제별 해결의 '${sourceTitle||"관련 문제"}'에서 연결된 실무자료 관리 화면을 열었습니다.`,"ok");
+      const target=$("resourceCards")?.closest(".section-box") || $("resourceCards");
+      target?.scrollIntoView({behavior:"smooth",block:"start"});
+      return;
+    }
+
     stat("problemStatus","연결된 3단계 상세페이지를 찾는 중입니다…","info");
 
     // 관리자에서 사업실무가 아직 로딩되지 않았거나 로딩 순서가 늦어도
