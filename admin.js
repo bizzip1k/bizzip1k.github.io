@@ -1,6 +1,16 @@
 const CFG={owner:"bizzip1k",repo:"bizzip1k.github.io",branch:"main",posts:"posts.json"};
 const $=id=>document.getElementById(id);
-let token="";
+const TOKEN_SESSION_KEY="BIZZIP_GITHUB_TOKEN";
+function loadSessionToken(){
+  try{return sessionStorage.getItem(TOKEN_SESSION_KEY)||""}catch(_){return""}
+}
+function saveSessionToken(v){
+  try{
+    if(v)sessionStorage.setItem(TOKEN_SESSION_KEY,v);
+    else sessionStorage.removeItem(TOKEN_SESSION_KEY);
+  }catch(_){}
+}
+let token=loadSessionToken();
 const S={
  index:{sha:"",html:"",menus:[],sections:[]},
  business:{sha:"",html:"",categories:[],selected:-1,cat:{sha:"",html:"",topics:[]},detail:{}},
@@ -32,8 +42,14 @@ function move(a,i,d,render,preview){const j=i+d;if(j<0||j>=a.length)return;[a[i]
 function bind(ids,fn){ids.forEach(id=>$(id)?.addEventListener("input",fn))}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===`panel-${b.dataset.panel}`));window.scrollTo({top:0,behavior:"smooth"})});
 
+if($("token") && token){
+ $("token").value=token;
+ stat("globalStatus","GitHub token이 현재 브라우저 탭에 임시 보관되어 있습니다. 'GitHub 연결'을 누르면 바로 사용할 수 있습니다.","info");
+}
+
 $("connectBtn").onclick=async()=>{
  token=$("token").value.trim();if(!token)return stat("globalStatus","GitHub token을 입력해주세요.","err");
+ saveSessionToken(token);
  stat("globalStatus","GitHub에 연결하고 각 메뉴를 독립적으로 불러오는 중입니다…","info");
  const jobs=[["사이트 구조",loadIndex],["사업실무",loadBusiness],["문제별 해결",loadProblems],["콘텐츠",loadContents],["실무자료",loadResources],["BIZZIP 소개",loadAbout],["문의",loadContact]];
  let ok=0,fail=[];
@@ -331,51 +347,79 @@ async function selectProblemRoot(i){S.problems.selected=i;renderProblemRoots();c
 async function openProblemLinkedDetail(path){
   try{
     if(!path)throw new Error("연결된 상세페이지 주소가 없습니다.");
+    stat("problemStatus","연결된 3단계 상세페이지를 찾는 중입니다…","info");
 
-    // 문제별 해결의 3단계는 별도 문서를 복제해서 편집하지 않고,
-    // 실제 연결 대상인 사업실무 상세 HTML을 사업실무의 표준 편집기로 연다.
+    // 관리자에서 사업실무가 아직 로딩되지 않았거나 로딩 순서가 늦어도
+    // 문제별 해결에서 바로 상세페이지를 열 수 있도록 business.html을 새로 읽는다.
+    const bg=await get("business.html"), bh=d64(bg.content), bd=doc(bh);
+    const categories=Array.from(bd.querySelectorAll(".grid .card")).map(a=>({
+      title:text(a,"h3"),
+      summary:text(a,"p"),
+      href:a.getAttribute("href")||""
+    }));
+
+    if(!categories.length)throw new Error("사업실무 분야 목록을 읽지 못했습니다.");
+
     let categoryIndex=-1, topicIndex=-1, categoryPage=null;
 
-    for(let ci=0;ci<S.business.categories.length;ci++){
-      const cat=S.business.categories[ci];
+    for(let ci=0;ci<categories.length;ci++){
+      const cat=categories[ci];
+      if(!cat.href)continue;
       try{
         const cg=await get(cat.href), ch=d64(cg.content), cd=doc(ch);
         const topics=Array.from(cd.querySelectorAll(".topic-card")).map(a=>({
-          title:text(a,"h3"), summary:text(a,"p"), href:a.getAttribute("href")||""
+          title:text(a,"h3"),
+          summary:text(a,"p"),
+          href:a.getAttribute("href")||""
         }));
         const ti=topics.findIndex(t=>t.href===path);
         if(ti>=0){
-          categoryIndex=ci; topicIndex=ti;
+          categoryIndex=ci;
+          topicIndex=ti;
           categoryPage={sha:cg.sha,html:ch,topics};
           break;
         }
       }catch(_){}
     }
 
-    if(categoryIndex<0)throw new Error(`사업실무에서 연결 대상(${path})을 찾지 못했습니다.`);
+    if(categoryIndex<0){
+      throw new Error(`사업실무 메뉴에서 '${path}' 연결을 찾지 못했습니다.`);
+    }
 
-    // 사업실무 관리자 상태도 같은 위치로 맞춘다.
+    // business 상태를 최신 파일 기준으로 다시 맞춘다.
+    S.business.sha=bg.sha;
+    S.business.html=bh;
+    S.business.categories=categories;
     S.business.selected=categoryIndex;
     S.business.cat=categoryPage;
+
     renderBizCategories();
 
     const catDoc=doc(categoryPage.html);
+    $("bizLandingTitle").value=text(bd,".page-hero h1");
+    $("bizLandingSummary").value=text(bd,".page-hero h1 + p");
     $("bizCatTitle").value=text(catDoc,".page-hero h1");
     $("bizCatSummary").value=text(catDoc,".page-hero h1 + p");
     $("bizCatSectionTitle").value=text(catDoc,".section-head h2");
     $("bizCatSectionSummary").value=text(catDoc,".section-head p");
     renderBizTopics();
     previewBusinessHierarchy();
+    $("saveBizLanding").disabled=false;
     $("saveBizCategory").disabled=false;
 
     const g=await get(path), h=d64(g.content), d=doc(h);
     $("bizDetailPath").textContent=path;
     loadBusinessDetailFlexible(S.business.detail,d,h,path,g.sha);
 
-    // 실제 편집기가 있는 사업실무 탭으로 이동
-    document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.panel==="business"));
-    document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="panel-business"));
-    stat("businessStatus","문제별 해결에서 연결된 3단계 상세페이지를 열었습니다.","ok");
+    // 탭 이동은 마지막에 실행해서, 앞 단계에서 오류가 나면 사용자가 현재 위치에서 오류를 볼 수 있게 한다.
+    document.querySelectorAll(".tab").forEach(x=>{
+      x.classList.toggle("active",x.dataset.panel==="business");
+    });
+    document.querySelectorAll(".panel").forEach(x=>{
+      x.classList.toggle("active",x.id==="panel-business");
+    });
+
+    stat("businessStatus",`✓ 문제별 해결에서 연결된 '${categoryPage.topics[topicIndex].title}' 상세페이지를 열었습니다.`,"ok");
 
     const target=$("bizDetailEditor")?.closest(".section-box") || $("bizDetailEditor");
     target?.scrollIntoView({behavior:"smooth",block:"start"});
