@@ -665,7 +665,13 @@ function renderResourceCards(){
  const filter=S.resources.filterTopic||"all",q=($("resourceAdminSearch")?.value||"").trim().toLowerCase();
  const visible=S.resources.cards.map((x,i)=>({x,i})).filter(o=>(filter==="all"||filter==="unclassified"?!o.x.topic:o.x.topic===filter)&&(!q||(o.x.title||"").toLowerCase().includes(q)||(o.x.summary||"").toLowerCase().includes(q)));
  $("resourceCards").innerHTML=visible.length?visible.map(({x,i})=>`<div class="tile ${i===S.resources.selected?"active":""}" data-i="${i}"><input class="input rc-title" value="${esc(x.title)}"><select class="resource-topic-select rc-topic">${resourceTopicOptions(x.topic)}</select><input class="input rc-href" value="${esc(x.href)}"><textarea class="textarea rc-summary" style="min-height:55px">${esc(x.summary)}</textarea><div class="actions"><button class="btn dark mini rc-edit">상세 편집</button><button class="btn light mini rc-left">←</button><button class="btn light mini rc-right">→</button><button class="btn danger mini rc-del">삭제</button></div></div>`).join(""):`<div class="hint">이 폴더에는 자료가 없습니다.</div>`;
- $("resourceCards").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{const x=S.resources.cards[i];x.title=r.querySelector(".rc-title").value;x.topic=r.querySelector(".rc-topic").value;x.topicLabel=(S.resources.topics.find(t=>t.id===x.topic)||{}).label||"";x.href=r.querySelector(".rc-href").value;x.summary=r.querySelector(".rc-summary").value;renderResourceFolderBar();previewResourceLanding()};r.querySelectorAll("input,textarea,select").forEach(x=>x.oninput=sync);r.querySelector(".rc-edit").onclick=()=>{sync();selectResource(i)};r.querySelector(".rc-left").onclick=()=>move(S.resources.cards,i,-1,renderResourceCards);r.querySelector(".rc-right").onclick=()=>move(S.resources.cards,i,1,renderResourceCards);r.querySelector(".rc-del").onclick=()=>{S.resources.cards.splice(i,1);renderResourceFolderBar();renderResourceCards();previewResourceLanding()}})
+ $("resourceCards").querySelectorAll(".tile").forEach(r=>{const i=+r.dataset.i,sync=()=>{const x=S.resources.cards[i];x.title=r.querySelector(".rc-title").value;x.topic=r.querySelector(".rc-topic").value;x.topicLabel=(S.resources.topics.find(t=>t.id===x.topic)||{}).label||"";x.href=r.querySelector(".rc-href").value;x.summary=r.querySelector(".rc-summary").value;renderResourceFolderBar();previewResourceLanding()};r.querySelectorAll("input,textarea,select").forEach(x=>x.oninput=sync);r.querySelector(".rc-edit").onclick=()=>{sync();selectResource(i)};r.querySelector(".rc-left").onclick=()=>move(S.resources.cards,i,-1,renderResourceCards);r.querySelector(".rc-right").onclick=()=>move(S.resources.cards,i,1,renderResourceCards);r.querySelector(".rc-del").onclick=()=>{
+  if(!confirm(`'${S.resources.cards[i].title||"이 자료"}'를 자료 목록에서 삭제할까요? 상세 HTML/첨부파일은 안전을 위해 자동 삭제하지 않습니다.`))return;
+  S.resources.cards.splice(i,1);
+  if(S.resources.selected===i)S.resources.selected=-1;
+  renderResourceFolderBar();renderResourceCards();previewResourceLanding();
+  stat("resourcesStatus","자료 목록에서 제거했습니다. 실제 반영하려면 '랜딩 저장'을 누르세요.","info")
+}})
 }
 $("resourceAdminSearch").oninput=renderResourceCards;
 $("addResourceCard").onclick=()=>{const f=S.resources.filterTopic||"all",topic=(f!=="all"&&f!=="unclassified")?f:"";S.resources.cards.push({title:"새 자료",summary:"",href:`resource-${Date.now()}.html`,topic,topicLabel:(S.resources.topics.find(t=>t.id===topic)||{}).label||""});renderResourceFolderBar();renderResourceCards();previewResourceLanding()};
@@ -717,6 +723,16 @@ function previewResource(){$("resourcePreview").innerHTML=`<div class="pv-hero">
 bind(["rsLandingTitle","rsLandingSummary"],previewResourceLanding);
 bind(["rsTitle","rsSummary","rsUsageHeading","rsUsage","rsTipHeading","rsTip","rsExampleHeading","rsExampleLabel","rsExample","rsStepsHeading","rsSteps","rsFinishTitle","rsFinishBody"],previewResource);
 $("saveResourceLanding").onclick=async()=>{try{
+ const seen=new Set();
+ for(const x of S.resources.cards){
+   x.title=(x.title||"").trim();
+   x.href=(x.href||"").trim();
+   if(!x.title)throw new Error("자료 제목이 비어 있는 항목이 있습니다.");
+   if(!x.href)throw new Error(`'${x.title}'의 상세페이지 주소가 비어 있습니다.`);
+   if(!/^[a-z0-9][a-z0-9._-]*\.html$/i.test(x.href))throw new Error(`'${x.title}'의 상세페이지 주소는 영문/숫자/하이픈 기준의 .html 파일명으로 입력해주세요.`);
+   if(seen.has(x.href))throw new Error(`중복된 상세페이지 주소가 있습니다: ${x.href}`);
+   seen.add(x.href);
+ }
  const d=doc(S.resources.html);setText(d,".page-hero h1",$("rsLandingTitle").value);setText(d,".page-hero h1 + p",$("rsLandingSummary").value);
  let td=d.querySelector("#resource-topics-data");if(!td){td=d.createElement("script");td.id="resource-topics-data";td.type="application/json";d.head.appendChild(td)}td.textContent=JSON.stringify(S.resources.topics||[]);
  const old=Array.from(d.querySelectorAll(".resource-card")),p=old[0]?.parentElement,t=old[0]?.cloneNode(true);
@@ -724,8 +740,11 @@ $("saveResourceLanding").onclick=async()=>{try{
  const h=out(d),r=await put("resources.html",h,S.resources.sha,"Update resources landing and topic folders");S.resources.sha=r.content.sha;S.resources.html=h;renderResourceTopics();renderResourceFolderBar();stat("resourcesStatus","✓ 실무자료 폴더와 자료 목록을 저장했습니다.","ok")
  }catch(e){stat("resourcesStatus","저장 실패: "+e.message,"err")}};
 $("saveResourceDetail").onclick=async()=>{try{
+ const title=$("rsTitle").value.trim(),summary=$("rsSummary").value.trim();
+ if(!title){stat("resourcesStatus","자료 제목을 입력해주세요.","err");$("rsTitle").focus();return}
  const st=S.resources.detail,d=doc(st.html),article=d.querySelector(".article"),h2s=Array.from(article?.querySelectorAll(":scope > h2")||[]);
- setText(d,".page-hero h1",$("rsTitle").value);setText(d,".page-hero h1 + p",$("rsSummary").value);
+ if(!article)throw new Error("자료 상세 본문 영역(.article)을 찾지 못했습니다.");
+ setText(d,".page-hero h1",title);setText(d,".page-hero h1 + p",summary);
  if(h2s[0])h2s[0].textContent=$("rsUsageHeading").value;
  const ul=d.querySelector(".article > ul");if(ul)ul.innerHTML=lines($("rsUsage").value).map(x=>`<li>${esc(x)}</li>`).join("");
  setText(d,".practice-box strong",$("rsTipHeading").value);setText(d,".practice-box p",$("rsTip").value);
@@ -735,7 +754,13 @@ $("saveResourceDetail").onclick=async()=>{try{
  const ol=d.querySelector(".resource-steps");if(ol)ol.innerHTML=lines($("rsSteps").value).map(x=>`<li>${esc(x)}</li>`).join("");
  setText(d,".finish-box strong",$("rsFinishTitle").value);setText(d,".finish-box p",$("rsFinishBody").value);
  let a=d.querySelector(".article a[download]");if(st.file){if(!a){a=d.createElement("a");a.className="btn primary";a.setAttribute("download","");a.textContent="샘플 파일 내려받기";d.querySelector(".article")?.appendChild(a)}a.href=st.file}else if(a){a.parentElement?.remove()}
- const h=out(d),r=await put(st.path,h,st.sha,`Update resource ${st.path}`);st.sha=r.content.sha;st.html=h;stat("resourcesStatus","✓ 자료 상세내용과 파일 연결을 저장했습니다.","ok")
+ const h=out(d),r=await put(st.path,h,st.sha,`Update resource ${st.path}`);st.sha=r.content.sha;st.html=h;
+ if(S.resources.selected>=0&&S.resources.cards[S.resources.selected]){
+   S.resources.cards[S.resources.selected].title=title;
+   S.resources.cards[S.resources.selected].summary=summary;
+   renderResourceCards();previewResourceLanding();
+ }
+ stat("resourcesStatus","✓ 자료 상세내용과 파일 연결을 저장했습니다. 제목/설명 변경을 목록에도 반영하려면 '랜딩 저장'을 눌러주세요.","ok")
  }catch(e){stat("resourcesStatus","저장 실패: "+e.message,"err")}};
 
 /* ABOUT */
