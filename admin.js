@@ -111,10 +111,6 @@ function detailEditorHtml(prefix){return `<div class="form-grid">
 
  <div><label class="label">마무리 제목</label><input id="${prefix}FinishTitle" class="input"></div><div><label class="label">마무리 본문</label><textarea id="${prefix}FinishBody" class="textarea"></textarea></div>
  <div class="wide"><button id="${prefix}Save" class="btn primary" disabled>상세페이지 저장</button></div></div>`}
-$("bizDetailEditor").innerHTML=businessDetailEditorHtml();
-$("problemDetailEditor").innerHTML=detailEditorHtml("pd");
-
-
 const BUSINESS_SECTION_TYPES={
  text:"일반 설명",
  notice:"강조 안내",
@@ -136,6 +132,9 @@ function businessDetailEditorHtml(){return `<div class="form-grid">
  </div>
  <div class="wide"><button id="bdSave" class="btn primary" disabled>상세페이지 저장</button></div>
 </div>`}
+
+$("bizDetailEditor").innerHTML=businessDetailEditorHtml();
+$("problemDetailEditor").innerHTML=detailEditorHtml("pd");
 
 function paragraphsFrom(el){
  if(!el)return "";
