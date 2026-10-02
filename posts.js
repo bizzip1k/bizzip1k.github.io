@@ -174,6 +174,22 @@
     menu.insertBefore(a, menu.firstChild);
   }
 
+
+  function applyPostSeo(post) {
+    const site = "https://bizzip.co.kr";
+    const url = `${site}/post.html?id=${encodeURIComponent(post.id)}`;
+    const title = `${post.title || "콘텐츠"} | BIZZIP`;
+    const desc = (post.summary || (post.sections || []).flatMap(s => s.paragraphs || []).join(" ") || "BIZZIP 실전 콘텐츠").replace(/\s+/g, " ").trim().slice(0, 160);
+    const image = `${site}/bizzip-cover.png`;
+    document.title = title;
+    const setName=(n,v)=>{let e=document.querySelector(`meta[name="${n}"]`);if(!e){e=document.createElement("meta");e.name=n;document.head.appendChild(e)}e.content=v};
+    const setProp=(n,v)=>{let e=document.querySelector(`meta[property="${n}"]`);if(!e){e=document.createElement("meta");e.setAttribute("property",n);document.head.appendChild(e)}e.content=v};
+    setName("description",desc); setName("robots","index,follow");
+    setName("twitter:card","summary_large_image"); setName("twitter:title",title); setName("twitter:description",desc); setName("twitter:image",image);
+    setProp("og:site_name","BIZZIP"); setProp("og:type","article"); setProp("og:title",title); setProp("og:description",desc); setProp("og:image",image); setProp("og:url",url);
+    let c=document.querySelector('link[rel="canonical"]');if(!c){c=document.createElement("link");c.rel="canonical";document.head.appendChild(c)}c.href=url;
+  }
+
   async function getPosts() {
     const res = await fetch("posts.json?v=" + Date.now());
     if (!res.ok) throw new Error("posts.json을 불러오지 못했습니다.");
@@ -268,6 +284,7 @@
       if (category) category.textContent =
         (post.categoryLabel || "");
 
+      applyPostSeo(post);
       document.getElementById("post-title").textContent = post.title;
       document.getElementById("post-summary").textContent = post.summary || "";
       document.getElementById("post-date").textContent = post.date || "";

@@ -1,9 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIZZIP 관리자 v5.6.4</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>BIZZIP 관리자 v5.6.4 | BIZZIP</title>
 <style>
 :root{
   --navy:#10263f;--teal:#18aaa4;--mint:#eaf8f6;--bg:#f4f7f8;--line:#d8e3e6;
@@ -178,250 +179,229 @@ button,input,select,textarea{font:inherit}
 }
 
 </style>
-</head>
+<meta content="창업부터 상품, 마케팅, 판매, 회사 운영까지 직접 해보지 않으면 알기 어려운 사업의 작은 문제를 정리하고 필요한 양식과 가이드까지 함께 제공합니다." name="description"/><meta content="noindex,nofollow" name="robots"/><meta content="summary_large_image" name="twitter:card"/><meta content="BIZZIP 관리자 v5.6.4 | BIZZIP" name="twitter:title"/><meta content="창업부터 상품, 마케팅, 판매, 회사 운영까지 직접 해보지 않으면 알기 어려운 사업의 작은 문제를 정리하고 필요한 양식과 가이드까지 함께 제공합니다." name="twitter:description"/><meta content="https://bizzip.co.kr/bizzip-cover.png" name="twitter:image"/><meta content="BIZZIP" property="og:site_name"/><meta content="website" property="og:type"/><meta content="BIZZIP 관리자 v5.6.4 | BIZZIP" property="og:title"/><meta content="창업부터 상품, 마케팅, 판매, 회사 운영까지 직접 해보지 않으면 알기 어려운 사업의 작은 문제를 정리하고 필요한 양식과 가이드까지 함께 제공합니다." property="og:description"/><meta content="https://bizzip.co.kr/bizzip-cover.png" property="og:image"/><meta content="https://bizzip.co.kr/admin.html" property="og:url"/><link href="https://bizzip.co.kr/admin.html" rel="canonical"/><link href="/favicon.ico" rel="icon"/><link href="/apple-touch-icon.png" rel="apple-touch-icon"/><link href="/site.webmanifest" rel="manifest"/></head>
 <body>
 <div class="shell">
-  <div class="topbar">
-    <div class="brand"><h1>BIZZIP 관리자 v5.6.4</h1><small>실제 페이지 구조 1:1 연결 · 메뉴별 독립 관리</small></div>
-    <div class="connect"><input id="token" class="input" type="password" placeholder="GitHub Fine-grained token"><button id="connectBtn" class="btn primary">GitHub 연결</button></div>
-  </div>
-  <div id="globalStatus" class="status"></div>
-
-  <nav class="tabs">
-    <button class="tab active" data-panel="structure">사이트 구조 관리</button>
-    <button class="tab" data-panel="business">사업실무</button>
-    <button class="tab" data-panel="problems">문제별 해결</button>
-    <button class="tab" data-panel="contents">콘텐츠</button>
-    <button class="tab" data-panel="resources">실무자료</button>
-    <button class="tab" data-panel="about">BIZZIP 소개</button>
-    <button class="tab" data-panel="contact">문의</button>
-  </nav>
-
-  <!-- INDEX -->
-  <section id="panel-structure" class="panel active">
-    <div class="panel-head"><div><h2>사이트 구조 관리 = index.html 편집</h2><p>홈 화면의 HERO, 섹션, 카드, 표시 순서와 상단 메뉴를 직접 수정합니다.</p></div></div>
-    <div class="workspace">
-      <div class="card">
-        <div class="form-grid">
-          <div><label class="label">HERO 영문 라벨</label><input id="ixEyebrow" class="input"></div>
-          <div><label class="label">HERO 제목</label><input id="ixTitle" class="input"></div>
-          <div class="wide"><label class="label">HERO 설명</label><textarea id="ixSummary" class="textarea"></textarea></div>
-        </div>
-        <div class="section-box"><div class="section-title"><h3>상단 메인 메뉴</h3><button id="addIxMenu" class="btn light mini">+ 메뉴 추가</button></div><div id="ixMenus" class="tile-grid"></div></div>
-        <div class="section-box">
-          <div class="section-title"><h3>INDEX 섹션</h3><div class="actions"><button id="addIxSection" class="btn light mini">+ 섹션 추가</button><button id="saveIndex" class="btn primary" disabled>index.html 저장</button></div></div>
-          <div id="ixSections"></div>
-          <div class="hint">섹션은 2단·3단으로 자동 줄바꿈되어 한눈에 보이도록 배치됩니다. 카드도 같은 방식으로 여러 줄에 표시됩니다.</div>
-        </div>
-        <div id="structureStatus" class="status"></div>
-      </div>
-      <div class="card preview"><div class="section-title"><h3>INDEX 미리보기</h3><span class="hint">입력 즉시 반영</span></div><div id="indexPreview" class="preview-canvas"></div></div>
-    </div>
-  </section>
-
-  <!-- BUSINESS -->
-  <section id="panel-business" class="panel">
-    <div class="panel-head"><div><h2>사업실무</h2><p>랜딩 → 1단계 분야 → 분야 정보 → 2단계 세부주제 → 3단계 상세페이지 순서로 관리합니다.</p></div></div>
-    <div class="card">
-      <div class="form-grid">
-        <div><label class="label">랜딩 제목</label><input id="bizLandingTitle" class="input"></div>
-        <div><label class="label">랜딩 설명</label><input id="bizLandingSummary" class="input"></div>
-      </div>
-
-      <div class="hierarchy-workspace section-box">
-        <div>
-          <div class="section-title"><h3>1단계 분야</h3><div class="actions"><button id="addBizCategory" class="btn light mini">+ 분야</button><button id="saveBizLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div>
-          <div id="bizCategories" class="two-row-4"></div>
-
-          <div class="form-grid" style="margin-top:10px">
-            <div><label class="label">분야 제목</label><input id="bizCatTitle" class="input"></div>
-            <div><label class="label">분야 설명</label><input id="bizCatSummary" class="input"></div>
-            <div><label class="label">세부주제 영역 제목</label><input id="bizCatSectionTitle" class="input"></div>
-            <div><label class="label">세부주제 영역 설명</label><input id="bizCatSectionSummary" class="input"></div>
-          </div>
-
-          <div class="section-box">
-            <div class="section-title"><h3>2단계 세부주제</h3><div class="actions"><button id="addBizTopic" class="btn light mini">+ 주제</button><button id="saveBizCategory" class="btn primary" disabled>선택 분야 저장</button></div></div>
-            <div id="bizTopics" class="two-row-4"></div>
-          </div>
-        </div>
-
-        <div class="hierarchy-preview">
-          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
-          <div id="businessHierarchyPreview" class="structure-preview-box"></div>
-        </div>
-      </div>
-
-      <div class="section-box"><div class="section-title"><h3>3단계 상세페이지</h3><span id="bizDetailPath" class="hint">세부주제에서 ‘상세 편집’을 선택하세요.</span></div>
-        <div class="workspace"><div id="bizDetailEditor"></div><div class="preview"><div id="bizDetailPreview" class="preview-canvas"></div></div></div>
-      </div>
-      <div id="businessStatus" class="status"></div>
-    </div>
-  </section>
-
-  <!-- PROBLEMS -->
-  <section id="panel-problems" class="panel">
-    <div class="panel-head"><div><h2>문제별 해결</h2><p>문제별 해결 안에서 1단계 → 2단계 → 연결 상세페이지를 끝까지 편집합니다.</p></div></div>
-    <div class="card">
-      <div class="form-grid">
-        <div><label class="label">랜딩 제목</label><input id="prLandingTitle" class="input"></div>
-        <div><label class="label">랜딩 설명</label><input id="prLandingSummary" class="input"></div>
-      </div>
-
-      <div class="hierarchy-workspace section-box">
-        <div>
-          <div class="section-title"><h3>1단계 큰 문제</h3><div class="actions"><button id="addProblemRoot" class="btn light mini">+ 큰 문제</button><button id="saveProblemLanding" class="btn primary" disabled>랜딩/1단계 저장</button></div></div>
-          <div id="problemRoots" class="two-row-3"></div>
-
-          <div class="form-grid" style="margin-top:10px">
-            <div><label class="label">문제 페이지 제목</label><input id="prPageTitle" class="input"></div>
-            <div><label class="label">상단 설명</label><input id="prPageSummary" class="input"></div>
-            <div><label class="label">관련 문제 영역 제목</label><input id="prSectionTitle" class="input"></div>
-            <div><label class="label">관련 문제 영역 설명</label><input id="prSectionSummary" class="input"></div>
-          </div>
-
-          <div class="section-box">
-            <div class="section-title"><h3>2단계 관련 문제</h3><div class="actions"><button id="addProblemSub" class="btn light mini">+ 관련 문제</button><button id="saveProblemPage" class="btn primary" disabled>선택 문제 저장</button></div></div>
-            <div id="problemSubs" class="two-row-3"></div>
-          </div>
-        </div>
-
-        <div class="hierarchy-preview">
-          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
-          <div id="problemHierarchyPreview" class="structure-preview-box"></div>
-        </div>
-      </div>
-
-      <div class="section-box"><div class="section-title"><h3>연결 상세페이지</h3><span id="problemDetailPath" class="hint">관련 문제에서 ‘상세 편집’을 선택하세요.</span></div>
-        <div class="workspace"><div id="problemDetailEditor"></div><div class="preview"><div id="problemDetailPreview" class="preview-canvas"></div></div></div>
-      </div>
-      <div id="problemStatus" class="status"></div>
-    </div>
-  </section>
-
-  <!-- CONTENTS -->
-  <section id="panel-contents" class="panel">
-    <div class="panel-head"><div><h2>콘텐츠</h2><p>posts.json의 실제 sections 구조를 그대로 읽어오고 수정합니다.</p></div></div>
-    <div class="section-box">
-      <div class="section-title"><h3>1단계 주제 폴더</h3><span class="hint">콘텐츠 전용 8개 주제입니다. 폴더를 선택하면 해당 콘텐츠만 아래에 표시됩니다.</span></div>
-      <div id="postFolderBar" class="admin-folder-grid"></div>
-    </div>
-    <div class="three">
-      <div class="card sticky">
-        <div class="section-title"><h3>2단계 콘텐츠 목록</h3><button id="newPost" class="btn light mini">+ 새 글</button></div>
-        <input id="postAdminSearch" class="input" type="search" placeholder="제목·요약·본문 검색" style="margin-bottom:8px">
-        <div id="postList" class="list"></div>
-      </div>
-      <div class="card">
-        <div class="form-grid">
-          <div><label class="label">콘텐츠 랜딩 제목</label><input id="ctLandingTitle" class="input"></div><div><label class="label">랜딩 설명</label><input id="ctLandingSummary" class="input"></div><div class="wide"><button id="saveContentsLanding" class="btn light">콘텐츠 랜딩 저장</button></div>
-          <div><label class="label">글 제목</label><input id="postTitle" class="input"></div><div><label class="label">발행일</label><input id="postDate" class="input" type="date"></div>
-          <div class="wide"><label class="label">콘텐츠 주제</label><select id="postCategory" class="select"></select><div class="hint" style="margin-top:5px">콘텐츠 주제는 사업실무와 별도로 관리됩니다. 사업실무 세부주제에는 자동 연결되지 않습니다.</div></div>
-          <div class="wide"><label class="label">요약</label><textarea id="postSummary" class="textarea"></textarea></div>
-        </div>
-        <div class="section-box"><div class="section-title"><h3>본문 섹션</h3><button id="addPostSection" class="btn light mini">+ 본문 섹션</button></div><div id="postSections" class="repeat"></div></div>
-        <div class="actions" style="margin-top:10px">
-          <button id="savePost" class="btn primary" disabled>콘텐츠 저장</button>
-          <button id="deletePost" class="btn danger" disabled style="display:none">콘텐츠 삭제</button>
-        </div>
-        <div id="contentsStatus" class="status"></div>
-      </div>
-      <div class="card preview"><div class="section-title"><h3>콘텐츠 미리보기</h3><span class="hint">실제 sections 반영</span></div><div id="postPreview" class="preview-canvas"></div></div>
-    </div>
-  </section>
-
-  <!-- RESOURCES -->
-  <section id="panel-resources" class="panel">
-    <div class="panel-head"><div><h2>실무자료</h2><p>자료 카드는 2줄 구조로 한눈에 보고, 오른쪽에서 랜딩 미리보기를 확인합니다.</p></div></div>
-    <div class="card">
-      <div class="form-grid">
-        <div><label class="label">랜딩 제목</label><input id="rsLandingTitle" class="input"></div>
-        <div><label class="label">랜딩 설명</label><input id="rsLandingSummary" class="input"></div>
-      </div>
-
-      <div class="section-box">
-        <div class="section-title"><h3>1단계 자료 주제 폴더</h3><div class="actions"><button id="addResourceTopic" class="btn light mini">+ 폴더</button><span class="hint">폴더명과 설명을 수정하고 순서를 바꿀 수 있습니다.</span></div></div>
-        <div id="resourceTopicRows" class="repeat"></div>
-        <div id="resourceFolderBar" class="admin-folder-grid" style="margin-top:10px"></div>
-      </div>
-
-      <div class="hierarchy-workspace section-box">
-        <div>
-          <div class="section-title"><h3>2단계 실무자료 목록</h3><div class="actions"><button id="addResourceCard" class="btn light mini">+ 자료</button><button id="saveResourceLanding" class="btn primary" disabled>랜딩 저장</button></div></div>
-          <input id="resourceAdminSearch" class="input" type="search" placeholder="자료명·설명 검색" style="margin-bottom:8px">
-          <div id="resourceCards" class="two-row-3"></div>
-        </div>
-        <div class="hierarchy-preview">
-          <div class="section-title"><h3>실시간 미리보기</h3><span class="hint">자료 랜딩</span></div>
-          <div id="resourceLandingPreview" class="structure-preview-box"></div>
-        </div>
-      </div>
-
-      <div class="section-box">
-        <div class="workspace">
-          <div>
-            <div class="form-grid">
-              <div><label class="label">자료 제목</label><input id="rsTitle" class="input"></div><div><label class="label">상단 설명</label><input id="rsSummary" class="input"></div>
-              <div class="wide section-box"><label class="label">사용법 섹션 제목</label><input id="rsUsageHeading" class="input"></div>
-              <div class="wide"><label class="label">사용법 (한 줄에 한 항목)</label><textarea id="rsUsage" class="textarea"></textarea></div>
-              <div><label class="label">사용 팁 제목</label><input id="rsTipHeading" class="input"></div><div><label class="label">사용 팁 본문</label><textarea id="rsTip" class="textarea"></textarea></div>
-              <div class="wide section-box"><label class="label">예시 섹션 제목</label><input id="rsExampleHeading" class="input"></div>
-              <div><label class="label">예시 라벨</label><input id="rsExampleLabel" class="input"></div><div><label class="label">현장 예시 본문</label><textarea id="rsExample" class="textarea"></textarea></div>
-              <div class="wide section-box"><label class="label">실행순서 섹션 제목</label><input id="rsStepsHeading" class="input"></div>
-              <div class="wide"><label class="label">실행순서 (한 줄에 한 항목)</label><textarea id="rsSteps" class="textarea"></textarea></div>
-              <div><label class="label">마무리 제목</label><input id="rsFinishTitle" class="input"></div><div><label class="label">마무리 본문</label><textarea id="rsFinishBody" class="textarea"></textarea></div>
-            </div>
-            <div class="section-box"><div class="section-title"><h3>연결 파일</h3><span class="hint">현재 파일 옆에서 다운로드·교체·삭제</span></div>
-              <div class="file-box"><div id="rsFileName" class="file-name">연결 파일 없음</div><div class="actions"><button id="rsDownloadFile" class="btn light mini" disabled>다운로드</button><label class="btn light mini" style="cursor:pointer">교체 업로드<input id="rsReplaceFile" type="file" hidden></label><button id="rsDeleteFile" class="btn danger mini" disabled>삭제</button></div></div>
-            </div>
-            <button id="saveResourceDetail" class="btn primary" disabled style="margin-top:10px">자료 상세 저장</button>
-          </div>
-          <div class="preview"><div class="section-title"><h3>자료 상세 미리보기</h3></div><div id="resourcePreview" class="preview-canvas"></div></div>
-        </div>
-      </div>
-      <div id="resourcesStatus" class="status"></div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="panel-about" class="panel">
-    <div class="panel-head"><div><h2>BIZZIP 소개</h2><p>about.html의 실제 모든 영역을 불러옵니다.</p></div></div>
-    <div class="workspace">
-      <div class="card">
-        <div class="form-grid">
-          <div><label class="label">페이지 제목</label><input id="abTitle" class="input"></div><div><label class="label">상단 설명</label><input id="abSummary" class="input"></div>
-          <div><label class="label">만드는 사람 섹션 제목</label><input id="abPeopleTitle" class="input"></div><div><label class="label">만드는 사람 섹션 설명</label><input id="abPeopleSummary" class="input"></div>
-        </div>
-        <div class="section-box"><div class="section-title"><h3>만드는 사람</h3><button id="addPerson" class="btn light mini">+ 사람 추가</button></div><div id="peopleRows" class="repeat"></div></div>
-        <div class="section-box"><div class="form-grid"><div><label class="label">컨설팅 섹션 제목</label><input id="abConsultingTitle" class="input"></div><div><label class="label">컨설팅 섹션 설명</label><input id="abConsultingSummary" class="input"></div></div><div class="section-title" style="margin-top:8px"><h3>2026 컨설팅 프로젝트</h3><button id="addConsulting" class="btn light mini">+ 추가</button></div><div id="consultingRows" class="repeat"></div></div>
-        <div class="section-box"><div class="form-grid"><div><label class="label">브랜드 섹션 제목</label><input id="abBrandTitle" class="input"></div><div><label class="label">브랜드 섹션 설명</label><input id="abBrandSummary" class="input"></div></div><div class="section-title" style="margin-top:8px"><h3>주요 브랜드 프로젝트</h3><button id="addBrandProject" class="btn light mini">+ 추가</button></div><div id="brandRows" class="repeat"></div></div>
-        <div class="section-box"><div class="form-grid"><div><label class="label">도서 섹션 제목</label><input id="abBookTitle" class="input"></div><div><label class="label">도서 섹션 설명</label><input id="abBookSummary" class="input"></div></div><div class="section-title" style="margin-top:8px"><h3>출판서적</h3><button id="addBook" class="btn light mini">+ 추가</button></div><div id="bookRows" class="repeat"></div></div>
-        <button id="saveAbout" class="btn primary" disabled style="margin-top:10px">BIZZIP 소개 저장</button><div id="aboutStatus" class="status"></div>
-      </div>
-      <div class="card preview"><div id="aboutPreview" class="preview-canvas"></div></div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="panel-contact" class="panel">
-    <div class="panel-head"><div><h2>문의</h2><p>contact.html의 기존 내용 + 담당자/업무용 카카오톡/개인정보 안내를 함께 관리합니다.</p></div></div>
-    <div class="workspace">
-      <div class="card">
-        <div class="notice">사이트 안에서 별도 문의폼으로 개인정보를 저장하지 않고 업무용 이메일 또는 카카오톡으로 직접 문의받는 방식입니다. 회신에 필요한 최소정보만 요청합니다.</div>
-        <div class="form-grid" style="margin-top:9px">
-          <div><label class="label">페이지 제목</label><input id="coTitle" class="input"></div><div><label class="label">상단 설명</label><input id="coSummary" class="input"></div>
-          <div><label class="label">문의 안내 제목</label><textarea id="coMainTitle" class="textarea" style="min-height:74px" placeholder="줄바꿈이 필요한 위치에서 Enter를 누르세요."></textarea></div><div class="wide"><label class="label">문의 안내 본문</label><textarea id="coMainBody" class="textarea"></textarea></div>
-          <div><label class="label">담당자</label><input id="coManager" class="input"></div><div><label class="label">업무용 이메일</label><input id="coEmail" class="input"></div>
-          <div><label class="label">카카오톡 ID/채널</label><input id="coKakao" class="input"></div><div><label class="label">카카오톡 연결주소</label><input id="coKakaoUrl" class="input"></div>
-          <div class="wide"><label class="label">메일 안내 제목</label><input id="coGuideTitle" class="input"></div><div class="wide"><label class="label">메일에 적을 내용 (한 줄에 한 항목)</label><textarea id="coGuideItems" class="textarea"></textarea></div>
-          <div class="wide"><label class="label">개인정보 안내</label><textarea id="coPrivacy" class="textarea"></textarea></div>
-        </div>
-        <div class="section-box"><div class="section-title"><h3>문의 유형</h3><button id="addContactType" class="btn light mini">+ 유형 추가</button></div><div id="contactTypeRows" class="repeat"></div></div>
-        <button id="saveContact" class="btn primary" disabled style="margin-top:10px">문의 페이지 저장</button><div id="contactStatus" class="status"></div>
-      </div>
-      <div class="card preview"><div id="contactPreview" class="preview-canvas"></div></div>
-    </div>
-  </section>
+<div class="topbar">
+<div class="brand"><h1>BIZZIP 관리자 v5.6.4</h1><small>실제 페이지 구조 1:1 연결 · 메뉴별 독립 관리</small></div>
+<div class="connect"><input class="input" id="token" placeholder="GitHub Fine-grained token" type="password"/><button class="btn primary" id="connectBtn">GitHub 연결</button></div>
+</div>
+<div class="status" id="globalStatus"></div>
+<nav class="tabs">
+<button class="tab active" data-panel="structure">사이트 구조 관리</button>
+<button class="tab" data-panel="business">사업실무</button>
+<button class="tab" data-panel="problems">문제별 해결</button>
+<button class="tab" data-panel="contents">콘텐츠</button>
+<button class="tab" data-panel="resources">실무자료</button>
+<button class="tab" data-panel="about">BIZZIP 소개</button>
+<button class="tab" data-panel="contact">문의</button>
+</nav>
+<!-- INDEX -->
+<section class="panel active" id="panel-structure">
+<div class="panel-head"><div><h2>사이트 구조 관리 = index.html 편집</h2><p>홈 화면의 HERO, 섹션, 카드, 표시 순서와 상단 메뉴를 직접 수정합니다.</p></div></div>
+<div class="workspace">
+<div class="card">
+<div class="form-grid">
+<div><label class="label">HERO 영문 라벨</label><input class="input" id="ixEyebrow"/></div>
+<div><label class="label">HERO 제목</label><input class="input" id="ixTitle"/></div>
+<div class="wide"><label class="label">HERO 설명</label><textarea class="textarea" id="ixSummary"></textarea></div>
+</div>
+<div class="section-box"><div class="section-title"><h3>상단 메인 메뉴</h3><button class="btn light mini" id="addIxMenu">+ 메뉴 추가</button></div><div class="tile-grid" id="ixMenus"></div></div>
+<div class="section-box">
+<div class="section-title"><h3>INDEX 섹션</h3><div class="actions"><button class="btn light mini" id="addIxSection">+ 섹션 추가</button><button class="btn primary" disabled="" id="saveIndex">index.html 저장</button></div></div>
+<div id="ixSections"></div>
+<div class="hint">섹션은 2단·3단으로 자동 줄바꿈되어 한눈에 보이도록 배치됩니다. 카드도 같은 방식으로 여러 줄에 표시됩니다.</div>
+</div>
+<div class="status" id="structureStatus"></div>
+</div>
+<div class="card preview"><div class="section-title"><h3>INDEX 미리보기</h3><span class="hint">입력 즉시 반영</span></div><div class="preview-canvas" id="indexPreview"></div></div>
+</div>
+</section>
+<!-- BUSINESS -->
+<section class="panel" id="panel-business">
+<div class="panel-head"><div><h2>사업실무</h2><p>랜딩 → 1단계 분야 → 분야 정보 → 2단계 세부주제 → 3단계 상세페이지 순서로 관리합니다.</p></div></div>
+<div class="card">
+<div class="form-grid">
+<div><label class="label">랜딩 제목</label><input class="input" id="bizLandingTitle"/></div>
+<div><label class="label">랜딩 설명</label><input class="input" id="bizLandingSummary"/></div>
+</div>
+<div class="hierarchy-workspace section-box">
+<div>
+<div class="section-title"><h3>1단계 분야</h3><div class="actions"><button class="btn light mini" id="addBizCategory">+ 분야</button><button class="btn primary" disabled="" id="saveBizLanding">랜딩/1단계 저장</button></div></div>
+<div class="two-row-4" id="bizCategories"></div>
+<div class="form-grid" style="margin-top:10px">
+<div><label class="label">분야 제목</label><input class="input" id="bizCatTitle"/></div>
+<div><label class="label">분야 설명</label><input class="input" id="bizCatSummary"/></div>
+<div><label class="label">세부주제 영역 제목</label><input class="input" id="bizCatSectionTitle"/></div>
+<div><label class="label">세부주제 영역 설명</label><input class="input" id="bizCatSectionSummary"/></div>
+</div>
+<div class="section-box">
+<div class="section-title"><h3>2단계 세부주제</h3><div class="actions"><button class="btn light mini" id="addBizTopic">+ 주제</button><button class="btn primary" disabled="" id="saveBizCategory">선택 분야 저장</button></div></div>
+<div class="two-row-4" id="bizTopics"></div>
+</div>
+</div>
+<div class="hierarchy-preview">
+<div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
+<div class="structure-preview-box" id="businessHierarchyPreview"></div>
+</div>
+</div>
+<div class="section-box"><div class="section-title"><h3>3단계 상세페이지</h3><span class="hint" id="bizDetailPath">세부주제에서 ‘상세 편집’을 선택하세요.</span></div>
+<div class="workspace"><div id="bizDetailEditor"></div><div class="preview"><div class="preview-canvas" id="bizDetailPreview"></div></div></div>
+</div>
+<div class="status" id="businessStatus"></div>
+</div>
+</section>
+<!-- PROBLEMS -->
+<section class="panel" id="panel-problems">
+<div class="panel-head"><div><h2>문제별 해결</h2><p>문제별 해결 안에서 1단계 → 2단계 → 연결 상세페이지를 끝까지 편집합니다.</p></div></div>
+<div class="card">
+<div class="form-grid">
+<div><label class="label">랜딩 제목</label><input class="input" id="prLandingTitle"/></div>
+<div><label class="label">랜딩 설명</label><input class="input" id="prLandingSummary"/></div>
+</div>
+<div class="hierarchy-workspace section-box">
+<div>
+<div class="section-title"><h3>1단계 큰 문제</h3><div class="actions"><button class="btn light mini" id="addProblemRoot">+ 큰 문제</button><button class="btn primary" disabled="" id="saveProblemLanding">랜딩/1단계 저장</button></div></div>
+<div class="two-row-3" id="problemRoots"></div>
+<div class="form-grid" style="margin-top:10px">
+<div><label class="label">문제 페이지 제목</label><input class="input" id="prPageTitle"/></div>
+<div><label class="label">상단 설명</label><input class="input" id="prPageSummary"/></div>
+<div><label class="label">관련 문제 영역 제목</label><input class="input" id="prSectionTitle"/></div>
+<div><label class="label">관련 문제 영역 설명</label><input class="input" id="prSectionSummary"/></div>
+</div>
+<div class="section-box">
+<div class="section-title"><h3>2단계 관련 문제</h3><div class="actions"><button class="btn light mini" id="addProblemSub">+ 관련 문제</button><button class="btn primary" disabled="" id="saveProblemPage">선택 문제 저장</button></div></div>
+<div class="two-row-3" id="problemSubs"></div>
+</div>
+</div>
+<div class="hierarchy-preview">
+<div class="section-title"><h3>실시간 미리보기</h3><span class="hint">1·2단계 구조</span></div>
+<div class="structure-preview-box" id="problemHierarchyPreview"></div>
+</div>
+</div>
+<div class="section-box"><div class="section-title"><h3>연결 상세페이지</h3><span class="hint" id="problemDetailPath">관련 문제에서 ‘상세 편집’을 선택하세요.</span></div>
+<div class="workspace"><div id="problemDetailEditor"></div><div class="preview"><div class="preview-canvas" id="problemDetailPreview"></div></div></div>
+</div>
+<div class="status" id="problemStatus"></div>
+</div>
+</section>
+<!-- CONTENTS -->
+<section class="panel" id="panel-contents">
+<div class="panel-head"><div><h2>콘텐츠</h2><p>posts.json의 실제 sections 구조를 그대로 읽어오고 수정합니다.</p></div></div>
+<div class="section-box">
+<div class="section-title"><h3>1단계 주제 폴더</h3><span class="hint">콘텐츠 전용 8개 주제입니다. 폴더를 선택하면 해당 콘텐츠만 아래에 표시됩니다.</span></div>
+<div class="admin-folder-grid" id="postFolderBar"></div>
+</div>
+<div class="three">
+<div class="card sticky">
+<div class="section-title"><h3>2단계 콘텐츠 목록</h3><button class="btn light mini" id="newPost">+ 새 글</button></div>
+<input class="input" id="postAdminSearch" placeholder="제목·요약·본문 검색" style="margin-bottom:8px" type="search"/>
+<div class="list" id="postList"></div>
+</div>
+<div class="card">
+<div class="form-grid">
+<div><label class="label">콘텐츠 랜딩 제목</label><input class="input" id="ctLandingTitle"/></div><div><label class="label">랜딩 설명</label><input class="input" id="ctLandingSummary"/></div><div class="wide"><button class="btn light" id="saveContentsLanding">콘텐츠 랜딩 저장</button></div>
+<div><label class="label">글 제목</label><input class="input" id="postTitle"/></div><div><label class="label">발행일</label><input class="input" id="postDate" type="date"/></div>
+<div class="wide"><label class="label">콘텐츠 주제</label><select class="select" id="postCategory"></select><div class="hint" style="margin-top:5px">콘텐츠 주제는 사업실무와 별도로 관리됩니다. 사업실무 세부주제에는 자동 연결되지 않습니다.</div></div>
+<div class="wide"><label class="label">요약</label><textarea class="textarea" id="postSummary"></textarea></div>
+</div>
+<div class="section-box"><div class="section-title"><h3>본문 섹션</h3><button class="btn light mini" id="addPostSection">+ 본문 섹션</button></div><div class="repeat" id="postSections"></div></div>
+<div class="actions" style="margin-top:10px">
+<button class="btn primary" disabled="" id="savePost">콘텐츠 저장</button>
+<button class="btn danger" disabled="" id="deletePost" style="display:none">콘텐츠 삭제</button>
+</div>
+<div class="status" id="contentsStatus"></div>
+</div>
+<div class="card preview"><div class="section-title"><h3>콘텐츠 미리보기</h3><span class="hint">실제 sections 반영</span></div><div class="preview-canvas" id="postPreview"></div></div>
+</div>
+</section>
+<!-- RESOURCES -->
+<section class="panel" id="panel-resources">
+<div class="panel-head"><div><h2>실무자료</h2><p>자료 카드는 2줄 구조로 한눈에 보고, 오른쪽에서 랜딩 미리보기를 확인합니다.</p></div></div>
+<div class="card">
+<div class="form-grid">
+<div><label class="label">랜딩 제목</label><input class="input" id="rsLandingTitle"/></div>
+<div><label class="label">랜딩 설명</label><input class="input" id="rsLandingSummary"/></div>
+</div>
+<div class="section-box">
+<div class="section-title"><h3>1단계 자료 주제 폴더</h3><div class="actions"><button class="btn light mini" id="addResourceTopic">+ 폴더</button><span class="hint">폴더명과 설명을 수정하고 순서를 바꿀 수 있습니다.</span></div></div>
+<div class="repeat" id="resourceTopicRows"></div>
+<div class="admin-folder-grid" id="resourceFolderBar" style="margin-top:10px"></div>
+</div>
+<div class="hierarchy-workspace section-box">
+<div>
+<div class="section-title"><h3>2단계 실무자료 목록</h3><div class="actions"><button class="btn light mini" id="addResourceCard">+ 자료</button><button class="btn primary" disabled="" id="saveResourceLanding">랜딩 저장</button></div></div>
+<input class="input" id="resourceAdminSearch" placeholder="자료명·설명 검색" style="margin-bottom:8px" type="search"/>
+<div class="two-row-3" id="resourceCards"></div>
+</div>
+<div class="hierarchy-preview">
+<div class="section-title"><h3>실시간 미리보기</h3><span class="hint">자료 랜딩</span></div>
+<div class="structure-preview-box" id="resourceLandingPreview"></div>
+</div>
+</div>
+<div class="section-box">
+<div class="workspace">
+<div>
+<div class="form-grid">
+<div><label class="label">자료 제목</label><input class="input" id="rsTitle"/></div><div><label class="label">상단 설명</label><input class="input" id="rsSummary"/></div>
+<div class="wide section-box"><label class="label">사용법 섹션 제목</label><input class="input" id="rsUsageHeading"/></div>
+<div class="wide"><label class="label">사용법 (한 줄에 한 항목)</label><textarea class="textarea" id="rsUsage"></textarea></div>
+<div><label class="label">사용 팁 제목</label><input class="input" id="rsTipHeading"/></div><div><label class="label">사용 팁 본문</label><textarea class="textarea" id="rsTip"></textarea></div>
+<div class="wide section-box"><label class="label">예시 섹션 제목</label><input class="input" id="rsExampleHeading"/></div>
+<div><label class="label">예시 라벨</label><input class="input" id="rsExampleLabel"/></div><div><label class="label">현장 예시 본문</label><textarea class="textarea" id="rsExample"></textarea></div>
+<div class="wide section-box"><label class="label">실행순서 섹션 제목</label><input class="input" id="rsStepsHeading"/></div>
+<div class="wide"><label class="label">실행순서 (한 줄에 한 항목)</label><textarea class="textarea" id="rsSteps"></textarea></div>
+<div><label class="label">마무리 제목</label><input class="input" id="rsFinishTitle"/></div><div><label class="label">마무리 본문</label><textarea class="textarea" id="rsFinishBody"></textarea></div>
+</div>
+<div class="section-box"><div class="section-title"><h3>연결 파일</h3><span class="hint">현재 파일 옆에서 다운로드·교체·삭제</span></div>
+<div class="file-box"><div class="file-name" id="rsFileName">연결 파일 없음</div><div class="actions"><button class="btn light mini" disabled="" id="rsDownloadFile">다운로드</button><label class="btn light mini" style="cursor:pointer">교체 업로드<input hidden="" id="rsReplaceFile" type="file"/></label><button class="btn danger mini" disabled="" id="rsDeleteFile">삭제</button></div></div>
+</div>
+<button class="btn primary" disabled="" id="saveResourceDetail" style="margin-top:10px">자료 상세 저장</button>
+</div>
+<div class="preview"><div class="section-title"><h3>자료 상세 미리보기</h3></div><div class="preview-canvas" id="resourcePreview"></div></div>
+</div>
+</div>
+<div class="status" id="resourcesStatus"></div>
+</div>
+</section>
+<!-- ABOUT -->
+<section class="panel" id="panel-about">
+<div class="panel-head"><div><h2>BIZZIP 소개</h2><p>about.html의 실제 모든 영역을 불러옵니다.</p></div></div>
+<div class="workspace">
+<div class="card">
+<div class="form-grid">
+<div><label class="label">페이지 제목</label><input class="input" id="abTitle"/></div><div><label class="label">상단 설명</label><input class="input" id="abSummary"/></div>
+<div><label class="label">만드는 사람 섹션 제목</label><input class="input" id="abPeopleTitle"/></div><div><label class="label">만드는 사람 섹션 설명</label><input class="input" id="abPeopleSummary"/></div>
+</div>
+<div class="section-box"><div class="section-title"><h3>만드는 사람</h3><button class="btn light mini" id="addPerson">+ 사람 추가</button></div><div class="repeat" id="peopleRows"></div></div>
+<div class="section-box"><div class="form-grid"><div><label class="label">컨설팅 섹션 제목</label><input class="input" id="abConsultingTitle"/></div><div><label class="label">컨설팅 섹션 설명</label><input class="input" id="abConsultingSummary"/></div></div><div class="section-title" style="margin-top:8px"><h3>2026 컨설팅 프로젝트</h3><button class="btn light mini" id="addConsulting">+ 추가</button></div><div class="repeat" id="consultingRows"></div></div>
+<div class="section-box"><div class="form-grid"><div><label class="label">브랜드 섹션 제목</label><input class="input" id="abBrandTitle"/></div><div><label class="label">브랜드 섹션 설명</label><input class="input" id="abBrandSummary"/></div></div><div class="section-title" style="margin-top:8px"><h3>주요 브랜드 프로젝트</h3><button class="btn light mini" id="addBrandProject">+ 추가</button></div><div class="repeat" id="brandRows"></div></div>
+<div class="section-box"><div class="form-grid"><div><label class="label">도서 섹션 제목</label><input class="input" id="abBookTitle"/></div><div><label class="label">도서 섹션 설명</label><input class="input" id="abBookSummary"/></div></div><div class="section-title" style="margin-top:8px"><h3>출판서적</h3><button class="btn light mini" id="addBook">+ 추가</button></div><div class="repeat" id="bookRows"></div></div>
+<button class="btn primary" disabled="" id="saveAbout" style="margin-top:10px">BIZZIP 소개 저장</button><div class="status" id="aboutStatus"></div>
+</div>
+<div class="card preview"><div class="preview-canvas" id="aboutPreview"></div></div>
+</div>
+</section>
+<!-- CONTACT -->
+<section class="panel" id="panel-contact">
+<div class="panel-head"><div><h2>문의</h2><p>contact.html의 기존 내용 + 담당자/업무용 카카오톡/개인정보 안내를 함께 관리합니다.</p></div></div>
+<div class="workspace">
+<div class="card">
+<div class="notice">사이트 안에서 별도 문의폼으로 개인정보를 저장하지 않고 업무용 이메일 또는 카카오톡으로 직접 문의받는 방식입니다. 회신에 필요한 최소정보만 요청합니다.</div>
+<div class="form-grid" style="margin-top:9px">
+<div><label class="label">페이지 제목</label><input class="input" id="coTitle"/></div><div><label class="label">상단 설명</label><input class="input" id="coSummary"/></div>
+<div><label class="label">문의 안내 제목</label><textarea class="textarea" id="coMainTitle" placeholder="줄바꿈이 필요한 위치에서 Enter를 누르세요." style="min-height:74px"></textarea></div><div class="wide"><label class="label">문의 안내 본문</label><textarea class="textarea" id="coMainBody"></textarea></div>
+<div><label class="label">담당자</label><input class="input" id="coManager"/></div><div><label class="label">업무용 이메일</label><input class="input" id="coEmail"/></div>
+<div><label class="label">카카오톡 ID/채널</label><input class="input" id="coKakao"/></div><div><label class="label">카카오톡 연결주소</label><input class="input" id="coKakaoUrl"/></div>
+<div class="wide"><label class="label">메일 안내 제목</label><input class="input" id="coGuideTitle"/></div><div class="wide"><label class="label">메일에 적을 내용 (한 줄에 한 항목)</label><textarea class="textarea" id="coGuideItems"></textarea></div>
+<div class="wide"><label class="label">개인정보 안내</label><textarea class="textarea" id="coPrivacy"></textarea></div>
+</div>
+<div class="section-box"><div class="section-title"><h3>문의 유형</h3><button class="btn light mini" id="addContactType">+ 유형 추가</button></div><div class="repeat" id="contactTypeRows"></div></div>
+<button class="btn primary" disabled="" id="saveContact" style="margin-top:10px">문의 페이지 저장</button><div class="status" id="contactStatus"></div>
+</div>
+<div class="card preview"><div class="preview-canvas" id="contactPreview"></div></div>
+</div>
+</section>
 </div>
 <script src="admin.js?v=5.6.4"></script>
 </body>
