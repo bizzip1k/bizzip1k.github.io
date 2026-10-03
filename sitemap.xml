@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bizzip.co.kr/about.html</loc>
@@ -214,81 +214,39 @@
     <loc>https://bizzip.co.kr/startup.html</loc>
   </url>
   <url>
-    <loc>https://bizzip.co.kr/post.html?id=BZ-0091</loc>
-  </url>
-  <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0089</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=BZ-0009</loc>
+    <lastmod>2026-10-01</lastmod>
   </url>
   <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0008</loc>
+    <lastmod>2026-09-29</lastmod>
   </url>
   <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0007</loc>
+    <lastmod>2026-09-27</lastmod>
   </url>
   <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0006</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=BZ-0003</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=BZ-0002</loc>
+    <lastmod>2026-09-23</lastmod>
   </url>
   <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0001</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bizzip.co.kr/post.html?id=BZ-0002</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bizzip.co.kr/post.html?id=BZ-0003</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bizzip.co.kr/post.html?id=BZ-0004</loc>
+    <lastmod>2026-09-20</lastmod>
   </url>
   <url>
     <loc>https://bizzip.co.kr/post.html?id=BZ-0005</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=office-contract-before-start</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=startup-cost-cash-buffer</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=pricing-not-only-cost</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=oem-quote-moq</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=brand-positioning-one-line</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=brand-message-customer-language</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=ads-check-before-spend</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=content-from-customer-questions</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=channel-first-choice</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=offline-margin-check</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=subscription-fixed-cost</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=outsourcing-account-ownership</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=3pl-total-cost</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=inventory-months</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=sales-decomposition</loc>
-  </url>
-  <url>
-    <loc>https://bizzip.co.kr/post.html?id=ai-repeat-work-first</loc>
+    <lastmod>2026-09-20</lastmod>
   </url>
 </urlset>
