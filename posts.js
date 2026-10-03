@@ -199,7 +199,7 @@
   function postCard(post) {
     const sub = "";
     return `
-      <a class="content-card auto-post-card" href="post.html?id=${encodeURIComponent(post.id)}">
+      <a class="content-card auto-post-card" data-category="${escHtml(post.category || "")}" data-post-id="${escHtml(post.id || "")}" href="post.html?id=${encodeURIComponent(post.id)}">
         <div class="tag">${escHtml(post.categoryLabel || CATEGORY_NAMES[post.category] || "BIZZIP")}</div>
         ${sub}
         <h3>${escHtml(post.title || "")}</h3>
@@ -290,13 +290,14 @@
       document.getElementById("post-date").textContent = post.date || "";
 
       mount.innerHTML = `
-        <article class="article">
+        <article class="article" data-post-id="${escHtml(post.id || "")}" data-post-category="${escHtml(post.category || "")}">
           ${(post.sections || []).map(sectionHtml).join("")}
           <div class="small-cta">
             <strong>${post.category ? `이 글은 BIZZIP 콘텐츠의 ${post.categoryLabel || ""} 주제에 분류되어 있습니다.` : "이 글은 최신 BIZZIP 콘텐츠로 등록되었습니다."}</strong>
             <span>${post.category ? (post.categoryLabel || "") : "관리자에서 콘텐츠 주제를 지정할 수 있습니다."}</span>
           </div>
         </article>`;
+      if (window.__bizzipMobileEnhancePost) window.__bizzipMobileEnhancePost(post);
     } catch(e) {
       console.error(e);
     }

@@ -32,8 +32,31 @@
     contact:'<svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3zM8 10h.01M12 10h.01M16 10h.01"></path></svg>',
     layers:'<svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"></path></svg>',
     checklist:'<svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8l1.5 1.5L12 7M13 9h3M8 14l1.5 1.5L12 13M13 15h3"></path></svg>',
-    file:'<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5M9 12h6M9 16h6"></path></svg>'
+    file:'<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5M9 12h6M9 16h6"></path></svg>',
+    user:'<svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"></path></svg>',
+    building:'<svg viewBox="0 0 24 24"><path d="M4 20V4h10v16M14 10h6v10M8 8h2M8 12h2M8 16h2"></path></svg>',
+    mail:'<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="m4 8 8 6 8-6"></path></svg>',
+    phone:'<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.89.33 1.76.63 2.6a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6.09 6.09l1.48-1.29a2 2 0 0 1 2.11-.45c.84.3 1.71.51 2.6.63A2 2 0 0 1 22 16.92z"></path></svg>',
+    arrow:'<svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>',
+    clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6l4 2"></path></svg>',
+    eye:'<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+    bookmark:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"></path></svg>',
+    checkCircle:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m8.5 12 2.3 2.3 4.7-4.8"></path></svg>',
+    spark:'<svg viewBox="0 0 24 24"><path d="M12 3 13.8 8.2 19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"></path></svg>'
   };
+
+  const visualMap={
+    'startup':{image:'mobile-assets/notebook-clean.jpg', metric:'12.4K', icon:svg.checklist},
+    'product':{image:'mobile-assets/desk-mug.jpg', metric:'9.1K', icon:svg.file},
+    'brand':{image:'mobile-assets/mug-close.jpg', metric:'8.4K', icon:svg.spark},
+    'marketing':{image:'mobile-assets/desk-mug.jpg', metric:'8.1K', icon:svg.search},
+    'sales':{image:'mobile-assets/hero-office.jpg', metric:'7.5K', icon:svg.arrow},
+    'operation':{image:'mobile-assets/mug-close.jpg', metric:'6.7K', icon:svg.building},
+    'logistics':{image:'mobile-assets/notebook-clean.jpg', metric:'6.2K', icon:svg.layers},
+    'data-ai':{image:'mobile-assets/hero-office.jpg', metric:'5.9K', icon:'<span class="mini-ai">AI</span>'},
+    'default':{image:'mobile-assets/hero-office.jpg', metric:'5.2K', icon:svg.file}
+  };
+  function visualFor(key){ return visualMap[key] || visualMap.default; }
 
   /* Header controls */
   const navWrap=header.querySelector('.nav');
@@ -44,12 +67,21 @@
   navWrap.append(searchToggle,toggle);
 
   /* Drawer */
+  const drawerItems=[
+    ['index.html',svg.home,'홈','전체 구조를 빠르게 확인합니다.','mobile-nav-home'],
+    ['problems.html',svg.problem,'문제별 해결','지금 겪는 문제에서 바로 시작합니다.','mobile-nav-problems'],
+    ['business.html',svg.layers,'사업실무','분야별 실무 가이드와 핵심 자료를 찾습니다.','mobile-nav-business'],
+    ['contents.html',svg.content,'콘텐츠','최신 글과 실전 인사이트를 확인합니다.','mobile-nav-contents'],
+    ['resources.html',svg.file,'실무자료','체크리스트와 계산표를 바로 꺼내 씁니다.','mobile-nav-resources'],
+    ['about.html',svg.building,'BIZZIP 소개','운영 철학과 서비스 방향을 봅니다.','mobile-nav-about'],
+    ['contact.html',svg.contact,'문의','질문, 제안, 강의·컨설팅 문의를 남깁니다.','mobile-nav-contact']
+  ];
   const backdrop=document.createElement('div'); backdrop.className='mobile-drawer-backdrop'; backdrop.setAttribute('aria-hidden','true');
   const drawer=document.createElement('aside'); drawer.className='mobile-drawer'; drawer.setAttribute('aria-label','모바일 전체 메뉴');
-  drawer.innerHTML=`<div class="mobile-drawer-head"><div class="mobile-drawer-brand">BIZZIP</div><button class="mobile-drawer-close" type="button" aria-label="메뉴 닫기">×</button></div>
-    <nav class="mobile-drawer-nav">
-      <a href="index.html">홈</a><a class="mobile-nav-problems" href="problems.html">문제별 해결</a><a class="mobile-nav-business" href="business.html">사업실무</a><a href="contents.html">콘텐츠</a><a href="resources.html">실무자료</a><a href="about.html">BIZZIP 소개</a><a href="contact.html">문의</a>
-    </nav><a class="mobile-drawer-contact" href="contact.html">전문가에게 문의하기</a>`;
+  drawer.innerHTML=`<div class="mobile-drawer-head"><img class="mobile-drawer-logo" src="bizzip-logo.png" alt="BIZZIP"><button class="mobile-drawer-close" type="button" aria-label="메뉴 닫기">×</button></div>
+    <nav class="mobile-drawer-nav">${drawerItems.map(([href,icon,label,desc,klass])=>`<a class="${klass}" href="${href}"><span class="mobile-drawer-icon" aria-hidden="true">${icon}</span><span class="mobile-drawer-copy"><strong>${label}</strong><span>${desc}</span></span></a>`).join('')}</nav>
+    <a class="mobile-drawer-promo" href="about.html"><span class="mobile-drawer-promo-copy"><em>비즈니스의 모든 가능성</em><strong>BIZZIP과 함께하세요.</strong></span><span class="mobile-drawer-promo-arrow">›</span></a>
+    <a class="mobile-drawer-contact" href="contact.html">전문가에게 문의하기</a>`;
   document.body.append(backdrop,drawer);
   drawer.querySelectorAll('a').forEach(a=>{if((a.getAttribute('href')||'').toLowerCase()===current) a.setAttribute('aria-current','page')});
   function openMenu(){closeSearch();body.classList.add('mobile-menu-open');toggle.setAttribute('aria-expanded','true')}
@@ -84,6 +116,104 @@
 
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();closeSearch()}});
 
+  function enhanceHomeContentCards(){
+    const cards=document.querySelectorAll('.mobile-home-content-section .content-card');
+    cards.forEach((card,idx)=>{
+      if(card.dataset.mobileEnhanced==='1') return;
+      const category=card.dataset.category || '';
+      const visual=visualFor(category);
+      card.dataset.mobileEnhanced='1';
+      card.classList.add('has-mobile-visual');
+      const visualBox=document.createElement('div');
+      visualBox.className='content-card-visual';
+      visualBox.style.backgroundImage=`url(${visual.image})`;
+      const meta=document.createElement('div');
+      meta.className='content-card-meta';
+      meta.innerHTML=`<span class="meta-stat">${svg.eye}<em>${visual.metric}</em></span><span class="meta-stat">${svg.clock}<em>${(card.querySelector('.post-date')?.textContent||'').replace(/-/g,'. ')}</em></span>`;
+      card.insertBefore(visualBox, card.firstChild);
+      card.appendChild(meta);
+    });
+  }
+
+  function buildQuickChecklist(post){
+    if(!post || !post.sections) return '';
+    const source = post.sections.find(s => Array.isArray(s.bullets) && s.bullets.length) || null;
+    if(!source) return '';
+    const items = source.bullets.slice(0,4).map(item=>`<li>${item}</li>`).join('');
+    return `<div class="mobile-post-quick-card"><div class="mobile-post-quick-head"><span class="quick-icon">${svg.file}</span><strong>한눈에 보는 체크리스트</strong></div><ul>${items}</ul></div>`;
+  }
+
+  function enhancePostDetailView(){
+    const hero=document.querySelector('.page-hero');
+    const article=document.querySelector('#post-detail .article');
+    if(!hero || !article || article.dataset.visualEnhanced==='1') return;
+    article.dataset.visualEnhanced='1';
+    const category=article.dataset.postCategory || (document.getElementById('post-category')?.textContent||'').trim();
+    let key='default';
+    Object.keys(visualMap).forEach(k=>{ if(category && (k===category || document.body.textContent.includes(k))) key=key; });
+    if(article.dataset.postCategory) key=article.dataset.postCategory;
+    const visual=visualFor(key);
+    const summary=document.getElementById('post-summary')?.textContent || '';
+    const date=document.getElementById('post-date')?.textContent || '';
+    const media=document.createElement('div');
+    media.className='mobile-post-hero-media';
+    media.innerHTML=`<img src="${visual.image}" alt="${document.getElementById('post-title')?.textContent || 'BIZZIP 콘텐츠'}"><div class="mobile-post-media-overlay"><span>${category || 'BIZZIP INSIGHT'}</span></div>`;
+    article.prepend(media);
+    const quickWrap=document.createElement('div');
+    quickWrap.className='mobile-post-summary-strip';
+    quickWrap.innerHTML=`<div class="mobile-post-meta-pill">${svg.clock}<span>${date}</span></div><div class="mobile-post-meta-pill">${svg.bookmark}<span>저장하기</span></div>`;
+    media.insertAdjacentElement('afterend',quickWrap);
+    const quick=document.createElement('div');
+    quick.innerHTML=buildQuickChecklist(window.__bizzipCurrentPost || {});
+    if(quick.innerHTML.trim()) quickWrap.insertAdjacentElement('afterend',quick.firstElementChild);
+  }
+
+  function enhanceGuidePages(){
+    const article=document.querySelector('.article');
+    const pageHero=document.querySelector('.page-hero .wrap');
+    if(!article || article.dataset.guideEnhanced==='1') return;
+    const guideSections=article.querySelector('.biz-flex-sections');
+    if(!guideSections) return;
+    article.dataset.guideEnhanced='1';
+    const eyebrow=(document.querySelector('.page-hero .eyebrow')?.textContent||'').trim();
+    const key = (path.match(/^(startup|product|brand|marketing|sales|operation|logistics|data-ai)/)||[])[1] || 'default';
+    const visual=visualFor(key);
+    const summaryItems=Array.from(article.querySelectorAll('[data-kind="checklist"] .biz-section-item .biz-item-title')).slice(0,4).map(el=>el.textContent.trim()).filter(Boolean);
+    if(pageHero && !document.querySelector('.mobile-guide-summary')){
+      const box=document.createElement('div');
+      box.className='mobile-guide-summary';
+      box.innerHTML=`<div class="mobile-guide-visual"><img src="${visual.image}" alt="${eyebrow || 'BIZZIP'}"></div>
+      <div class="mobile-guide-info"><div class="mobile-guide-chip">${eyebrow || 'BIZZIP GUIDE'}</div><strong>한눈에 보는 체크리스트</strong><ul>${summaryItems.slice(0,4).map(i=>`<li>${i}</li>`).join('')}</ul></div>`;
+      pageHero.insertAdjacentElement('beforeend',box);
+    }
+
+    article.querySelectorAll('.biz-flex-section').forEach((section, idx)=>{
+      section.classList.add('mobile-guide-block');
+      section.dataset.order=String(idx+1).padStart(2,'0');
+      const kind=section.dataset.kind || '';
+      const title=section.querySelector('.biz-section-title');
+      if(title && !title.querySelector('.mobile-order-badge')) title.insertAdjacentHTML('afterbegin', `<span class="mobile-order-badge">${String(idx+1)}</span>`);
+      if(kind==='checklist' || kind==='cards' || kind==='faq' || kind==='links' || kind==='decision' || kind==='steps'){
+        section.querySelectorAll('.biz-section-item').forEach((item,itemIdx)=>{
+          if(kind==='steps') item.style.setProperty('--step-no', `'${itemIdx+1}'`);
+        });
+      }
+    });
+  }
+
+  function enhanceContactPage(){
+    if(path!=='contact.html') return;
+    const shell=document.querySelector('.contact-shell');
+    if(!shell || document.querySelector('.mobile-contact-channels')) return;
+    const block=document.createElement('div');
+    block.className='mobile-contact-channels';
+    block.innerHTML=`<div class="mobile-contact-tabs"><button type="button" class="is-active">문의 폼</button><button type="button">카카오톡</button><button type="button">이메일</button></div>
+    <div class="mobile-contact-formcard"><label>문의 유형<select><option>문의 유형을 선택해주세요.</option><option>콘텐츠 주제 제안</option><option>실무자료 요청</option><option>강의·컨설팅 문의</option></select></label><label>제목<input type="text" placeholder="문의 제목을 입력해주세요."></label><label>문의 내용<textarea placeholder="궁금한 내용을 자세히 입력해주세요.&#10;(최대 1,000자)"></textarea></label><div class="mobile-contact-tip">${svg.checkCircle}<span>빠른 답변을 위해 구체적인 내용을 작성해 주세요. 평일 기준 1~2일 내에 답변드립니다.</span></div><a class="mobile-contact-submit" href="mailto:bizzip1k@naver.com?subject=BIZZIP%20문의">문의하기</a></div>
+    <div class="mobile-contact-alt"><h3>다른 방법으로도 상담할 수 있어요</h3><div class="mobile-contact-alt-grid"><a href="https://open.kakao.com/" target="_blank" rel="noopener"><span class="alt-icon kakao">톡</span><strong>카카오 상담</strong></a><a href="mailto:bizzip1k@naver.com"><span class="alt-icon mail">${svg.mail}</span><strong>이메일 문의</strong></a><a href="contact.html"><span class="alt-icon phone">${svg.phone}</span><strong>전화 문의</strong></a></div></div>`;
+    const main=document.querySelector('.contact-main');
+    if(main) main.insertAdjacentElement('afterend', block);
+  }
+
   /* Home-only restructuring: uses the same original content/links, only changes mobile presentation. */
   if(path==='index.html'){
     const hero=document.querySelector('.hero .wrap');
@@ -116,4 +246,18 @@
   /* Detail-page persistent CTA in original navy. */
   const isDetail=/^(startup|product|brand|marketing|sales|operation|logistics|data-ai)-/.test(path)||/^problem-/.test(path)||/^resource-/.test(path)||path==='post.html';
   if(isDetail){const main=document.querySelector('main');if(main){const cta=document.createElement('a');cta.href='contact.html';cta.className='mobile-contact-cta';cta.innerHTML=svg.contact+' 전문가에게 문의하기 <span aria-hidden="true">›</span>';main.appendChild(cta)}}
+
+  const homeObserver = new MutationObserver(()=>{ if(path==='index.html') enhanceHomeContentCards(); if(path==='post.html') enhancePostDetailView(); });
+  document.addEventListener('DOMContentLoaded', ()=>{
+    setTimeout(()=>{
+      if(path==='index.html') enhanceHomeContentCards();
+      if(path==='post.html') enhancePostDetailView();
+      enhanceGuidePages();
+      enhanceContactPage();
+    }, 250);
+    const homeGrid=document.querySelector('.mobile-home-content-section .content-grid, #post-detail');
+    if(homeGrid) homeObserver.observe(homeGrid, {childList:true, subtree:true});
+  });
+
+  window.__bizzipMobileEnhancePost = function(post){ window.__bizzipCurrentPost = post; setTimeout(enhancePostDetailView, 60); };
 })();
