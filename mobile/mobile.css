@@ -541,3 +541,90 @@ body.locked{overflow:hidden}
 .resource-principle-card p{
   margin:0;color:#d5e0e5;font-size:11px;line-height:1.58
 }
+
+/* ===== Mobile Season 2 : About + Contact ===== */
+.about-person-card{
+  overflow:hidden;border:1px solid var(--line);border-radius:20px;background:#fff;
+  box-shadow:0 10px 24px rgba(16,36,56,.04)
+}
+.about-person-photo{height:220px;background:#eef4f5}
+.about-person-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.about-person-copy{padding:18px}
+.about-person-copy h2{margin:0 0 9px;color:var(--navy);font-size:23px;letter-spacing:-.7px}
+.about-person-copy p{margin:0;color:#6e7e88;font-size:12px;line-height:1.65}
+.about-career-list{margin-top:10px;border:1px solid var(--line);border-radius:17px;background:#fff;padding:4px 15px}
+.about-career-list div{padding:12px 0;border-top:1px solid #edf2f4;color:#566873;font-size:11px;line-height:1.5}
+.about-career-list div:first-child{border-top:0}
+.about-mobile-section{padding-top:6px}
+.about-project-list{display:grid;gap:9px}
+.about-project-list article{
+  padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff
+}
+.about-project-list span,.about-brand-grid span,.about-book-list span{
+  display:block;margin-bottom:5px;color:var(--point);font-size:9px;font-weight:900
+}
+.about-project-list strong,.about-brand-grid strong,.about-book-list strong{
+  display:block;color:var(--navy);font-size:15px;line-height:1.35
+}
+.about-project-list p,.about-brand-grid p,.about-book-list p{
+  margin:6px 0 0;color:#75848d;font-size:11px;line-height:1.5
+}
+.about-brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.about-brand-grid article{
+  min-height:112px;padding:13px 11px;border:1px solid var(--line);border-radius:15px;background:#fff
+}
+.about-brand-grid strong{font-size:14px}
+.about-book-list{display:grid;gap:10px}
+.about-book-list a{
+  display:grid;grid-template-columns:82px minmax(0,1fr);gap:13px;padding:13px;
+  border:1px solid var(--line);border-radius:17px;background:#fff
+}
+.about-book-list img{width:82px;height:116px;object-fit:cover;border-radius:7px;background:#eef3f5}
+.about-book-list strong{font-size:14px}
+.mobile-contact-main{
+  position:relative;overflow:hidden;padding:22px 19px;border-radius:20px;
+  background:linear-gradient(135deg,#102f49,#216874);color:#fff;
+  box-shadow:0 14px 28px rgba(16,36,56,.1)
+}
+.mobile-contact-main::after{
+  content:"";position:absolute;right:-60px;bottom:-90px;width:170px;height:170px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.14)
+}
+.mobile-contact-main>span{font-size:9px;font-weight:900;letter-spacing:.08em;color:#79d3c4}
+.mobile-contact-main h2{margin:7px 0 8px;font-size:23px;line-height:1.35;letter-spacing:-.7px}
+.mobile-contact-main p{margin:0 0 16px;color:#dce8ed;font-size:12px;line-height:1.6}
+.mobile-contact-main a{
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+  min-height:47px;border-radius:14px;background:#fff;color:#173c51;font-size:13px;font-weight:900
+}
+.contact-type-section{padding-top:5px}
+.contact-type-grid{display:grid;gap:9px}
+.contact-type-grid article{
+  padding:16px;border:1px solid var(--line);border-radius:17px;background:#fff
+}
+.contact-type-grid article>span{color:var(--point);font-size:9px;font-weight:900;letter-spacing:.06em}
+.contact-type-grid strong{display:block;margin-top:4px;color:var(--navy);font-size:15px}
+.contact-type-grid p{margin:6px 0 0;color:#75848d;font-size:11px;line-height:1.55}
+.mobile-contact-info{
+  padding:18px 16px;border:1px solid var(--line);border-radius:18px;background:#fff
+}
+.mobile-contact-info h2{margin:0 0 12px;color:var(--navy);font-size:20px}
+.mobile-contact-info a,.mobile-contact-info>div{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #edf2f4
+}
+.mobile-contact-info a:first-of-type{border-top:0}
+.mobile-contact-info span{color:#85929a;font-size:10px}
+.mobile-contact-info strong{color:var(--navy);font-size:12px}
+.mobile-contact-info>p{
+  margin:10px 0 0;padding-top:10px;border-top:1px solid #edf2f4;color:#8b989f;font-size:9px;line-height:1.5
+}
+.contact-guide-card{
+  padding:18px 16px;border-radius:18px;background:#fffaf6;border:1px solid #f1dfd0
+}
+.contact-guide-card>span{display:block;color:var(--point);font-size:10px;font-weight:900;margin-bottom:8px}
+.contact-guide-card ol{margin:0;padding-left:20px;color:#5f707a}
+.contact-guide-card li{margin:7px 0;font-size:11px;line-height:1.5}
+@media(max-width:360px){
+  .about-brand-grid{grid-template-columns:1fr}
+  .about-person-photo{height:205px}
+}
