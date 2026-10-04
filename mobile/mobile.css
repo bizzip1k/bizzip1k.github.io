@@ -495,3 +495,49 @@ body.locked{overflow:hidden}
   .mobile-content-item{grid-template-columns:92px minmax(0,1fr)}
   .mobile-content-thumb{min-height:126px}
 }
+
+/* ===== Mobile Season 2 : Resources ===== */
+.resource-browser-section{padding-top:18px}
+.mobile-resource-cards{display:grid;gap:11px}
+.mobile-resource-card{
+  position:relative;overflow:hidden;min-height:142px;padding:16px 15px;
+  border:1px solid var(--line);border-radius:18px;background:#fff;
+  box-shadow:0 8px 22px rgba(16,36,56,.035)
+}
+.mobile-resource-card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px
+}
+.mobile-resource-badge{
+  display:inline-flex;align-items:center;min-height:24px;padding:0 8px;border-radius:999px;
+  background:#eef7f8;color:var(--teal);font-size:9px;font-weight:900;letter-spacing:.04em
+}
+.mobile-resource-format{
+  color:#8b989f;font-size:9px;font-weight:900;letter-spacing:.05em
+}
+.mobile-resource-card h3{
+  margin:0 0 7px;color:var(--navy);font-size:16px;line-height:1.4;letter-spacing:-.4px
+}
+.mobile-resource-card p{
+  margin:0 0 13px;color:#75848d;font-size:11px;line-height:1.55
+}
+.mobile-resource-card .mobile-resource-link{
+  display:inline-flex;align-items:center;gap:5px;color:var(--navy);font-size:11px;font-weight:900
+}
+.mobile-resource-card .mobile-resource-link::after{content:"→";color:var(--point)}
+.mobile-resource-empty{
+  padding:30px 14px;border:1px dashed #d7e3e7;border-radius:16px;
+  background:#fff;color:#7c8a93;text-align:center;font-size:12px
+}
+.resource-principle-section{padding-top:2px}
+.resource-principle-card{
+  padding:20px 18px;border-radius:19px;background:linear-gradient(135deg,#102f49,#173f58);color:#fff
+}
+.resource-principle-card>span{
+  display:block;margin-bottom:6px;color:#75d2c2;font-size:9px;font-weight:900;letter-spacing:.08em
+}
+.resource-principle-card strong{
+  display:block;margin-bottom:6px;font-size:17px;line-height:1.35;letter-spacing:-.4px
+}
+.resource-principle-card p{
+  margin:0;color:#d5e0e5;font-size:11px;line-height:1.58
+}
