@@ -366,3 +366,52 @@ body.locked{overflow:hidden}
   .business-hub-card{padding:13px 11px;gap:10px}
   .business-hub-card strong{font-size:15px}
 }
+
+/* ===== Mobile Season 2 : Problems hub ===== */
+.problem-hub-section{padding-top:17px}
+.problem-hub-grid{display:grid;gap:11px}
+.problem-hub-card{
+  position:relative;overflow:hidden;min-height:136px;padding:17px 15px;
+  border:1px solid var(--line);border-radius:19px;background:#fff;
+  display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:start;gap:11px;
+  box-shadow:0 8px 22px rgba(16,36,56,.04)
+}
+.problem-hub-card.dark{
+  background:linear-gradient(145deg,var(--navy),#173f58);border-color:transparent;color:#fff
+}
+.problem-hub-card.dark::after{
+  content:"";position:absolute;right:-40px;bottom:-75px;width:155px;height:155px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.11)
+}
+.problem-no{
+  width:34px;height:34px;border-radius:11px;background:var(--point-soft);color:var(--point);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900
+}
+.problem-hub-card.dark .problem-no{background:rgba(255,255,255,.12);color:#fff}
+.problem-hub-card strong{
+  display:block;margin:1px 0 7px;color:var(--navy);font-size:16px;line-height:1.42;letter-spacing:-.45px
+}
+.problem-hub-card p{margin:0;color:#74838c;font-size:11px;line-height:1.52}
+.problem-hub-card em{font-style:normal;color:#a3adb3;font-size:21px;line-height:1.2;margin-top:4px}
+.problem-hub-card.dark strong,.problem-hub-card.dark p,.problem-hub-card.dark em{position:relative;z-index:1;color:#fff}
+.problem-hub-card.dark p{color:#d2dde3}
+.problem-guide-section{padding-top:2px}
+.problem-guide-card{
+  padding:20px 18px;border-radius:19px;background:linear-gradient(135deg,#eef8f6,#f9fbfc);
+  border:1px solid #dcebe8
+}
+.problem-guide-card>span{
+  display:block;margin-bottom:7px;color:var(--teal);font-size:10px;font-weight:900;letter-spacing:.05em
+}
+.problem-guide-card>strong{
+  display:block;color:var(--navy);font-size:17px;line-height:1.48;letter-spacing:-.45px
+}
+.problem-guide-card>a{
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:14px;
+  padding:0 14px;border-radius:12px;background:var(--navy);color:#fff;font-size:12px;font-weight:900
+}
+@media(max-width:360px){
+  .problem-hub-card{padding:15px 12px;grid-template-columns:32px minmax(0,1fr) auto}
+  .problem-no{width:32px;height:32px}
+  .problem-hub-card strong{font-size:15px}
+}
