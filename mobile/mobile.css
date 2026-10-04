@@ -628,3 +628,32 @@ body.locked{overflow:hidden}
   .about-brand-grid{grid-template-columns:1fr}
   .about-person-photo{height:205px}
 }
+
+/* ===== Mobile Season 2 : Business category hubs ===== */
+.mobile-topic-section{padding-top:18px}
+.mobile-topic-list{display:grid;gap:10px}
+.mobile-topic-card{
+  min-height:102px;padding:15px 13px;border:1px solid var(--line);border-radius:18px;background:#fff;
+  display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:11px;
+  box-shadow:0 8px 22px rgba(16,36,56,.035)
+}
+.topic-order{
+  width:36px;height:36px;border-radius:11px;background:var(--point-soft);color:var(--point);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900
+}
+.mobile-topic-card strong{
+  display:block;margin-bottom:5px;color:var(--navy);font-size:15px;line-height:1.35;letter-spacing:-.35px
+}
+.mobile-topic-card p{margin:0;color:#75848d;font-size:11px;line-height:1.5}
+.mobile-topic-card em{font-style:normal;color:#a3adb3;font-size:20px}
+.mobile-topic-more{padding-top:2px}
+.topic-more-card{
+  padding:19px 17px;border-radius:18px;background:linear-gradient(135deg,#eef8f6,#f9fbfc);
+  border:1px solid #dcebe8
+}
+.topic-more-card>span{display:block;color:var(--teal);font-size:9px;font-weight:900;letter-spacing:.06em;margin-bottom:6px}
+.topic-more-card>strong{display:block;color:var(--navy);font-size:16px;line-height:1.48;letter-spacing:-.4px}
+.topic-more-card>a{
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:13px;
+  padding:0 14px;border-radius:12px;background:var(--navy);color:#fff;font-size:12px;font-weight:900
+}
