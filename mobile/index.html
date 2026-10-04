@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="BIZZIP 모바일 사업 실무 가이드">
+<meta name="robots" content="noindex,nofollow">
+<title>BIZZIP Mobile Season 2</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+<header class="m-header">
+  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈">
+    <img src="../bizzip-logo.png" alt="BIZZIP">
+  </a>
+  <div class="m-header-actions">
+    <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    </button>
+    <button class="icon-btn" id="menuOpen" type="button" aria-label="메뉴 열기" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">BUSINESS KNOW-HOW ARCHIVE</div>
+    <h1>사업을 하다 보면,<br>작은 문제에서 막힙니다.</h1>
+    <p>직접 해보지 않으면 알기 어려운 사업의 작은 문제와 필요한 실무자료를 한곳에 모았습니다.</p>
+    <button class="hero-search" id="heroSearch" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <span>궁금한 내용을 검색해보세요.</span>
+    </button>
+  </section>
+
+  <section class="primary-actions section-pad">
+    <a class="primary-card problem" href="../problems.html">
+      <span class="primary-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg>
+      </span>
+      <strong>문제별 해결</strong>
+      <span>지금 겪는 문제에서 바로 시작합니다.</span>
+    </a>
+    <a class="primary-card business" href="../business.html">
+      <span class="primary-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
+      </span>
+      <strong>사업실무</strong>
+      <span>분야별 실무 가이드를 찾아봅니다.</span>
+    </a>
+  </section>
+
+  <section class="section-pad">
+    <div class="section-head">
+      <div>
+        <span class="section-kicker">BUSINESS PRACTICE</span>
+        <h2>사업실무</h2>
+      </div>
+      <a href="../business.html">전체보기</a>
+    </div>
+    <div class="business-grid">
+      <a href="../startup.html"><span>01</span><strong>창업 준비</strong><em>›</em></a>
+      <a href="../product.html"><span>02</span><strong>상품과 서비스</strong><em>›</em></a>
+      <a href="../brand.html"><span>03</span><strong>브랜드</strong><em>›</em></a>
+      <a href="../marketing.html"><span>04</span><strong>마케팅</strong><em>›</em></a>
+      <a href="../sales.html"><span>05</span><strong>판매와 유통</strong><em>›</em></a>
+      <a href="../operation.html"><span>06</span><strong>회사 운영</strong><em>›</em></a>
+      <a href="../logistics.html"><span>07</span><strong>물류와 재고</strong><em>›</em></a>
+      <a href="../data-ai.html"><span class="ai">AI</span><strong>데이터와 AI</strong><em>›</em></a>
+    </div>
+  </section>
+
+  <section class="section-pad content-section">
+    <div class="section-head">
+      <div>
+        <span class="section-kicker">LATEST CONTENT</span>
+        <h2>최근 BIZZIP 콘텐츠</h2>
+      </div>
+      <a href="../contents.html">전체보기</a>
+    </div>
+    <div class="content-track" id="latestPosts" aria-live="polite">
+      <article class="content-card loading">콘텐츠를 불러오는 중입니다.</article>
+    </div>
+  </section>
+
+  <section class="section-pad resources-section">
+    <div class="section-head">
+      <div>
+        <span class="section-kicker">PRACTICAL RESOURCES</span>
+        <h2>바로 쓰는 실무자료</h2>
+      </div>
+      <a href="../resources.html">전체보기</a>
+    </div>
+    <div class="resource-list">
+      <a href="../resource-start-check.html">
+        <span class="resource-type">CHECKLIST</span>
+        <strong>사업 시작 체크리스트</strong>
+        <em>›</em>
+      </a>
+      <a href="../resource-pricing.html">
+        <span class="resource-type">XLSX</span>
+        <strong>원가·판매가 계산표</strong>
+        <em>›</em>
+      </a>
+      <a href="../resource-3pl.html">
+        <span class="resource-type">GUIDE</span>
+        <strong>3PL 비교 가이드</strong>
+        <em>›</em>
+      </a>
+    </div>
+  </section>
+
+  <section class="section-pad contact-section">
+    <div class="contact-card">
+      <span>BIZZIP CONTACT</span>
+      <h2>사업을 하다가<br>막히는 부분이 있나요?</h2>
+      <p>강의, 컨설팅, 사업실무 관련 문의를 남겨주세요.</p>
+      <a href="../contact.html">전문가에게 문의하기</a>
+    </div>
+  </section>
+
+  <div class="pc-link-wrap">
+    <a class="pc-link" href="../index.html">PC 버전 보기</a>
+  </div>
+</main>
+
+<footer class="m-footer">
+  <strong>내 사업에 사소한 일은 없습니다. 비즈집</strong>
+  <span>© 2026 BIZZIP</span>
+</footer>
+
+<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+  <a href="index.html" aria-current="page"><span class="nav-icon">⌂</span><span>홈</span></a>
+  <a href="../problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
+  <a href="../business.html"><span class="nav-icon">▤</span><span>사업실무</span></a>
+  <a href="../contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
+  <a href="../contact.html"><span class="nav-icon">◌</span><span>문의</span></a>
+</nav>
+
+<div class="backdrop" id="menuBackdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <img src="../bizzip-logo.png" alt="BIZZIP">
+    <button type="button" id="menuClose" aria-label="메뉴 닫기">×</button>
+  </div>
+  <nav>
+    <a href="index.html"><strong>홈</strong><span>모바일 홈으로 이동</span></a>
+    <a class="dark" href="../problems.html"><strong>문제별 해결</strong><span>지금 겪는 문제에서 시작</span></a>
+    <a class="teal" href="../business.html"><strong>사업실무</strong><span>분야별 실무 가이드</span></a>
+    <a href="../contents.html"><strong>콘텐츠</strong><span>BIZZIP 최신 콘텐츠</span></a>
+    <a href="../resources.html"><strong>실무자료</strong><span>체크리스트와 계산표</span></a>
+    <a href="../about.html"><strong>BIZZIP 소개</strong><span>비즈집을 만드는 사람과 방향</span></a>
+    <a href="../contact.html"><strong>문의</strong><span>강의와 컨설팅 문의</span></a>
+  </nav>
+  <a class="drawer-pc" href="../index.html">PC 버전으로 이동</a>
+</aside>
+
+<div class="backdrop search-backdrop" id="searchBackdrop" hidden></div>
+<section class="search-panel" id="searchPanel" aria-hidden="true">
+  <div class="search-head">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="searchInput" type="search" placeholder="궁금한 내용을 검색해보세요." autocomplete="off">
+    </div>
+    <button type="button" id="searchClose" aria-label="검색 닫기">×</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</section>
+
+<script src="mobile.js"></script>
+</body>
+</html>
