@@ -657,3 +657,66 @@ body.locked{overflow:hidden}
   display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:13px;
   padding:0 14px;border-radius:12px;background:var(--navy);color:#fff;font-size:12px;font-weight:900
 }
+
+/* ===== Mobile Season 2 : Guide detail pages ===== */
+.mobile-guide-article{padding-top:14px}
+.mobile-guide-article .article{padding:0;background:transparent;border:0;box-shadow:none}
+.mobile-guide-article .biz-flex-sections{display:grid;gap:12px}
+.mobile-guide-article .biz-flex-section{
+  padding:18px 16px;border:1px solid var(--line);border-radius:18px;background:#fff;
+  box-shadow:0 9px 22px rgba(16,36,56,.035)
+}
+.mobile-guide-article .biz-section-title{
+  margin:0 0 10px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.55px
+}
+.mobile-guide-article .biz-section-body{display:grid;gap:8px}
+.mobile-guide-article .biz-section-body p{
+  margin:0;color:#61727c;font-size:12px;line-height:1.72
+}
+.mobile-guide-article .biz-section-items{display:grid;gap:9px;margin-top:12px}
+.mobile-guide-article .biz-section-item{
+  position:relative;padding:13px 13px 13px 42px;border:1px solid #e3edf1;border-radius:14px;background:#fbfcfd
+}
+.mobile-guide-article .biz-section-item::before{
+  content:"";position:absolute;left:13px;top:14px;width:20px;height:20px;border-radius:50%;background:#eef8f6
+}
+.mobile-guide-article .biz-section-item::after{
+  content:"✓";position:absolute;left:17px;top:13px;color:var(--teal);font-size:12px;font-weight:900
+}
+.mobile-guide-article .biz-item-title{
+  display:block;color:var(--navy);font-size:14px;line-height:1.45
+}
+.mobile-guide-article .biz-item-body{
+  margin:4px 0 0;color:#70808a;font-size:11px;line-height:1.58
+}
+.mobile-guide-article .biz-item-link{
+  display:inline-flex;margin-top:7px;color:var(--navy);font-size:11px;font-weight:900
+}
+.mobile-guide-article .biz-item-link[hidden]{display:none!important}
+.mobile-guide-article .biz-flex-section[data-kind="notice"]{
+  background:linear-gradient(180deg,#f3faf8,#fff);border-color:#d9ebe7
+}
+.mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-items{counter-reset:step}
+.mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-item{
+  padding-left:48px;background:#fffaf6;border-color:#f1dfd0
+}
+.mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-item::before{
+  content:counter(step);counter-increment:step;width:24px;height:24px;left:12px;top:12px;
+  display:flex;align-items:center;justify-content:center;background:var(--point);color:#fff;font-size:11px;font-weight:900
+}
+.mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-item::after{display:none}
+.mobile-guide-article .biz-flex-section[data-kind="faq"] .biz-section-item{background:#f9fbfc}
+.mobile-guide-article .biz-flex-section[data-kind="decision"]{
+  background:linear-gradient(180deg,#fff8f2,#fff);border-color:#f2dece
+}
+.mobile-guide-article .biz-flex-section[data-kind="links"] .biz-section-item{padding-left:13px;background:#f7fbfc}
+.mobile-guide-article .biz-flex-section[data-kind="links"] .biz-section-item::before,
+.mobile-guide-article .biz-flex-section[data-kind="links"] .biz-section-item::after{display:none}
+.mobile-guide-article .related-posts-v22{margin-top:12px}
+.mobile-guide-article .related-posts-v22 .content-grid{
+  display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none
+}
+.mobile-guide-article .related-posts-v22 .content-grid::-webkit-scrollbar{display:none}
+.mobile-guide-article .related-posts-v22 .content-card{
+  flex:0 0 78%;scroll-snap-align:start
+}
