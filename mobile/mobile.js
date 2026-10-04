@@ -39,7 +39,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();close
 
 const staticSearch=[
   ['사업실무','분야별 실무 가이드','business.html'],
-  ['문제별 해결','지금 겪는 문제에서 시작','../problems.html'],
+  ['문제별 해결','지금 겪는 문제에서 시작','problems.html'],
   ['콘텐츠','BIZZIP 최신 콘텐츠','../contents.html'],
   ['실무자료','체크리스트, 계산표, 가이드','../resources.html'],
   ['창업 준비','사업 시작 전 준비와 검증','../startup.html'],
