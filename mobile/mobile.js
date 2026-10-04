@@ -28,12 +28,17 @@ function closeSearch(){
   searchPanel.setAttribute('aria-hidden','true');
   setTimeout(()=>{searchBackdrop.hidden=true},220);lock(false);
 }
-menuOpen.addEventListener('click',openDrawer);menuClose.addEventListener('click',closeDrawer);menuBackdrop.addEventListener('click',closeDrawer);
-searchOpen.addEventListener('click',openSearch);heroSearch.addEventListener('click',openSearch);searchClose.addEventListener('click',closeSearch);searchBackdrop.addEventListener('click',closeSearch);
+if(menuOpen&&menuClose&&drawer&&menuBackdrop){
+  menuOpen.addEventListener('click',openDrawer);menuClose.addEventListener('click',closeDrawer);menuBackdrop.addEventListener('click',closeDrawer);
+}
+if(searchOpen)searchOpen.addEventListener('click',openSearch);
+if(heroSearch)heroSearch.addEventListener('click',openSearch);
+if(searchClose)searchClose.addEventListener('click',closeSearch);
+if(searchBackdrop)searchBackdrop.addEventListener('click',closeSearch);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeSearch()}});
 
 const staticSearch=[
-  ['사업실무','분야별 실무 가이드','../business.html'],
+  ['사업실무','분야별 실무 가이드','business.html'],
   ['문제별 해결','지금 겪는 문제에서 시작','../problems.html'],
   ['콘텐츠','BIZZIP 최신 콘텐츠','../contents.html'],
   ['실무자료','체크리스트, 계산표, 가이드','../resources.html'],
@@ -58,7 +63,7 @@ function renderSearch(q){
     ?list.map(x=>'<a href="'+esc(x[2])+'"><strong>'+esc(x[0])+'</strong><span>'+esc(x[1])+'</span></a>').join('')
     :'<div class="search-empty">검색 결과가 없습니다.</div>';
 }
-searchInput.addEventListener('input',e=>renderSearch(e.target.value));
+if(searchInput)searchInput.addEventListener('input',e=>renderSearch(e.target.value));
 
 function postDate(v){
   const s=String(v||'').trim();
@@ -66,7 +71,7 @@ function postDate(v){
   return s.replaceAll('-','.');
 }
 function renderPosts(posts){
-  const box=$('#latestPosts');
+  const box=$('#latestPosts'); if(!box)return;
   const active=(posts||[]).filter(p=>!p.deleted).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,5);
   if(!active.length){box.innerHTML='<article class="content-card loading">등록된 콘텐츠가 없습니다.</article>';return}
   box.innerHTML=active.map(p=>{
