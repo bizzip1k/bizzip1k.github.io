@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="BIZZIP 모바일 실무자료">
+<meta name="robots" content="noindex,nofollow">
+<title>실무자료 | BIZZIP Mobile</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body class="mobile-resources-page">
+<header class="m-header">
+  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈"><img src="../bizzip-logo.png" alt="BIZZIP"></a>
+  <div class="m-header-actions">
+    <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    </button>
+    <button class="icon-btn" id="menuOpen" type="button" aria-label="메뉴 열기" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="mobile-page-hero">
+    <div class="mobile-breadcrumb"><a href="index.html">홈</a><span>›</span><strong>실무자료</strong></div>
+    <span class="section-kicker">PRACTICAL RESOURCES</span>
+    <h1>실무자료</h1>
+    <p>체크리스트, 계산표, 가이드처럼 사업할 때 바로 꺼내 쓸 수 있는 자료를 모았습니다.</p>
+  </section>
+
+  <section class="section-pad resource-browser-section">
+    <div class="content-topic-head">
+      <div>
+        <span class="section-kicker">RESOURCE TOPIC</span>
+        <h2>용도별로 보기</h2>
+      </div>
+      <button type="button" id="resourceReset" class="is-active">전체</button>
+    </div>
+    <div class="content-topic-chips" id="resourceTopicChips" aria-label="실무자료 주제 필터"></div>
+
+    <label class="content-page-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="resourcePageSearch" type="search" placeholder="자료명이나 설명으로 찾아보세요." autocomplete="off">
+    </label>
+
+    <div class="content-list-head">
+      <div>
+        <h2 id="resourcePageTitle">전체 실무자료</h2>
+        <p id="resourcePageSummary">현재 등록된 자료를 모두 보여드립니다.</p>
+      </div>
+      <span id="resourceCount">6</span>
+    </div>
+
+    <div class="mobile-resource-cards" id="resourcePageList"></div>
+  </section>
+
+  <section class="section-pad resource-principle-section">
+    <div class="resource-principle-card">
+      <span>BIZZIP RESOURCE</span>
+      <strong>파일만 제공하지 않습니다.</strong>
+      <p>자료와 함께 실제 사용하는 순서와 판단 기준까지 같이 정리합니다.</p>
+    </div>
+  </section>
+
+  <div class="pc-link-wrap"><a class="pc-link" href="../resources.html">PC 버전 보기</a></div>
+</main>
+
+<footer class="m-footer">
+  <strong>내 사업에 사소한 일은 없습니다. 비즈집</strong>
+  <span>© 2026 BIZZIP</span>
+</footer>
+
+<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+  <a href="index.html"><span class="nav-icon">⌂</span><span>홈</span></a>
+  <a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
+  <a href="business.html"><span class="nav-icon">▤</span><span>사업실무</span></a>
+  <a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
+  <a href="../contact.html"><span class="nav-icon">◌</span><span>문의</span></a>
+</nav>
+
+<div class="backdrop" id="menuBackdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head"><img src="../bizzip-logo.png" alt="BIZZIP"><button type="button" id="menuClose" aria-label="메뉴 닫기">×</button></div>
+  <nav>
+    <a href="index.html"><strong>홈</strong><span>모바일 홈으로 이동</span></a>
+    <a class="dark" href="problems.html"><strong>문제별 해결</strong><span>지금 겪는 문제에서 시작</span></a>
+    <a class="teal" href="business.html"><strong>사업실무</strong><span>분야별 실무 가이드</span></a>
+    <a href="contents.html"><strong>콘텐츠</strong><span>BIZZIP 최신 콘텐츠</span></a>
+    <a href="resources.html"><strong>실무자료</strong><span>체크리스트와 계산표</span></a>
+    <a href="../about.html"><strong>BIZZIP 소개</strong><span>비즈집을 만드는 사람과 방향</span></a>
+    <a href="../contact.html"><strong>문의</strong><span>강의와 컨설팅 문의</span></a>
+  </nav>
+  <a class="drawer-pc" href="../resources.html">PC 버전으로 이동</a>
+</aside>
+
+<div class="backdrop search-backdrop" id="searchBackdrop" hidden></div>
+<section class="search-panel" id="searchPanel" aria-hidden="true">
+  <div class="search-head">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="searchInput" type="search" placeholder="궁금한 내용을 검색해보세요." autocomplete="off">
+    </div>
+    <button type="button" id="searchClose" aria-label="검색 닫기">×</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</section>
+
+<script src="mobile.js"></script>
+</body>
+</html>
