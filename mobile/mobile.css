@@ -306,3 +306,63 @@ body.locked{overflow:hidden}
 .drawer nav{gap:10px;padding-top:8px}
 .drawer nav a{min-height:72px;border-radius:18px;padding:12px 14px}
 .drawer-pc{margin-top:14px;min-height:52px;border-radius:15px}
+
+/* ===== Mobile Season 2 : Business hub ===== */
+.mobile-page-hero{
+  padding:18px 16px 14px;background:linear-gradient(180deg,#fff 0%,#f7fafb 100%);
+  border-bottom:1px solid #edf2f4
+}
+.mobile-breadcrumb{
+  display:flex;align-items:center;gap:6px;margin-bottom:16px;color:#87949c;font-size:10px
+}
+.mobile-breadcrumb a{color:#6e7c85}
+.mobile-breadcrumb strong{font-weight:800;color:#53636d}
+.mobile-page-hero .section-kicker{margin-bottom:5px}
+.mobile-page-hero h1{
+  margin:0 0 7px;color:var(--navy);font-size:28px;line-height:1.2;letter-spacing:-1px
+}
+.mobile-page-hero p{
+  margin:0;max-width:390px;color:#71808a;font-size:13px;line-height:1.65
+}
+.business-hub-section{padding-top:17px}
+.business-hub-grid{display:grid;gap:10px}
+.business-hub-card{
+  min-height:100px;padding:15px 13px;border:1px solid var(--line);border-radius:18px;background:#fff;
+  display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:12px;
+  box-shadow:0 8px 20px rgba(16,36,56,.035)
+}
+.hub-num{
+  width:38px;height:38px;border-radius:12px;background:var(--point-soft);color:var(--point);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900
+}
+.hub-num.hub-ai{font-size:14px;letter-spacing:-.5px}
+.business-hub-card strong{
+  display:block;margin-bottom:5px;color:var(--navy);font-size:16px;line-height:1.3;letter-spacing:-.4px
+}
+.business-hub-card p{margin:0;color:#74838c;font-size:11px;line-height:1.5}
+.business-hub-card em{font-style:normal;color:#a3adb3;font-size:21px}
+.business-start-section{padding-top:2px}
+.business-start-card{
+  position:relative;overflow:hidden;padding:21px 18px;border-radius:19px;
+  background:linear-gradient(135deg,#102f49,#17506a);color:#fff
+}
+.business-start-card::after{
+  content:"";position:absolute;right:-45px;bottom:-70px;width:150px;height:150px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.13)
+}
+.business-start-card>span{
+  display:block;margin-bottom:7px;color:#74d0c1;font-size:10px;font-weight:900;letter-spacing:.05em
+}
+.business-start-card>strong{
+  display:block;position:relative;z-index:1;font-size:17px;line-height:1.48;letter-spacing:-.45px
+}
+.business-start-card>a{
+  position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;margin-top:14px;padding:0 14px;border-radius:12px;background:var(--teal);
+  color:#fff;font-size:12px;font-weight:900
+}
+@media(max-width:360px){
+  .mobile-page-hero h1{font-size:26px}
+  .business-hub-card{padding:13px 11px;gap:10px}
+  .business-hub-card strong{font-size:15px}
+}
