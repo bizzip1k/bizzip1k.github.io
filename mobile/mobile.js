@@ -42,14 +42,14 @@ const staticSearch=[
   ['문제별 해결','지금 겪는 문제에서 시작','problems.html'],
   ['콘텐츠','BIZZIP 최신 콘텐츠','contents.html'],
   ['실무자료','체크리스트, 계산표, 가이드','resources.html'],
-  ['창업 준비','사업 시작 전 준비와 검증','../startup.html'],
-  ['상품과 서비스','상품기획, 원가, 가격, OEM','../product.html'],
-  ['브랜드','브랜드명, 포지셔닝, 메시지','../brand.html'],
-  ['마케팅','검색, 광고, 콘텐츠, 전환','../marketing.html'],
-  ['판매와 유통','판매채널과 입점 실무','../sales.html'],
-  ['회사 운영','계약, 비용, 외주, 문서','../operation.html'],
-  ['물류와 재고','3PL, 재고, 포장, 반품','../logistics.html'],
-  ['데이터와 AI','데이터, AI, 업무 자동화','../data-ai.html'],
+  ['창업 준비','사업 시작 전 준비와 검증','startup.html'],
+  ['상품과 서비스','상품기획, 원가, 가격, OEM','product.html'],
+  ['브랜드','브랜드명, 포지셔닝, 메시지','brand.html'],
+  ['마케팅','검색, 광고, 콘텐츠, 전환','marketing.html'],
+  ['판매와 유통','판매채널과 입점 실무','sales.html'],
+  ['회사 운영','계약, 비용, 외주, 문서','operation.html'],
+  ['물류와 재고','3PL, 재고, 포장, 반품','logistics.html'],
+  ['데이터와 AI','데이터, AI, 업무 자동화','data-ai.html'],
   ['문의','BIZZIP에 문의하기','contact.html']
 ];
 let postSearch=[];
