@@ -40,7 +40,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();close
 const staticSearch=[
   ['사업실무','분야별 실무 가이드','business.html'],
   ['문제별 해결','지금 겪는 문제에서 시작','problems.html'],
-  ['콘텐츠','BIZZIP 최신 콘텐츠','../contents.html'],
+  ['콘텐츠','BIZZIP 최신 콘텐츠','contents.html'],
   ['실무자료','체크리스트, 계산표, 가이드','../resources.html'],
   ['창업 준비','사업 시작 전 준비와 검증','../startup.html'],
   ['상품과 서비스','상품기획, 원가, 가격, OEM','../product.html'],
@@ -98,4 +98,74 @@ fetch('../posts.json?v='+Date.now(),{cache:'no-store'})
   .catch(()=>renderPosts([]));
 
 renderSearch('');
+})();
+/* Mobile contents page */
+(function(){
+  const pageList=document.getElementById('contentPageList');
+  if(!pageList)return;
+
+  const chips=document.getElementById('contentTopicChips');
+  const reset=document.getElementById('contentReset');
+  const q=document.getElementById('contentPageSearch');
+  const title=document.getElementById('contentPageTitle');
+  const summary=document.getElementById('contentPageSummary');
+  const count=document.getElementById('contentCount');
+  let all=[];
+  let active='all';
+
+  const esc2=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const labelFor=p=>(p.categoryLabel||p.category||'').trim()||'미분류';
+
+  function renderChips(){
+    const labels=[...new Set(all.map(labelFor))];
+    const ordered=['창업 준비','상품과 서비스','브랜드','마케팅','판매와 유통','회사 운영','물류와 재고','데이터와 AI','미분류']
+      .filter(x=>labels.includes(x))
+      .concat(labels.filter(x=>!['창업 준비','상품과 서비스','브랜드','마케팅','판매와 유통','회사 운영','물류와 재고','데이터와 AI','미분류'].includes(x)));
+    chips.innerHTML=ordered.map(x=>'<button type="button" class="content-topic-chip" data-topic="'+esc2(x)+'">'+esc2(x)+'</button>').join('');
+    chips.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
+      active=btn.dataset.topic; q.value=''; render();
+    }));
+  }
+
+  function render(){
+    const term=(q.value||'').trim().toLowerCase();
+    let list=all.filter(p=>active==='all'||labelFor(p)===active);
+    if(term)list=list.filter(p=>((p.title||'')+' '+(p.summary||'')+' '+labelFor(p)).toLowerCase().includes(term));
+    list.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+
+    reset.classList.toggle('is-active',active==='all');
+    chips.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active',b.dataset.topic===active));
+    if(term){
+      title.textContent='검색 결과';
+      summary.textContent='"'+q.value.trim()+'"에 대한 콘텐츠입니다.';
+    }else if(active!=='all'){
+      title.textContent=active;
+      summary.textContent=active==='미분류'?'아직 주제가 지정되지 않은 최신 콘텐츠입니다.':'선택한 주제의 콘텐츠입니다.';
+    }else{
+      title.textContent='최근 콘텐츠';
+      summary.textContent='최근 등록된 글부터 보여드립니다.';
+    }
+    count.textContent=list.length;
+
+    pageList.innerHTML=list.length?list.map(p=>{
+      const label=labelFor(p), uncl=label==='미분류'?' unclassified':'';
+      return '<a class="mobile-content-item'+uncl+'" href="../post.html?id='+encodeURIComponent(p.id)+'">'
+        +'<div class="mobile-content-thumb"></div>'
+        +'<div class="mobile-content-copy"><span class="mobile-content-topic">'+esc2(label)+'</span>'
+        +'<h3>'+esc2(p.title||'제목 없음')+'</h3>'
+        +'<p>'+esc2(p.summary||'BIZZIP 콘텐츠')+'</p>'
+        +'<span class="mobile-content-date">'+esc2(String(p.date||'').replaceAll('-','.'))+'</span></div></a>';
+    }).join(''):'<div class="mobile-content-empty">조건에 맞는 콘텐츠가 없습니다.</div>';
+  }
+
+  reset.addEventListener('click',()=>{active='all';q.value='';render()});
+  q.addEventListener('input',render);
+
+  fetch('../posts.json?v='+Date.now(),{cache:'no-store'})
+    .then(r=>r.ok?r.json():Promise.reject(new Error('posts')))
+    .then(posts=>{
+      all=(posts||[]).filter(p=>!p.deleted);
+      renderChips();render();
+    })
+    .catch(()=>{pageList.innerHTML='<div class="mobile-content-empty">콘텐츠를 불러오지 못했습니다.</div>';});
 })();
