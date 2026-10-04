@@ -50,7 +50,7 @@ const staticSearch=[
   ['회사 운영','계약, 비용, 외주, 문서','../operation.html'],
   ['물류와 재고','3PL, 재고, 포장, 반품','../logistics.html'],
   ['데이터와 AI','데이터, AI, 업무 자동화','../data-ai.html'],
-  ['문의','BIZZIP에 문의하기','../contact.html']
+  ['문의','BIZZIP에 문의하기','contact.html']
 ];
 let postSearch=[];
 
