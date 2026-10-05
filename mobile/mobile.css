@@ -748,3 +748,33 @@ body.locked{overflow:hidden}
 .mobile-quick-grid strong{display:block;color:var(--navy);font-size:14px;line-height:1.4;letter-spacing:-.3px}
 .mobile-quick-grid p{margin:7px 0 0;color:#75848d;font-size:10px;line-height:1.55}
 @media(max-width:360px){.mobile-quick-grid{grid-template-columns:1fr}}
+
+/* ===== Mobile Season 2 : Post + resource details ===== */
+.mobile-post-hero{padding-bottom:22px}
+.mobile-post-date{display:block;margin-top:10px;color:#8c999f;font-size:10px}
+.mobile-post-article{display:grid;gap:18px}
+.mobile-post-section{padding:0 1px}
+.mobile-post-section h2{margin:0 0 10px;color:var(--navy);font-size:20px;line-height:1.38;letter-spacing:-.55px}
+.mobile-post-section p{margin:0 0 12px;color:#596b75;font-size:13px;line-height:1.78}
+.mobile-post-section ul{margin:4px 0 13px;padding-left:20px;color:#596b75}
+.mobile-post-section li{margin:6px 0;font-size:12px;line-height:1.65}
+.mobile-post-divider{height:1px;background:#e7eef1;margin:3px 0}
+.mobile-resource-detail{padding-top:14px}
+.mobile-resource-detail .article{padding:0;background:transparent;border:0;box-shadow:none}
+.mobile-resource-detail h2{margin:22px 0 10px;color:var(--navy);font-size:20px;line-height:1.4;letter-spacing:-.5px}
+.mobile-resource-detail h2:first-child{margin-top:0}
+.mobile-resource-detail ul,.mobile-resource-detail ol{padding-left:20px;color:#586a74}
+.mobile-resource-detail li{margin:7px 0;font-size:12px;line-height:1.62}
+.mobile-resource-detail .practice-box,
+.mobile-resource-detail .example-box,
+.mobile-resource-detail .finish-box{margin-top:14px;padding:15px;border-radius:16px;border:1px solid var(--line);background:#fff}
+.mobile-resource-detail .practice-box{background:#f3faf8;border-color:#dcebe8}
+.mobile-resource-detail .example-box{background:#fffaf6;border-color:#f1dfd0}
+.mobile-resource-detail .finish-box{background:#f8fafb}
+.mobile-resource-detail .practice-box strong,
+.mobile-resource-detail .example-box strong,
+.mobile-resource-detail .finish-box strong{display:block;margin-bottom:5px;color:var(--navy);font-size:14px}
+.mobile-resource-detail .practice-box p,
+.mobile-resource-detail .example-box p,
+.mobile-resource-detail .finish-box p{margin:0;color:#687983;font-size:11px;line-height:1.6}
+.mobile-resource-detail .btn.primary{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:14px;background:var(--navy);color:#fff;font-size:12px;font-weight:900}
