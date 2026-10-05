@@ -720,3 +720,31 @@ body.locked{overflow:hidden}
 .mobile-guide-article .related-posts-v22 .content-card{
   flex:0 0 78%;scroll-snap-align:start
 }
+
+/* ===== Mobile Season 2 : Problem detail guides ===== */
+.mobile-problem-solutions{padding-top:16px}
+.mobile-problem-solution-list{display:grid;gap:10px}
+.mobile-problem-solution{
+  min-height:112px;padding:15px 13px;border:1px solid var(--line);border-radius:18px;background:#fff;
+  display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:11px;
+  box-shadow:0 8px 22px rgba(16,36,56,.035)
+}
+.mobile-problem-solution>span{
+  width:36px;height:36px;border-radius:11px;background:var(--point-soft);color:var(--point);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900
+}
+.mobile-problem-solution strong{
+  display:block;margin-bottom:5px;color:var(--navy);font-size:15px;line-height:1.4;letter-spacing:-.35px
+}
+.mobile-problem-solution p{margin:0;color:#75848d;font-size:11px;line-height:1.52}
+.mobile-problem-solution em{font-style:normal;color:#a3adb3;font-size:20px}
+.mobile-quick-checks{padding-top:4px}
+.mobile-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mobile-quick-grid article{
+  min-height:154px;padding:15px 13px;border-radius:17px;background:linear-gradient(180deg,#f4faf8,#fff);
+  border:1px solid #dcebe8
+}
+.mobile-quick-grid article>span{display:block;margin-bottom:7px;color:var(--teal);font-size:9px;font-weight:900;letter-spacing:.06em}
+.mobile-quick-grid strong{display:block;color:var(--navy);font-size:14px;line-height:1.4;letter-spacing:-.3px}
+.mobile-quick-grid p{margin:7px 0 0;color:#75848d;font-size:10px;line-height:1.55}
+@media(max-width:360px){.mobile-quick-grid{grid-template-columns:1fr}}
