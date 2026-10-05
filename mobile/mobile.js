@@ -75,7 +75,7 @@ function renderPosts(posts){
   const active=(posts||[]).filter(p=>!p.deleted).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,5);
   if(!active.length){box.innerHTML='<article class="content-card loading">등록된 콘텐츠가 없습니다.</article>';return}
   box.innerHTML=active.map(p=>{
-    const href='../post.html?id='+encodeURIComponent(p.id);
+    const href='post.html?id='+encodeURIComponent(p.id);
     const tag=p.categoryLabel||p.category||'BIZZIP';
     return '<a class="content-card" href="'+href+'">'
       +'<div class="content-visual">BIZZIP INSIGHT</div>'
@@ -92,7 +92,7 @@ fetch('../posts.json?v='+Date.now(),{cache:'no-store'})
     postSearch=(posts||[]).filter(p=>!p.deleted).map(p=>[
       p.title||'',
       p.summary||'BIZZIP 콘텐츠',
-      '../post.html?id='+encodeURIComponent(p.id)
+      'post.html?id='+encodeURIComponent(p.id)
     ]);
   })
   .catch(()=>renderPosts([]));
@@ -175,12 +175,12 @@ renderSearch('');
   if(!box)return;
 
   const data=[
-    {topic:'사업 준비',title:'사업 시작 체크리스트',desc:'사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.',format:'CSV',href:'../resource-start-check.html'},
-    {topic:'상품기획·원가',title:'원가·판매가 계산표',desc:'제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.',format:'XLSX',href:'../resource-pricing.html'},
-    {topic:'물류·재고',title:'3PL 비교표',desc:'물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.',format:'GUIDE',href:'../resource-3pl.html'},
-    {topic:'상품기획·원가',title:'OEM 견적 확인 가이드',desc:'견적서에서 단가 외에 꼭 봐야 하는 항목을 정리합니다.',format:'GUIDE',href:'../resource-oem.html'},
-    {topic:'마케팅·판매',title:'광고 성과 점검표',desc:'광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.',format:'GUIDE',href:'../resource-ad-check.html'},
-    {topic:'마케팅·판매',title:'입점 제안서 작성 가이드',desc:'유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.',format:'GUIDE',href:'../resource-proposal.html'}
+    {topic:'사업 준비',title:'사업 시작 체크리스트',desc:'사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.',format:'CSV',href:'resource-start-check.html'},
+    {topic:'상품기획·원가',title:'원가·판매가 계산표',desc:'제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.',format:'XLSX',href:'resource-pricing.html'},
+    {topic:'물류·재고',title:'3PL 비교표',desc:'물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.',format:'GUIDE',href:'resource-3pl.html'},
+    {topic:'상품기획·원가',title:'OEM 견적 확인 가이드',desc:'견적서에서 단가 외에 꼭 봐야 하는 항목을 정리합니다.',format:'GUIDE',href:'resource-oem.html'},
+    {topic:'마케팅·판매',title:'광고 성과 점검표',desc:'광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.',format:'GUIDE',href:'resource-ad-check.html'},
+    {topic:'마케팅·판매',title:'입점 제안서 작성 가이드',desc:'유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.',format:'GUIDE',href:'resource-proposal.html'}
   ];
 
   const chips=document.getElementById('resourceTopicChips');
@@ -231,4 +231,39 @@ renderSearch('');
   reset.addEventListener('click',()=>{active='all';q.value='';render()});
   q.addEventListener('input',render);
   renderChips();render();
+})();
+/* Mobile dynamic post detail */
+(function(){
+  const body=document.getElementById('postBody');
+  if(!body)return;
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  fetch('../posts.json?v='+Date.now(),{cache:'no-store'})
+    .then(r=>r.ok?r.json():Promise.reject(new Error('posts')))
+    .then(posts=>{
+      const p=(posts||[]).find(x=>String(x.id)===String(id)&&!x.deleted);
+      if(!p)throw new Error('not-found');
+      const cat=(p.categoryLabel||p.category||'BIZZIP CONTENT').trim()||'BIZZIP CONTENT';
+      document.getElementById('postTitle').textContent=p.title||'콘텐츠';
+      document.getElementById('postSummary').textContent=p.summary||'';
+      document.getElementById('postCategory').textContent=cat;
+      document.getElementById('postCrumb').textContent=p.title||'콘텐츠';
+      document.getElementById('postDate').textContent=String(p.date||'').replaceAll('-','.');
+      document.title=(p.title||'콘텐츠')+' | BIZZIP Mobile';
+      const pc='../post.html?id='+encodeURIComponent(p.id);
+      document.getElementById('postPcLink').href=pc;
+      document.getElementById('postDrawerPc').href=pc;
+      const sections=Array.isArray(p.sections)?p.sections:[];
+      body.innerHTML=sections.length?sections.map((s,i)=>{
+        const ps=(s.paragraphs||[]).map(x=>'<p>'+esc(x)+'</p>').join('');
+        const bs=(s.bullets||[]).length?'<ul>'+(s.bullets||[]).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'';
+        return (i?'<div class="mobile-post-divider"></div>':'')+'<section class="mobile-post-section">'
+          +(s.heading?'<h2>'+esc(s.heading)+'</h2>':'')+ps+bs+'</section>';
+      }).join(''):'<div class="mobile-content-empty">본문이 없습니다.</div>';
+    })
+    .catch(()=>{
+      body.innerHTML='<div class="mobile-content-empty">콘텐츠를 찾을 수 없습니다.</div>';
+      document.getElementById('postTitle').textContent='콘텐츠를 찾을 수 없습니다.';
+    });
 })();
