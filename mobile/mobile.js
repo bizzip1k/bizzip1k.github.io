@@ -149,7 +149,7 @@ renderSearch('');
 
     pageList.innerHTML=list.length?list.map(p=>{
       const label=labelFor(p), uncl=label==='미분류'?' unclassified':'';
-      return '<a class="mobile-content-item'+uncl+'" href="../post.html?id='+encodeURIComponent(p.id)+'">'
+      return '<a class="mobile-content-item'+uncl+'" href="post.html?id='+encodeURIComponent(p.id)+'">'
         +'<div class="mobile-content-thumb"></div>'
         +'<div class="mobile-content-copy"><span class="mobile-content-topic">'+esc2(label)+'</span>'
         +'<h3>'+esc2(p.title||'제목 없음')+'</h3>'
