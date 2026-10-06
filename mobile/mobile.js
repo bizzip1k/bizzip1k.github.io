@@ -552,3 +552,42 @@ renderSearch('');
     }).catch(()=>{});
   }
 })();
+
+/* Mobile home: PC admin data is the source, mobile composition stays independent */
+(function(){
+  if(!location.pathname.endsWith('/mobile/index.html')&&!location.pathname.endsWith('/mobile/'))return;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const srcName=v=>String(v||'').replace(/^\.\.\//,'').split('/').pop().split('?')[0];
+  const get=src=>fetch('../'+src+'?v='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():Promise.reject(new Error(src))).then(t=>new DOMParser().parseFromString(t,'text/html'));
+
+  get('business.html').then(d=>{
+    const cards=Array.from(d.querySelectorAll('.grid .card'));
+    const grid=document.querySelector('.business-grid');
+    if(grid&&cards.length)grid.innerHTML=cards.map((a,i)=>{
+      const raw=srcName(a.getAttribute('href')||'');
+      const title=a.querySelector('h3')?.textContent?.trim()||'분야';
+      const badge=title.includes('AI')?'AI':String(i+1).padStart(2,'0');
+      return '<a href="business-category.html?src='+encodeURIComponent(raw)+'"><span'+(badge==='AI'?' class="ai"':'')+'>'+esc(badge)+'</span><strong>'+esc(title)+'</strong><em>›</em></a>';
+    }).join('');
+  }).catch(()=>{});
+
+  get('resources.html').then(d=>{
+    const cards=Array.from(d.querySelectorAll('.resource-card')).slice(0,3);
+    const list=document.querySelector('.resource-list');
+    if(list&&cards.length)list.innerHTML=cards.map(a=>{
+      const raw=srcName(a.getAttribute('href')||'');
+      const title=a.querySelector('h3')?.textContent?.trim()||'실무자료';
+      return '<a href="resource-detail.html?src='+encodeURIComponent(raw)+'"><span class="resource-type">RESOURCE</span><strong>'+esc(title)+'</strong><em>›</em></a>';
+    }).join('');
+  }).catch(()=>{});
+
+  get('contact.html').then(d=>{
+    const pc=d.querySelector('.contact-main');
+    const mobile=document.querySelector('.contact-card');
+    if(!pc||!mobile)return;
+    const h2=pc.querySelector('h2');
+    const p=pc.querySelector('p');
+    if(h2&&mobile.querySelector('h2'))mobile.querySelector('h2').innerHTML=h2.innerHTML;
+    if(p&&mobile.querySelector('p'))mobile.querySelector('p').textContent=p.textContent.trim();
+  }).catch(()=>{});
+})();
