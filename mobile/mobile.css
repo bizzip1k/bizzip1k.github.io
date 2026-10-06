@@ -778,3 +778,86 @@ body.locked{overflow:hidden}
 .mobile-resource-detail .example-box p,
 .mobile-resource-detail .finish-box p{margin:0;color:#687983;font-size:11px;line-height:1.6}
 .mobile-resource-detail .btn.primary{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:14px;background:var(--navy);color:#fff;font-size:12px;font-weight:900}
+
+/* ===== Mobile Season 2 : Responsive polish 320 / 360 / 390 ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow-x:hidden}
+.m-header,.mobile-page-hero,.section-pad,.m-footer{box-sizing:border-box}
+.mobile-breadcrumb{
+  flex-wrap:wrap;row-gap:4px;line-height:1.45;overflow-wrap:anywhere
+}
+.mobile-breadcrumb strong,.mobile-breadcrumb a{max-width:100%}
+.mobile-page-hero h1,
+.mobile-topic-card strong,
+.mobile-problem-solution strong,
+.business-hub-card strong,
+.problem-hub-card strong,
+.mobile-content-item h3,
+.mobile-resource-card h3{
+  overflow-wrap:anywhere
+}
+.drawer{overflow-y:auto;overscroll-behavior:contain}
+.drawer nav{flex:0 0 auto}
+.bottom-nav a{padding:4px 2px 3px;line-height:1.08}
+.bottom-nav a span:last-child{white-space:nowrap}
+.icon-btn,.drawer-head button,#searchClose{touch-action:manipulation}
+.mobile-post-article,.mobile-guide-article,.mobile-resource-detail{max-width:100%}
+.mobile-post-section p,
+.mobile-guide-article .biz-section-body p,
+.mobile-guide-article .biz-item-body,
+.mobile-resource-detail li{
+  overflow-wrap:anywhere
+}
+@media(max-width:390px){
+  .mobile-page-hero h1{font-size:26px;line-height:1.24;letter-spacing:-.8px}
+  .mobile-page-hero p{font-size:12px;line-height:1.62}
+  .section-head h2,.content-list-head h2{font-size:21px}
+  .mobile-post-section h2,.mobile-guide-article .biz-section-title,.mobile-resource-detail h2{font-size:19px}
+  .mobile-post-section p{font-size:12.5px;line-height:1.74}
+}
+@media(max-width:360px){
+  .m-header{height:60px;padding-left:14px;padding-right:10px}
+  .m-logo img{width:74px;height:27px}
+  .icon-btn{width:40px;height:40px}
+  .mobile-page-hero{padding:16px 14px 13px}
+  .mobile-page-hero h1{font-size:24px;line-height:1.25;letter-spacing:-.7px}
+  .mobile-breadcrumb{margin-bottom:13px;font-size:9.5px}
+  .section-pad{padding-left:14px;padding-right:14px}
+  .business-hub-card,.mobile-topic-card,.mobile-problem-solution{gap:9px}
+  .mobile-guide-article .biz-flex-section{padding:16px 14px}
+  .mobile-guide-article .biz-section-title{font-size:18px}
+  .mobile-post-section h2,.mobile-resource-detail h2{font-size:18px}
+  .bottom-nav a{font-size:9px;letter-spacing:-.35px}
+  .nav-icon{font-size:19px;height:20px}
+  .drawer{width:min(91vw,390px);padding-left:14px;padding-right:14px}
+  .drawer nav{gap:6px;padding-top:13px}
+  .drawer nav a{min-height:54px;padding:9px 12px}
+  .search-panel{left:10px;right:10px;top:70px;padding:13px}
+}
+@media(max-width:320px){
+  body{min-width:0}
+  .m-header{padding-left:12px;padding-right:8px}
+  .m-logo img{width:70px;height:26px}
+  .mobile-page-hero{padding-left:12px;padding-right:12px}
+  .mobile-page-hero h1{font-size:22px;line-height:1.28;letter-spacing:-.6px}
+  .mobile-page-hero p{font-size:11.5px}
+  .section-pad{padding-left:12px;padding-right:12px}
+  .primary-actions{gap:8px}
+  .primary-card{min-height:118px;padding:14px 11px}
+  .business-grid{gap:7px}
+  .business-grid a{padding:10px 9px;gap:7px}
+  .business-grid strong{font-size:12px}
+  .business-hub-card,.mobile-topic-card,.mobile-problem-solution{
+    grid-template-columns:32px minmax(0,1fr) auto;padding:13px 11px
+  }
+  .hub-num,.topic-order,.mobile-problem-solution>span{width:32px;height:32px}
+  .business-hub-card strong,.mobile-topic-card strong,.mobile-problem-solution strong{font-size:14px}
+  .problem-hub-card{grid-template-columns:30px minmax(0,1fr) auto;padding:14px 10px;gap:8px}
+  .problem-no{width:30px;height:30px}
+  .mobile-guide-article .biz-flex-section{padding:15px 12px}
+  .mobile-guide-article .biz-section-item{padding-right:11px}
+  .about-book-list a{grid-template-columns:70px minmax(0,1fr);gap:10px;padding:11px}
+  .about-book-list img{width:70px;height:99px}
+  .bottom-nav a{font-size:8.5px;letter-spacing:-.45px}
+  .nav-icon{font-size:18px}
+}
