@@ -169,19 +169,10 @@ renderSearch('');
     })
     .catch(()=>{pageList.innerHTML='<div class="mobile-content-empty">콘텐츠를 불러오지 못했습니다.</div>';});
 })();
-/* Mobile resources page */
+/* Mobile resources page - reads PC resources.html as the single source of truth */
 (function(){
   const box=document.getElementById('resourcePageList');
   if(!box)return;
-
-  const data=[
-    {topic:'사업 준비',title:'사업 시작 체크리스트',desc:'사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.',format:'CSV',href:'resource-start-check.html'},
-    {topic:'상품기획·원가',title:'원가·판매가 계산표',desc:'제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.',format:'XLSX',href:'resource-pricing.html'},
-    {topic:'물류·재고',title:'3PL 비교표',desc:'물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.',format:'GUIDE',href:'resource-3pl.html'},
-    {topic:'상품기획·원가',title:'OEM 견적 확인 가이드',desc:'견적서에서 단가 외에 꼭 봐야 하는 항목을 정리합니다.',format:'GUIDE',href:'resource-oem.html'},
-    {topic:'마케팅·판매',title:'광고 성과 점검표',desc:'광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.',format:'GUIDE',href:'resource-ad-check.html'},
-    {topic:'마케팅·판매',title:'입점 제안서 작성 가이드',desc:'유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.',format:'GUIDE',href:'resource-proposal.html'}
-  ];
 
   const chips=document.getElementById('resourceTopicChips');
   const reset=document.getElementById('resourceReset');
@@ -189,6 +180,7 @@ renderSearch('');
   const title=document.getElementById('resourcePageTitle');
   const summary=document.getElementById('resourcePageSummary');
   const count=document.getElementById('resourceCount');
+  let data=[];
   let active='all';
 
   const esc3=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -222,7 +214,7 @@ renderSearch('');
 
     box.innerHTML=list.length?list.map(x=>
       '<article class="mobile-resource-card">'
-      +'<div class="mobile-resource-card-head"><span class="mobile-resource-badge">'+esc3(x.topic)+'</span><span class="mobile-resource-format">'+esc3(x.format)+'</span></div>'
+      +'<div class="mobile-resource-card-head"><span class="mobile-resource-badge">'+esc3(x.topic)+'</span><span class="mobile-resource-format">자료</span></div>'
       +'<h3>'+esc3(x.title)+'</h3><p>'+esc3(x.desc)+'</p>'
       +'<a class="mobile-resource-link" href="'+esc3(x.href)+'">내용 보기</a></article>'
     ).join(''):'<div class="mobile-resource-empty">조건에 맞는 실무자료가 없습니다.</div>';
@@ -230,7 +222,23 @@ renderSearch('');
 
   reset.addEventListener('click',()=>{active='all';q.value='';render()});
   q.addEventListener('input',render);
-  renderChips();render();
+
+  fetch('../resources.html?v='+Date.now(),{cache:'no-store'})
+    .then(r=>r.ok?r.text():Promise.reject(new Error('resources')))
+    .then(html=>{
+      const d=new DOMParser().parseFromString(html,'text/html');
+      let topics=[];
+      try{topics=JSON.parse(d.querySelector('#resource-topics-data')?.textContent||'[]')}catch(_){}
+      const topicMap=Object.fromEntries((topics||[]).map(t=>[t.id,t.label]));
+      data=Array.from(d.querySelectorAll('.resource-card')).map(a=>{
+        const href=(a.getAttribute('href')||'').split('/').pop();
+        const topicId=a.dataset.topic||'';
+        const topic=(a.dataset.topicLabel||topicMap[topicId]||'미분류').trim()||'미분류';
+        return {topic,title:a.querySelector('h3')?.textContent?.trim()||'자료',desc:a.querySelector('p')?.textContent?.trim()||'',href};
+      }).filter(x=>x.href);
+      renderChips();render();
+    })
+    .catch(()=>{box.innerHTML='<div class="mobile-resource-empty">실무자료를 불러오지 못했습니다.</div>';});
 })();
 /* Mobile dynamic post detail */
 (function(){
