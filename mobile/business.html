@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="BIZZIP 모바일 사업실무">
+<meta name="robots" content="noindex,nofollow">
+<title>사업실무 | BIZZIP Mobile</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+<header class="m-header">
+  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈"><img src="../bizzip-logo.png" alt="BIZZIP"></a>
+  <div class="m-header-actions">
+    <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    </button>
+    <button class="icon-btn" id="menuOpen" type="button" aria-label="메뉴 열기" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="mobile-page-hero">
+    <div class="mobile-breadcrumb"><a href="index.html">홈</a><span>›</span><strong>사업실무</strong></div>
+    <span class="section-kicker">BUSINESS PRACTICE</span>
+    <h1>사업실무</h1>
+    <p>필요한 분야를 선택하면 실제 사업에서 자주 생기는 세부 문제와 실행 방법으로 들어갑니다.</p>
+  </section>
+
+  <section class="section-pad business-hub-section">
+    <div class="business-hub-grid">
+      <a class="business-hub-card" href="startup.html">
+        <span class="hub-num">01</span>
+        <div><strong>창업 준비</strong><p>사업을 시작하기 전에 확인할 것과 준비 순서를 정리합니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="product.html">
+        <span class="hub-num">02</span>
+        <div><strong>상품과 서비스</strong><p>상품기획, 원가, 가격, OEM과 출시 과정을 살펴봅니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="brand.html">
+        <span class="hub-num">03</span>
+        <div><strong>브랜드</strong><p>이름, 포지셔닝, 메시지와 고객에게 보이는 방식을 정리합니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="marketing.html">
+        <span class="hub-num">04</span>
+        <div><strong>마케팅</strong><p>검색, 광고, 콘텐츠와 고객 전환을 실제 운영 기준으로 봅니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="sales.html">
+        <span class="hub-num">05</span>
+        <div><strong>판매와 유통</strong><p>온라인과 오프라인 채널 선택, 입점과 판매 실무를 정리합니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="operation.html">
+        <span class="hub-num">06</span>
+        <div><strong>회사 운영</strong><p>계약, 비용, 외주, 문서와 반복업무를 관리하는 방법을 봅니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="logistics.html">
+        <span class="hub-num">07</span>
+        <div><strong>물류와 재고</strong><p>3PL, 택배, 포장, 재고와 반품을 비용과 운영 관점에서 봅니다.</p></div>
+        <em>›</em>
+      </a>
+      <a class="business-hub-card" href="data-ai.html">
+        <span class="hub-num hub-ai">AI</span>
+        <div><strong>데이터와 AI</strong><p>내부데이터, 무료 데이터, AI와 자동화를 업무에 적용합니다.</p></div>
+        <em>›</em>
+      </a>
+    </div>
+  </section>
+
+  <section class="section-pad business-start-section">
+    <div class="business-start-card">
+      <span>처음이라면</span>
+      <strong>무엇부터 봐야 할지 모르겠다면<br>창업 준비부터 시작해보세요.</strong>
+      <a href="startup.html">창업 준비 보기</a>
+    </div>
+  </section>
+
+  <div class="pc-link-wrap"><a class="pc-link" href="../business.html">PC 버전 보기</a></div>
+</main>
+
+<footer class="m-footer">
+  <strong>내 사업에 사소한 일은 없습니다. 비즈집</strong>
+  <span>© 2026 BIZZIP</span>
+</footer>
+
+<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+  <a href="index.html"><span class="nav-icon">⌂</span><span>홈</span></a>
+  <a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
+  <a href="business.html" aria-current="page"><span class="nav-icon">▤</span><span>사업실무</span></a>
+  <a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
+  <a href="contact.html"><span class="nav-icon">◌</span><span>문의</span></a>
+</nav>
+
+<div class="backdrop" id="menuBackdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head"><img src="../bizzip-logo.png" alt="BIZZIP"><button type="button" id="menuClose" aria-label="메뉴 닫기">×</button></div>
+  <nav>
+    <a href="index.html"><strong>홈</strong><span>모바일 홈으로 이동</span></a>
+    <a class="dark" href="problems.html"><strong>문제별 해결</strong><span>지금 겪는 문제에서 시작</span></a>
+    <a class="teal" href="business.html"><strong>사업실무</strong><span>분야별 실무 가이드</span></a>
+    <a href="contents.html"><strong>콘텐츠</strong><span>BIZZIP 최신 콘텐츠</span></a>
+    <a href="resources.html"><strong>실무자료</strong><span>체크리스트와 계산표</span></a>
+    <a href="about.html"><strong>BIZZIP 소개</strong><span>비즈집을 만드는 사람과 방향</span></a>
+    <a href="contact.html"><strong>문의</strong><span>강의와 컨설팅 문의</span></a>
+  </nav>
+  <a class="drawer-pc" href="../business.html">PC 버전으로 이동</a>
+</aside>
+
+<div class="backdrop search-backdrop" id="searchBackdrop" hidden></div>
+<section class="search-panel" id="searchPanel" aria-hidden="true">
+  <div class="search-head">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="searchInput" type="search" placeholder="궁금한 내용을 검색해보세요." autocomplete="off">
+    </div>
+    <button type="button" id="searchClose" aria-label="검색 닫기">×</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</section>
+
+<script src="mobile.js"></script>
+</body>
+</html>
