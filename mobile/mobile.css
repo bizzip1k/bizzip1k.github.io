@@ -1242,3 +1242,256 @@ body{overflow-x:hidden}
   .business-grid a{min-height:80px;padding:11px 10px}
   .business-grid strong{font-size:13px}
 }
+
+
+/* ===== Mobile Season 2 landing visible redesign v4 ===== */
+body.landing-page{
+  background:#f5f8f9;
+}
+body.landing-page .m-header{
+  height:66px;
+  padding:0 14px 0 16px;
+  background:rgba(255,255,255,.98);
+  border-bottom:1px solid #e8eef1;
+}
+body.landing-page .m-logo img{
+  width:88px;
+  height:31px;
+}
+body.landing-page .hero{
+  padding:28px 16px 30px;
+  background:
+    radial-gradient(circle at 103% 18%,rgba(21,156,132,.13) 0 84px,transparent 85px),
+    linear-gradient(160deg,#ffffff 0%,#f3f8f9 100%);
+  border-bottom:1px solid #e7eef1;
+}
+body.landing-page .hero::before{
+  right:-44px;
+  bottom:-112px;
+  width:230px;
+  height:230px;
+  border-color:rgba(21,156,132,.18);
+}
+body.landing-page .hero h1{
+  max-width:330px;
+  margin:0 0 19px;
+  color:#17384f;
+  font-size:23px;
+  line-height:1.46;
+  letter-spacing:-.85px;
+  font-weight:800;
+}
+body.landing-page .hero-search{
+  height:54px;
+  padding:0 16px;
+  border:1px solid #d5e3e7;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(16,47,73,.09);
+  color:#74848e;
+  font-size:13px;
+}
+body.landing-page .hero-search svg{
+  width:19px;
+  height:19px;
+  color:#102f49;
+}
+
+body.landing-page .primary-actions{
+  position:relative;
+  z-index:2;
+  gap:12px;
+  padding:18px 16px 10px;
+  background:#f5f8f9;
+}
+body.landing-page .primary-card{
+  min-height:144px;
+  padding:18px 16px 17px;
+  border-radius:22px;
+  box-shadow:0 14px 30px rgba(16,47,73,.12);
+}
+body.landing-page .primary-card.problem{
+  background:linear-gradient(150deg,#10314b 0%,#174761 100%);
+}
+body.landing-page .primary-card.business{
+  background:linear-gradient(150deg,#12967f 0%,#2aae95 100%);
+}
+body.landing-page .primary-card::after{
+  right:-26px;
+  bottom:-42px;
+  width:132px;
+  height:132px;
+  background:rgba(255,255,255,.085);
+}
+body.landing-page .primary-icon{
+  width:38px;
+  height:38px;
+  margin-bottom:17px;
+  border-radius:13px;
+  background:rgba(255,255,255,.11);
+}
+body.landing-page .primary-icon svg{
+  width:23px;
+  height:23px;
+}
+body.landing-page .primary-card strong{
+  margin-bottom:7px;
+  font-size:17px;
+  letter-spacing:-.5px;
+}
+body.landing-page .primary-card>span:last-child{
+  max-width:140px;
+  font-size:11.5px;
+  line-height:1.55;
+}
+
+body.landing-page main>.section-pad:not(.primary-actions){
+  padding-left:16px;
+  padding-right:16px;
+}
+body.landing-page .section-head{
+  align-items:center;
+  margin-bottom:17px;
+}
+body.landing-page .section-kicker{
+  margin-bottom:5px;
+  font-size:9px;
+  letter-spacing:.13em;
+}
+body.landing-page .section-head h2{
+  font-size:24px;
+  letter-spacing:-.9px;
+}
+body.landing-page .section-head>a{
+  padding:6px 10px;
+  border:1px solid #dfe8eb;
+  border-radius:999px;
+  background:#fff;
+  color:#657681;
+  font-size:10px;
+}
+
+body.landing-page .business-grid{
+  gap:11px;
+}
+body.landing-page .business-grid a{
+  min-height:91px;
+  padding:14px 13px;
+  border:1px solid #dbe6ea;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 8px 20px rgba(16,47,73,.045);
+}
+body.landing-page .business-grid a>span{
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  background:#fff0e6;
+  font-size:10.5px;
+}
+body.landing-page .business-grid a>span.ai{
+  background:#eaf7f4;
+  color:#138c78;
+}
+body.landing-page .business-grid strong{
+  font-size:14.5px;
+  color:#17384f;
+}
+body.landing-page .business-grid em{
+  font-size:19px;
+  color:#9eabb2;
+}
+
+body.landing-page .content-section{
+  margin-top:3px;
+  padding-top:30px;
+  padding-bottom:28px;
+  background:#edf4f6;
+  border-top:1px solid #e2ecef;
+  border-bottom:1px solid #e2ecef;
+}
+body.landing-page .content-card{
+  flex-basis:min(79vw,304px);
+  min-height:290px;
+  border:0;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 13px 30px rgba(16,47,73,.09);
+}
+body.landing-page .content-visual{
+  height:132px;
+  padding:15px 16px;
+  border-bottom:0;
+  background-size:cover!important;
+  background-position:center!important;
+}
+body.landing-page .content-body{
+  padding:14px 17px 17px;
+}
+body.landing-page .content-tag{
+  min-height:24px;
+  padding:0 9px;
+  margin-bottom:9px;
+  background:#fff0e6;
+  color:#ff6a2b;
+  font-size:9.5px;
+}
+body.landing-page .content-card h3{
+  font-size:16px;
+  line-height:1.46;
+  color:#15364d;
+}
+body.landing-page .content-card p{
+  font-size:11.5px;
+  line-height:1.58;
+}
+body.landing-page .content-meta{
+  padding-top:10px;
+  border-top:1px solid #eef2f4;
+}
+
+body.landing-page .resources-section{
+  padding-top:30px;
+  padding-bottom:30px;
+  background:#fff;
+}
+body.landing-page .resource-list{
+  gap:11px;
+}
+body.landing-page .resource-list a{
+  min-height:74px;
+  padding:13px 14px;
+  border-radius:17px;
+  border-color:#dce7eb;
+  box-shadow:0 7px 18px rgba(16,47,73,.04);
+}
+body.landing-page .resource-type{
+  min-height:34px;
+  border-radius:11px;
+}
+
+body.landing-page .contact-section{
+  padding-top:28px;
+}
+body.landing-page .contact-card{
+  padding:26px 21px 24px;
+  border-radius:24px;
+  background:linear-gradient(145deg,#102f49 0%,#1c5a68 100%);
+  box-shadow:0 16px 34px rgba(16,47,73,.14);
+}
+body.landing-page .contact-card h2{
+  font-size:24px;
+}
+body.landing-page .contact-card a{
+  min-height:49px;
+  border-radius:15px;
+}
+
+@media(max-width:360px){
+  body.landing-page .hero h1{font-size:21px}
+  body.landing-page .primary-card{min-height:136px;padding:16px 14px}
+  body.landing-page .business-grid{gap:9px}
+  body.landing-page .business-grid a{min-height:86px;padding:12px 11px}
+  body.landing-page .business-grid strong{font-size:13.5px}
+  body.landing-page .content-card{flex-basis:82vw}
+}
