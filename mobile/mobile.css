@@ -865,3 +865,189 @@ body{overflow-x:hidden}
 /* Mobile-only experience: do not expose PC-version switching */
 .pc-link-wrap,
 .drawer-pc{display:none!important}
+
+
+/* ===== Mobile Season 2 : Business hub visual polish v2 ===== */
+.mobile-page-hero{
+  position:relative;
+  overflow:hidden;
+  padding:17px 16px 15px;
+  background:
+    radial-gradient(circle at 94% 112%,rgba(21,156,132,.08) 0 74px,transparent 75px),
+    linear-gradient(180deg,#fff 0%,#f7fafb 100%);
+  border-bottom:1px solid #edf2f4;
+}
+.mobile-page-hero::after{
+  content:"";
+  position:absolute;
+  right:-52px;
+  bottom:-92px;
+  width:190px;
+  height:190px;
+  border:1px solid rgba(21,156,132,.13);
+  border-radius:50%;
+  pointer-events:none;
+}
+.mobile-breadcrumb{
+  position:relative;
+  z-index:1;
+  margin-bottom:14px;
+  font-size:9.5px;
+  color:#8b979e;
+}
+.mobile-page-hero .section-kicker{
+  position:relative;
+  z-index:1;
+  margin-bottom:4px;
+  font-size:8.5px;
+  letter-spacing:.12em;
+}
+.mobile-page-hero h1{
+  position:relative;
+  z-index:1;
+  margin-bottom:6px;
+  font-size:27px;
+  line-height:1.18;
+  letter-spacing:-.95px;
+}
+.mobile-page-hero p{
+  position:relative;
+  z-index:1;
+  max-width:345px;
+  font-size:12.5px;
+  line-height:1.64;
+  color:#72818a;
+}
+
+.business-hub-section{
+  padding-top:16px;
+  padding-bottom:22px;
+}
+.business-hub-grid{gap:10px}
+.business-hub-card{
+  position:relative;
+  overflow:hidden;
+  min-height:96px;
+  padding:14px 13px;
+  grid-template-columns:40px minmax(0,1fr) auto;
+  gap:12px;
+  border-color:#dfe9ed;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 20px rgba(16,36,56,.035);
+}
+.business-hub-card::before{
+  content:"";
+  position:absolute;
+  right:-40px;
+  bottom:-66px;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:rgba(21,156,132,.025);
+}
+.business-hub-card:nth-child(1),
+.business-hub-card:nth-child(4),
+.business-hub-card:nth-child(7){
+  border-color:#d8e8ea;
+}
+.hub-num{
+  position:relative;
+  z-index:1;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#fff2e9;
+  color:#ff6a2b;
+  box-shadow:inset 0 0 0 1px rgba(255,106,43,.05);
+  font-size:10.5px;
+}
+.hub-num.hub-ai{
+  background:#eef8f6;
+  color:#159c84;
+  font-size:13.5px;
+}
+.business-hub-card>div{
+  position:relative;
+  z-index:1;
+}
+.business-hub-card strong{
+  margin-bottom:4px;
+  font-size:15.5px;
+  line-height:1.3;
+  letter-spacing:-.42px;
+}
+.business-hub-card p{
+  max-width:270px;
+  font-size:11px;
+  line-height:1.52;
+  color:#74838c;
+}
+.business-hub-card em{
+  position:relative;
+  z-index:1;
+  font-size:20px;
+  color:#a8b2b8;
+}
+
+.business-start-section{
+  padding-top:0;
+  padding-bottom:24px;
+}
+.business-start-card{
+  padding:22px 19px 21px;
+  border-radius:21px;
+  background:linear-gradient(135deg,#102f49 0%,#1b5666 100%);
+  box-shadow:0 14px 30px rgba(16,36,56,.10);
+}
+.business-start-card::before{
+  content:"";
+  position:absolute;
+  right:24px;
+  top:22px;
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:rgba(255,255,255,.07);
+}
+.business-start-card::after{
+  right:-52px;
+  bottom:-76px;
+  width:160px;
+  height:160px;
+  border-color:rgba(255,255,255,.12);
+}
+.business-start-card>span{
+  margin-bottom:8px;
+  font-size:9px;
+  letter-spacing:.08em;
+  color:#78d6c6;
+}
+.business-start-card>strong{
+  max-width:270px;
+  font-size:17px;
+  line-height:1.48;
+}
+.business-start-card>a{
+  min-height:42px;
+  margin-top:15px;
+  padding:0 15px;
+  border-radius:13px;
+  background:#159c84;
+  font-size:11.5px;
+  box-shadow:0 7px 16px rgba(0,0,0,.08);
+}
+@media(max-width:360px){
+  .mobile-page-hero{padding-left:14px;padding-right:14px}
+  .mobile-page-hero h1{font-size:25px}
+  .mobile-page-hero p{font-size:12px}
+  .business-hub-card{
+    min-height:92px;
+    padding:12px 11px;
+    grid-template-columns:37px minmax(0,1fr) auto;
+    gap:10px;
+  }
+  .hub-num{width:37px;height:37px}
+  .business-hub-card strong{font-size:14.5px}
+  .business-hub-card p{font-size:10.5px}
+}
