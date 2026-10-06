@@ -333,7 +333,7 @@ renderSearch('');
       const cards=Array.from(d.querySelectorAll('.grid .card'));
       const grid=document.querySelector('.business-hub-grid');
       if(grid&&cards.length)grid.innerHTML=cards.map((a,i)=>{
-        const href=mobileHref(a.getAttribute('href')||'');
+        const raw=a.getAttribute('href')||''; const href='business-category.html?src='+encodeURIComponent(srcName(raw));
         const title=a.querySelector('h3')?.textContent?.trim()||'분야';
         const summary=a.querySelector('p')?.textContent?.trim()||'';
         const badge=title.includes('AI')?'AI':String(i+1).padStart(2,'0');
@@ -362,7 +362,7 @@ renderSearch('');
       const topics=Array.from(d.querySelectorAll('.topic-card'));
       document.getElementById('dynCount').textContent=topics.length;
       document.getElementById('dynList').innerHTML=topics.map((a,i)=>{
-        const h=mobileHref(a.getAttribute('href')||'');
+        const raw=a.getAttribute('href')||''; const h='business-guide.html?src='+encodeURIComponent(srcName(raw));
         return '<a class="mobile-topic-card" href="'+esc(h)+'"><span class="topic-order">'+String(i+1).padStart(2,'0')+'</span><div><strong>'+esc(a.querySelector('h3')?.textContent?.trim()||'세부 주제')+'</strong><p>'+esc(a.querySelector('p')?.textContent?.trim()||'')+'</p></div><em>›</em></a>';
       }).join('')||'<div class="mobile-content-empty">등록된 세부 주제가 없습니다.</div>';
     }).catch(()=>fail(document.getElementById('dynList')));
@@ -405,7 +405,7 @@ renderSearch('');
       const grid=document.querySelector('.problem-hub-grid');
       if(grid&&cards.length)grid.innerHTML=cards.map((a,i)=>{
         const title=a.querySelector('strong')?.textContent?.trim()||'문제';
-        const href=mobileHref(a.getAttribute('href')||'');
+        const raw=a.getAttribute('href')||''; const href='problem-guide.html?src='+encodeURIComponent(srcName(raw));
         return '<a class="problem-hub-card'+(i===0?' dark':'')+'" href="'+esc(href)+'"><span class="problem-no">'+String(i+1).padStart(2,'0')+'</span><div><strong>'+esc(title)+'</strong><p>관련 세부 문제와 실무 내용을 확인합니다.</p></div><em>›</em></a>';
       }).join('');
     }).catch(()=>{});
@@ -427,7 +427,7 @@ renderSearch('');
       document.title=title+' | BIZZIP Mobile';
       const subs=Array.from(d.querySelectorAll('.problem-subcard'));
       document.getElementById('dynCount').textContent=subs.length;
-      document.getElementById('dynList').innerHTML=subs.map((a,i)=>'<a class="mobile-problem-solution" href="'+esc(mobileHref(a.getAttribute('href')||''))+'"><span>'+String(i+1).padStart(2,'0')+'</span><div><strong>'+esc(a.querySelector('h3')?.textContent?.trim()||'관련 문제')+'</strong><p>'+esc(a.querySelector('p')?.textContent?.trim()||'')+'</p></div><em>›</em></a>').join('')||'<div class="mobile-content-empty">등록된 관련 문제가 없습니다.</div>';
+      document.getElementById('dynList').innerHTML=subs.map((a,i)=>{const raw=a.getAttribute('href')||'';const href='business-guide.html?src='+encodeURIComponent(srcName(raw));return '<a class="mobile-problem-solution" href="'+esc(href)+'"><span>'+String(i+1).padStart(2,'0')+'</span><div><strong>'+esc(a.querySelector('h3')?.textContent?.trim()||'관련 문제')+'</strong><p>'+esc(a.querySelector('p')?.textContent?.trim()||'')+'</p></div><em>›</em></a>'}).join('')||'<div class="mobile-content-empty">등록된 관련 문제가 없습니다.</div>';
       const quick=Array.from(d.querySelectorAll('.feature-box'));
       const qbox=document.getElementById('dynQuick');
       if(qbox){
