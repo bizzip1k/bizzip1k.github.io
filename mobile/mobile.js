@@ -70,15 +70,31 @@ function postDate(v){
   if(!s)return '';
   return s.replaceAll('-','.');
 }
+const homeVisuals=[
+  '../mobile-assets/notebook-clean.jpg',
+  '../mobile-assets/desk-mug.jpg',
+  '../mobile-assets/mug-close.jpg',
+  '../mobile-assets/hero-office.jpg',
+  '../mobile-assets/hero-workspace.jpg',
+  '../mobile-assets/notebook-close.jpg',
+  '../mobile-assets/abstract-wave.jpg'
+];
+function visualForPost(p,index){
+  const id=String(p&&p.id||'');
+  let seed=index;
+  for(let i=0;i<id.length;i++)seed+=id.charCodeAt(i);
+  return homeVisuals[seed%homeVisuals.length];
+}
 function renderPosts(posts){
   const box=$('#latestPosts'); if(!box)return;
   const active=(posts||[]).filter(p=>!p.deleted).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,5);
   if(!active.length){box.innerHTML='<article class="content-card loading">등록된 콘텐츠가 없습니다.</article>';return}
-  box.innerHTML=active.map(p=>{
+  box.innerHTML=active.map((p,index)=>{
     const href='post.html?id='+encodeURIComponent(p.id);
     const tag=p.categoryLabel||p.category||'BIZZIP';
+    const visual=visualForPost(p,index);
     return '<a class="content-card" href="'+href+'">'
-      +'<div class="content-visual">BIZZIP INSIGHT</div>'
+      +'<div class="content-visual" style="background-image:linear-gradient(180deg,rgba(16,47,73,.04),rgba(16,47,73,.26)),url(\''+esc(visual)+'\')">BIZZIP INSIGHT</div>'
       +'<div class="content-body"><span class="content-tag">'+esc(tag)+'</span>'
       +'<h3>'+esc(p.title)+'</h3>'
       +'<p>'+esc(p.summary||'사업 현장에서 바로 활용할 수 있는 내용을 정리했습니다.')+'</p>'
