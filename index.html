@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 
 <html lang="ko"><head>
-<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8"/><script>
+(function(){
+  try{
+    var ua=navigator.userAgent||'';
+    var mobileUA=/Android|iPhone|iPod|IEMobile|Opera Mini|Mobile/i.test(ua);
+    var iPad=/iPad/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    var narrow=window.matchMedia&&window.matchMedia('(max-width: 767px)').matches;
+    if(mobileUA||iPad||narrow) location.replace('/mobile/');
+  }catch(e){}
+})();
+</script><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="BIZZIP 사업 실무 가이드" name="description"/>
 <title>BIZZIP | 사업의 작은 문제를 해결합니다</title>
 <link href="style.css" rel="stylesheet"/>
