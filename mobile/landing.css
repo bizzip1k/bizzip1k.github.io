@@ -667,3 +667,63 @@ body.landing-page .ref-primary-actions .primary-desc{
     font-size:9px!important;
   }
 }
+
+/* ===== FINAL DENSITY AND SECTION GAP 2026-10-08 ===== */
+/* Primary cards: denser like approved reference */
+body.landing-page .ref-primary-actions .primary-card{
+  min-height:88px!important;
+  padding:10px 12px 9px!important;
+  row-gap:3px!important;
+  align-content:center!important;
+}
+body.landing-page .ref-primary-actions .primary-icon{
+  width:31px!important;
+  height:31px!important;
+}
+body.landing-page .ref-primary-actions .primary-icon svg{
+  width:28px!important;
+  height:28px!important;
+}
+body.landing-page .ref-primary-actions .primary-card>strong{
+  font-size:clamp(14.8px,3.9vw,16.2px)!important;
+}
+body.landing-page .ref-primary-actions .primary-desc{
+  line-height:1.36!important;
+}
+
+/* Remove artificial first-fold stretch and tighten section transition */
+body.landing-page .landing-fold{
+  min-height:0!important;
+  padding-bottom:0!important;
+}
+body.landing-page .content-section{
+  padding-bottom:12px!important;
+}
+body.landing-page .resource-card-section{
+  margin-top:0!important;
+  padding-top:14px!important;
+}
+
+@media(min-width:390px){
+  body.landing-page .ref-primary-actions .primary-card{
+    min-height:92px!important;
+    padding:11px 13px 10px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon{
+    width:33px!important;
+    height:33px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon svg{
+    width:30px!important;
+    height:30px!important;
+  }
+}
+@media(max-width:359px){
+  body.landing-page .ref-primary-actions .primary-card{
+    min-height:85px!important;
+    padding:9px 10px 8px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-card>strong{
+    font-size:14.3px!important;
+  }
+}
