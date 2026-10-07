@@ -1452,3 +1452,144 @@ body{
   .primary-copy strong{font-size:11.8px}
   .primary-copy span{font-size:7.7px}
 }
+
+
+/* ===== Season 2 step 2 : compact hub pages aligned with approved landing ===== */
+.mobile-page-hero{
+  padding:14px 16px 13px;
+  background:linear-gradient(180deg,#f6fbff 0%,#fff 100%);
+  border-bottom:1px solid #e8f0f3;
+}
+.mobile-breadcrumb{
+  margin-bottom:10px;
+  gap:5px;
+  font-size:9px;
+}
+.mobile-page-hero .section-kicker{
+  margin-bottom:3px;
+  font-size:7.5px;
+  letter-spacing:.12em;
+}
+.mobile-page-hero h1{
+  margin-bottom:5px;
+  font-size:23px;
+  line-height:1.22;
+  letter-spacing:-.75px;
+}
+.mobile-page-hero p{
+  max-width:360px;
+  font-size:11.5px;
+  line-height:1.58;
+  color:#697b87;
+}
+
+/* Business hub */
+.business-hub-section{padding-top:12px;padding-bottom:18px}
+.business-hub-grid{gap:8px}
+.business-hub-card{
+  min-height:82px;
+  padding:11px 12px;
+  border-radius:15px;
+  grid-template-columns:34px minmax(0,1fr) 14px;
+  gap:10px;
+  box-shadow:0 6px 16px rgba(16,36,56,.035);
+}
+.hub-num{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  font-size:10px;
+}
+.hub-num.hub-ai{font-size:13px}
+.business-hub-card strong{
+  margin-bottom:3px;
+  font-size:14px;
+  line-height:1.25;
+}
+.business-hub-card p{
+  font-size:10.5px;
+  line-height:1.42;
+}
+.business-hub-card em{font-size:20px}
+.business-start-section{padding-top:0}
+.business-start-card{
+  padding:18px 16px;
+  border-radius:17px;
+}
+.business-start-card>span{margin-bottom:5px;font-size:9px}
+.business-start-card>strong{font-size:15px;line-height:1.42}
+.business-start-card>a{
+  min-height:38px;
+  margin-top:12px;
+  padding:0 13px;
+  border-radius:11px;
+  font-size:11px;
+}
+
+/* Problem hub */
+.problem-hub-section{padding-top:12px;padding-bottom:18px}
+.problem-hub-grid{gap:8px}
+.problem-hub-card{
+  min-height:104px;
+  padding:13px 12px;
+  border-radius:16px;
+  grid-template-columns:31px minmax(0,1fr) 14px;
+  gap:9px;
+  box-shadow:0 6px 17px rgba(16,36,56,.035);
+}
+.problem-no{
+  width:31px;
+  height:31px;
+  border-radius:10px;
+  font-size:9px;
+}
+.problem-hub-card strong{
+  margin:0 0 5px;
+  font-size:14px;
+  line-height:1.35;
+}
+.problem-hub-card p{
+  font-size:10.5px;
+  line-height:1.46;
+}
+.problem-hub-card em{
+  margin-top:2px;
+  font-size:20px;
+}
+.problem-guide-section{padding-top:0}
+.problem-guide-card{
+  padding:17px 16px;
+  border-radius:17px;
+}
+.problem-guide-card>span{margin-bottom:5px;font-size:9px}
+.problem-guide-card>strong{font-size:15px;line-height:1.42}
+.problem-guide-card>a{
+  min-height:38px;
+  margin-top:12px;
+  padding:0 13px;
+  border-radius:11px;
+  font-size:11px;
+}
+
+@media(max-width:360px){
+  .mobile-page-hero{padding-left:14px;padding-right:14px}
+  .mobile-page-hero h1{font-size:22px}
+  .business-hub-card{
+    min-height:78px;
+    padding:10px;
+    grid-template-columns:32px minmax(0,1fr) 12px;
+    gap:8px;
+  }
+  .hub-num{width:32px;height:32px}
+  .business-hub-card strong{font-size:13.5px}
+  .business-hub-card p{font-size:10px}
+  .problem-hub-card{
+    min-height:98px;
+    padding:12px 10px;
+    grid-template-columns:30px minmax(0,1fr) 12px;
+    gap:8px;
+  }
+  .problem-no{width:30px;height:30px}
+  .problem-hub-card strong{font-size:13.5px}
+  .problem-hub-card p{font-size:10px}
+}
