@@ -8,12 +8,12 @@
 <title>BIZZIP Mobile Season 2</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="mobile.css?v=20261007-clean01">
+<link rel="stylesheet" href="mobile.css">
 </head>
-<body class="landing-page">
+<body>
 <header class="m-header">
-  <a class="m-logo ref-wordmark" href="index.html" aria-label="BIZZIP 모바일 홈">
-    <span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span>
+  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈">
+    <img src="../bizzip-logo.png" alt="BIZZIP">
   </a>
   <div class="m-header-actions">
     <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
@@ -26,14 +26,19 @@
 </header>
 
 <main>
-  <section class="hero ref-hero">
-    <div class="ref-hero-copy">
-      <span class="ref-kicker">BUSINESS SOLUTIONS<br>FOR A BRIGHTER TOMORROW</span>
-      <h1>내 사업에 사소한 일은<br>없습니다. <em>비즈집</em></h1>
-      <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드로 제공합니다.</p>
-    </div>
-    <div class="ref-hero-visual" aria-hidden="true">
-      <span class="ref-hero-slash"></span>
+  <section class="hero hero-final">
+    <div class="hero-top">
+      <div class="hero-copy">
+        <span class="hero-kicker">BUSINESS SOLUTIONS<br>FOR A BRIGHTER TOMORROW</span>
+        <h1>내 사업에 사소한 일은<br>없습니다. <strong>비즈집</strong></h1>
+        <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드를 제공합니다.</p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-orange-line"></div>
+        <div class="hero-photo">
+          <img src="hero-house.svg" alt="">
+        </div>
+      </div>
     </div>
     <button class="hero-search" id="heroSearch" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
@@ -41,55 +46,40 @@
     </button>
   </section>
 
-  <section class="primary-actions section-pad ref-primary-actions">
+  <section class="primary-actions section-pad">
     <a class="primary-card problem" href="problems.html">
       <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 4h14v12H9l-4 4z"></path>
-          <path d="M9 8h6M9 11h4"></path>
-        </svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM15 3v4h4M9 11h6M9 15h4"></path></svg>
       </span>
-      <strong>문제별 해결 <em>›</em></strong>
-      <span>지금 겪고 있는<br>사업 문제를 해결해보세요.</span>
+      <div class="primary-copy"><strong>문제별 해결</strong><span>지금 겪고 있는<br>사업 문제를 해결하세요.</span></div>
+      <span class="primary-chevron">›</span>
     </a>
     <a class="primary-card business" href="business.html">
       <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m12 3 9 5-9 5-9-5z"></path>
-          <path d="m3 12 9 5 9-5"></path>
-          <path d="m3 16 9 5 9-5"></path>
-        </svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"></path></svg>
       </span>
-      <strong>사업실무 <em>›</em></strong>
-      <span>바로 적용 가능한<br>실무 가이드를 확인하세요.</span>
+      <div class="primary-copy"><strong>사업실무</strong><span>바로 적용 가능한<br>실무 가이드를 확인하세요.</span></div>
+      <span class="primary-chevron">›</span>
     </a>
   </section>
 
-  <section class="section-pad">
-    <div class="section-head">
-      <div>
-        <span class="section-kicker">BUSINESS PRACTICE</span>
-        <h2>사업실무</h2>
-      </div>
-      <a href="business.html">전체보기</a>
-    </div>
-    <div class="business-grid ref-business-grid">
-      <a href="startup.html"><span class="ref-cat-icon">🚀</span><strong>창업준비</strong><em>›</em></a>
-      <a href="product.html"><span class="ref-cat-icon">⬡</span><strong>제품·서비스</strong><em>›</em></a>
-      <a href="brand.html"><span class="ref-cat-icon">◇</span><strong>브랜드</strong><em>›</em></a>
-      <a href="marketing.html"><span class="ref-cat-icon">↗</span><strong>마케팅</strong><em>›</em></a>
-      <a href="sales.html"><span class="ref-cat-icon">♧</span><strong>영업</strong><em>›</em></a>
-      <a href="operation.html"><span class="ref-cat-icon">⚙</span><strong>운영</strong><em>›</em></a>
-      <a href="logistics.html"><span class="ref-cat-icon">▱</span><strong>물류</strong><em>›</em></a>
-      <a href="data-ai.html"><span class="ref-cat-icon">✤</span><strong>데이터·AI</strong><em>›</em></a>
+  <section class="section-pad home-business-section" aria-label="사업실무 바로가기">
+    <div class="business-grid">
+      <a href="startup.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5c2-2 4-2 5-2 0 1 0 3-2 5l-4 4-5-3z"></path><path d="M8 9 5 10l-2 3 4 1M13 14l1 4 3-2 1-3M9 15l-2 2"></path></svg></span><strong>창업준비</strong><em>›</em></a>
+      <a href="product.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 4-7 4-7-4z"></path><path d="m5 7v9l7 4 7-4V7M12 11v9"></path></svg></span><strong>제품·서비스</strong><em>›</em></a>
+      <a href="brand.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 12 3h7v7l-9 9z"></path><circle cx="16" cy="7" r="1"></circle></svg></span><strong>브랜드</strong><em>›</em></a>
+      <a href="marketing.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 16v-4M11 16V9M16 16V6M20 6l-4-3-5 4-5-2"></path></svg></span><strong>마케팅</strong><em>›</em></a>
+      <a href="sales.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 19c0-3 2-5 5-5s5 2 5 5M13 19c.2-2.3 1.7-4 4-4 2.5 0 4 1.6 4 4"></path></svg></span><strong>영업</strong><em>›</em></a>
+      <a href="operation.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"></path></svg></span><strong>운영</strong><em>›</em></a>
+      <a href="logistics.html"><span class="biz-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"></path><circle cx="7" cy="18" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span><strong>물류</strong><em>›</em></a>
+      <a href="data-ai.html"><span class="biz-icon ai">AI</span><strong>데이터·AI</strong><em>›</em></a>
     </div>
   </section>
 
   <section class="section-pad content-section">
     <div class="section-head">
       <div>
-        <span class="section-kicker">LATEST CONTENT</span>
-        <h2>최근 BIZZIP 콘텐츠</h2>
+        <h2>최근 콘텐츠</h2>
       </div>
       <a href="contents.html">전체보기</a>
     </div>
@@ -144,11 +134,12 @@
   <span>© 2026 BIZZIP</span>
 </footer>
 
-<nav class="bottom-nav ref-bottom-nav" aria-label="모바일 빠른 메뉴">
-  <a href="index.html" aria-current="page"><span class="nav-icon">⌂</span><span>홈</span></a>
-  <a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
-  <a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
-  <a href="contact.html"><span class="nav-icon">▣</span><span>문의</span></a>
+<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+  <a href="index.html" aria-current="page"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="m4 11 8-7 8 7v9H7v-6h10v6"></path></svg></span><span>홈</span></a>
+  <a href="problems.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span><span>문제별 해결</span></a>
+  <a href="business.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg></span><span>사업실무</span></a>
+  <a href="contents.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"></path></svg></span><span>콘텐츠</span></a>
+  <a href="contact.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3z"></path><path d="M8 10h.01M12 10h.01M16 10h.01"></path></svg></span><span>문의</span></a>
 </nav>
 
 <div class="backdrop" id="menuBackdrop" hidden></div>
@@ -181,6 +172,6 @@
   <div class="search-results" id="searchResults"></div>
 </section>
 
-<script src="mobile.js?v=20261007-step1b"></script>
+<script src="mobile.js"></script>
 </body>
 </html>
