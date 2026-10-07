@@ -8,12 +8,12 @@
 <title>BIZZIP Mobile Season 2</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="mobile.css">
+<link rel="stylesheet" href="mobile.css?v=20261007-fold03">
 </head>
-<body>
+<body class="landing-page">
 <header class="m-header">
-  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈">
-    <img src="../bizzip-logo.png" alt="BIZZIP">
+  <a class="m-logo ref-wordmark" href="index.html" aria-label="BIZZIP 모바일 홈">
+    <span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span>
   </a>
   <div class="m-header-actions">
     <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
@@ -26,19 +26,17 @@
 </header>
 
 <main>
-  <section class="hero hero-final">
-    <div class="hero-top">
-      <div class="hero-copy">
-        <span class="hero-kicker">BUSINESS SOLUTIONS<br>FOR A BRIGHTER TOMORROW</span>
-        <h1>내 사업에 사소한 일은<br>없습니다. <strong>비즈집</strong></h1>
-        <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드를 제공합니다.</p>
-      </div>
-      <div class="hero-visual" aria-hidden="true">
-        <div class="hero-orange-line"></div>
-        <div class="hero-photo">
-          <img src="hero-house.svg" alt="">
-        </div>
-      </div>
+<div class="landing-fold">
+  <section class="hero ref-hero">
+    <div class="ref-hero-copy">
+      <span class="ref-kicker">BUSINESS SOLUTIONS<br>FOR A BRIGHTER TOMORROW</span>
+      <h1>내 사업에 사소한 일은<br>없습니다. <em>비즈집</em></h1>
+      <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드로 제공합니다.</p>
+    </div>
+    <div class="ref-hero-visual" aria-hidden="true">
+      <span class="ref-facade-glass"></span>
+      <span class="ref-facade-orange"></span>
+      <span class="ref-facade-line"></span>
     </div>
     <button class="hero-search" id="heroSearch" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
@@ -46,20 +44,20 @@
     </button>
   </section>
 
-  <section class="primary-actions section-pad">
+  <section class="primary-actions section-pad ref-primary-actions">
     <a class="primary-card problem" href="problems.html">
       <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM15 3v4h4M9 11h6M9 15h4"></path></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v12H9l-4 4z"></path><path d="M9 8h6M9 11h4"></path></svg>
       </span>
-      <div class="primary-copy"><strong>문제별 해결</strong><span>지금 겪고 있는<br>사업 문제를 해결하세요.</span></div>
-      <span class="primary-chevron">›</span>
+      <strong>문제별 해결 <em>›</em></strong>
+      <span class="primary-desc">지금 겪고 있는<br>사업 문제를 해결해보세요.</span>
     </a>
     <a class="primary-card business" href="business.html">
       <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"></path></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"></path><path d="m3 12 9 5 9-5"></path><path d="m3 16 9 5 9-5"></path></svg>
       </span>
-      <div class="primary-copy"><strong>사업실무</strong><span>바로 적용 가능한<br>실무 가이드를 확인하세요.</span></div>
-      <span class="primary-chevron">›</span>
+      <strong>사업실무 <em>›</em></strong>
+      <span class="primary-desc">바로 적용 가능한<br>실무 가이드를 확인하세요.</span>
     </a>
   </section>
 
@@ -88,6 +86,7 @@
     </div>
   </section>
 
+</div>
   <section class="section-pad resources-section">
     <div class="section-head">
       <div>
@@ -134,10 +133,9 @@
   <span>© 2026 BIZZIP</span>
 </footer>
 
-<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+<nav class="bottom-nav ref-bottom-nav" aria-label="모바일 빠른 메뉴">
   <a href="index.html" aria-current="page"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="m4 11 8-7 8 7v9H7v-6h10v6"></path></svg></span><span>홈</span></a>
   <a href="problems.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span><span>문제별 해결</span></a>
-  <a href="business.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg></span><span>사업실무</span></a>
   <a href="contents.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"></path></svg></span><span>콘텐츠</span></a>
   <a href="contact.html"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3z"></path><path d="M8 10h.01M12 10h.01M16 10h.01"></path></svg></span><span>문의</span></a>
 </nav>
@@ -145,7 +143,7 @@
 <div class="backdrop" id="menuBackdrop" hidden></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-head">
-    <img src="../bizzip-logo.png" alt="BIZZIP">
+    <div class="ref-wordmark drawer-wordmark" aria-label="BIZZIP"><span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span></div>
     <button type="button" id="menuClose" aria-label="메뉴 닫기">×</button>
   </div>
   <nav>
@@ -172,6 +170,6 @@
   <div class="search-results" id="searchResults"></div>
 </section>
 
-<script src="mobile.js"></script>
+<script src="mobile.js?v=20261007-fold03"></script>
 </body>
 </html>
