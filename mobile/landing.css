@@ -291,3 +291,135 @@ body.landing-page .ref-bottom-nav a{font-size:9.5px!important;font-weight:800!im
   body.landing-page .home-business-section .business-grid strong{font-size:11.4px!important}
   body.landing-page .content-card{flex-basis:calc((100vw - 35px)/3)!important;min-height:157px!important}
 }
+
+/* ===== FINAL HOME CARD TUNING 2026-10-08 ===== */
+/* Primary two cards: match approved density */
+body.landing-page .ref-primary-actions{
+  gap:7px!important;
+  padding:8px 8px 7px!important;
+}
+body.landing-page .ref-primary-actions .primary-card{
+  min-height:104px!important;
+  padding:12px 14px 11px!important;
+  border-radius:11px!important;
+}
+body.landing-page .ref-primary-actions .primary-icon{
+  width:33px!important;
+  height:33px!important;
+  margin:0 0 7px!important;
+}
+body.landing-page .ref-primary-actions .primary-icon svg{
+  width:30px!important;
+  height:30px!important;
+  stroke-width:1.9!important;
+}
+body.landing-page .ref-primary-actions .primary-card>strong{
+  margin:0 0 5px!important;
+  font-size:clamp(14.5px,4.15vw,16.5px)!important;
+  line-height:1.16!important;
+  letter-spacing:-.42px!important;
+  font-weight:900!important;
+}
+body.landing-page .ref-primary-actions .primary-card>strong em{
+  font-size:21px!important;
+  line-height:1!important;
+}
+body.landing-page .ref-primary-actions .primary-desc{
+  font-size:clamp(9.8px,2.8vw,11.2px)!important;
+  line-height:1.42!important;
+  font-weight:650!important;
+  letter-spacing:-.08px!important;
+}
+
+/* Eight business blocks: larger icons, same overall balance */
+body.landing-page .home-business-section .business-grid a{
+  min-height:46px!important;
+  grid-template-columns:32px minmax(0,1fr) 10px!important;
+  gap:8px!important;
+}
+body.landing-page .home-business-section .business-grid a>span.biz-icon{
+  width:31px!important;
+  height:31px!important;
+}
+body.landing-page .home-business-section .business-grid a>span.biz-icon svg{
+  width:24px!important;
+  height:24px!important;
+  stroke-width:1.9!important;
+}
+body.landing-page .home-business-section .business-grid a>span.biz-icon.ai{
+  font-size:12px!important;
+  font-weight:900!important;
+}
+body.landing-page .home-business-section .business-grid strong{
+  font-size:clamp(12.2px,3.25vw,14.2px)!important;
+  font-weight:850!important;
+}
+
+@media(min-width:390px){
+  body.landing-page .ref-primary-actions{
+    gap:8px!important;
+    padding-left:9px!important;
+    padding-right:9px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-card{
+    min-height:108px!important;
+    padding:13px 15px 11px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon{
+    width:35px!important;
+    height:35px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon svg{
+    width:32px!important;
+    height:32px!important;
+  }
+
+  body.landing-page .home-business-section .business-grid a{
+    min-height:49px!important;
+    grid-template-columns:34px minmax(0,1fr) 10px!important;
+  }
+  body.landing-page .home-business-section .business-grid a>span.biz-icon{
+    width:33px!important;
+    height:33px!important;
+  }
+  body.landing-page .home-business-section .business-grid a>span.biz-icon svg{
+    width:25px!important;
+    height:25px!important;
+  }
+  body.landing-page .home-business-section .business-grid a>span.biz-icon.ai{
+    font-size:12.5px!important;
+  }
+}
+@media(max-width:359px){
+  body.landing-page .ref-primary-actions .primary-card{
+    padding:11px 12px 10px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon{
+    width:31px!important;
+    height:31px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-icon svg{
+    width:28px!important;
+    height:28px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-card>strong{
+    font-size:14px!important;
+  }
+  body.landing-page .ref-primary-actions .primary-desc{
+    font-size:9.5px!important;
+  }
+
+  body.landing-page .home-business-section .business-grid a{
+    min-height:44px!important;
+    grid-template-columns:29px minmax(0,1fr) 9px!important;
+    gap:7px!important;
+  }
+  body.landing-page .home-business-section .business-grid a>span.biz-icon{
+    width:28px!important;
+    height:28px!important;
+  }
+  body.landing-page .home-business-section .business-grid a>span.biz-icon svg{
+    width:22px!important;
+    height:22px!important;
+  }
+}
