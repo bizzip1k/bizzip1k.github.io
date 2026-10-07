@@ -727,3 +727,106 @@ body.landing-page .resource-card-section{
     font-size:14.3px!important;
   }
 }
+
+/* ===== FINAL CONTACT COMPACTION 2026-10-08 ===== */
+/* Tighten resources -> contact spacing */
+body.landing-page .resource-card-section{
+  padding-bottom:14px!important;
+}
+body.landing-page .contact-section{
+  padding:8px 12px 18px!important;
+  background:#fff!important;
+}
+
+/* Compact two-column contact card */
+body.landing-page .contact-card{
+  min-height:166px!important;
+  padding:18px 18px 17px!important;
+  border-radius:20px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:
+    "kicker kicker"
+    "title action"
+    "desc action"!important;
+  column-gap:14px!important;
+  row-gap:5px!important;
+  align-items:center!important;
+}
+body.landing-page .contact-card>span{
+  grid-area:kicker!important;
+  margin:0 0 2px!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  font-weight:850!important;
+  letter-spacing:.09em!important;
+}
+body.landing-page .contact-card h2{
+  grid-area:title!important;
+  margin:0!important;
+  font-size:clamp(21px,5.4vw,24px)!important;
+  line-height:1.28!important;
+  letter-spacing:-.75px!important;
+}
+body.landing-page .contact-card p{
+  grid-area:desc!important;
+  margin:0!important;
+  max-width:220px!important;
+  color:#cbd6dd!important;
+  font-size:clamp(10px,2.6vw,11.5px)!important;
+  line-height:1.45!important;
+  font-weight:550!important;
+}
+body.landing-page .contact-card a{
+  grid-area:action!important;
+  align-self:end!important;
+  justify-self:end!important;
+  min-width:132px!important;
+  min-height:46px!important;
+  padding:0 15px!important;
+  margin:0 0 2px!important;
+  border-radius:13px!important;
+  white-space:nowrap!important;
+  font-size:12.5px!important;
+  font-weight:800!important;
+}
+body.landing-page .contact-card::after{
+  right:-82px!important;
+  bottom:-92px!important;
+  width:180px!important;
+  height:180px!important;
+}
+
+@media(min-width:390px){
+  body.landing-page .contact-section{
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+  body.landing-page .contact-card{
+    min-height:160px!important;
+    padding:18px 20px 17px!important;
+    column-gap:18px!important;
+  }
+  body.landing-page .contact-card a{
+    min-width:142px!important;
+  }
+}
+
+@media(max-width:359px){
+  body.landing-page .contact-card{
+    min-height:178px!important;
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "kicker"
+      "title"
+      "desc"
+      "action"!important;
+    row-gap:7px!important;
+  }
+  body.landing-page .contact-card a{
+    justify-self:end!important;
+    align-self:auto!important;
+    min-width:136px!important;
+    min-height:44px!important;
+  }
+}
