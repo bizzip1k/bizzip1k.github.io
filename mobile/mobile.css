@@ -1971,3 +1971,43 @@ body.home-fit-ready{background:#fff}
   .content-visual{height:63px}
   .content-tag{top:51px}
 }
+
+
+/* ===== Landing final polish : unified line icons and spacing ===== */
+.home-business-section .biz-icon svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.home-business-section .business-grid a{
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.home-business-section .business-grid a:active{
+  transform:translateY(1px);
+  box-shadow:0 1px 4px rgba(16,36,56,.05);
+}
+.bottom-nav .nav-icon svg{
+  width:19px;
+  height:19px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.bottom-nav .nav-icon{
+  width:22px;
+  height:22px;
+  font-size:0;
+}
+.bottom-nav a[aria-current="page"] .nav-icon{
+  transform:translateY(-1px);
+}
+@media(max-width:360px){
+  .home-business-section .biz-icon svg{width:17px;height:17px}
+  .bottom-nav .nav-icon svg{width:18px;height:18px}
+}
