@@ -2,6 +2,7 @@
 'use strict';
 const $=s=>document.querySelector(s);
 const body=document.body;
+if(document.querySelector('.hero-final')) document.body.classList.add('home-fit-ready');
 const menuOpen=$('#menuOpen'), menuClose=$('#menuClose'), drawer=$('#drawer'), menuBackdrop=$('#menuBackdrop');
 const searchOpen=$('#searchOpen'), heroSearch=$('#heroSearch'), searchClose=$('#searchClose');
 const searchPanel=$('#searchPanel'), searchBackdrop=$('#searchBackdrop'), searchInput=$('#searchInput'), searchResults=$('#searchResults');
@@ -77,11 +78,12 @@ function renderPosts(posts){
   box.innerHTML=active.map(p=>{
     const href='post.html?id='+encodeURIComponent(p.id);
     const tag=p.categoryLabel||p.category||'BIZZIP';
+    const imgs=['../mobile-assets/desk-mug.jpg','../mobile-assets/hero-office.jpg','../mobile-assets/notebook-clean.jpg'];
+    const img=imgs[Math.abs(String(p.id||'').split('').reduce((n,ch)=>n+ch.charCodeAt(0),0))%imgs.length];
     return '<a class="content-card" href="'+href+'">'
-      +'<div class="content-visual">BIZZIP INSIGHT</div>'
+      +'<div class="content-visual" style="background-image:linear-gradient(180deg,rgba(16,47,73,.04),rgba(16,47,73,.18)),url('+img+')"></div>'
       +'<div class="content-body"><span class="content-tag">'+esc(tag)+'</span>'
       +'<h3>'+esc(p.title)+'</h3>'
-      +'<p>'+esc(p.summary||'사업 현장에서 바로 활용할 수 있는 내용을 정리했습니다.')+'</p>'
       +'<div class="content-meta">'+esc(postDate(p.date))+'</div></div></a>';
   }).join('');
 }
