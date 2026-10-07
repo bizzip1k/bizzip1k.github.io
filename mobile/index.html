@@ -8,12 +8,12 @@
 <title>BIZZIP Mobile Season 2</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="mobile.css?v=20261007-ref01">
+<link rel="stylesheet" href="mobile.css?v=20261007-step1b">
 </head>
 <body class="landing-page">
 <header class="m-header">
-  <a class="m-logo" href="index.html" aria-label="BIZZIP 모바일 홈">
-    <img src="../bizzip-logo.png" alt="BIZZIP">
+  <a class="m-logo ref-wordmark" href="index.html" aria-label="BIZZIP 모바일 홈">
+    <span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span>
   </a>
   <div class="m-header-actions">
     <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기">
@@ -32,7 +32,9 @@
       <h1>내 사업에 사소한 일은<br>없습니다. <em>비즈집</em></h1>
       <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드로 제공합니다.</p>
     </div>
-    <div class="ref-hero-visual" aria-hidden="true"></div>
+    <div class="ref-hero-visual" aria-hidden="true">
+      <span class="ref-hero-slash"></span>
+    </div>
     <button class="hero-search" id="heroSearch" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
       <span>궁금한 내용을 검색해보세요.</span>
@@ -41,18 +43,25 @@
 
   <section class="primary-actions section-pad ref-primary-actions">
     <a class="primary-card problem" href="problems.html">
-      <span class="primary-icon ref-icon-chat">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v12H9l-4 4z"></path><path d="M9 8h6M9 11h4"></path></svg>
+      <span class="primary-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 4h14v12H9l-4 4z"></path>
+          <path d="M9 8h6M9 11h4"></path>
+        </svg>
       </span>
       <strong>문제별 해결 <em>›</em></strong>
-      <span>지금 겪고 있는 사업 문제에 대한<br>해결책을 찾아보세요.</span>
+      <span>지금 겪고 있는<br>사업 문제를 해결해보세요.</span>
     </a>
     <a class="primary-card business" href="business.html">
-      <span class="primary-icon ref-icon-layers">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"></path></svg>
+      <span class="primary-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m12 3 9 5-9 5-9-5z"></path>
+          <path d="m3 12 9 5 9-5"></path>
+          <path d="m3 16 9 5 9-5"></path>
+        </svg>
       </span>
       <strong>사업실무 <em>›</em></strong>
-      <span>바로 적용 가능한<br>실무 가이드와 확인하세요.</span>
+      <span>바로 적용 가능한<br>실무 가이드를 확인하세요.</span>
     </a>
   </section>
 
@@ -172,6 +181,6 @@
   <div class="search-results" id="searchResults"></div>
 </section>
 
-<script src="mobile.js?v=20261007-ref01"></script>
+<script src="mobile.js?v=20261007-step1b"></script>
 </body>
 </html>
