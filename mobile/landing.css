@@ -423,3 +423,138 @@ body.landing-page .home-business-section .business-grid strong{
     height:22px!important;
   }
 }
+
+/* ===== PRACTICAL RESOURCES AS CONTENT CARDS 2026-10-08 ===== */
+body.landing-page .resource-card-section{
+  margin-top:18px!important;
+  padding:12px 0 28px 8px!important;
+  background:#fff!important;
+  border-top:1px solid #edf2f4!important;
+  border-bottom:0!important;
+}
+body.landing-page .resource-card-section .section-head{
+  margin:0 10px 8px 0!important;
+  align-items:center!important;
+}
+body.landing-page .resource-card-section .section-head h2{
+  margin:0!important;
+  color:#102f49!important;
+  font-size:clamp(16px,4.2vw,18px)!important;
+  line-height:1.2!important;
+  letter-spacing:-.55px!important;
+  font-weight:850!important;
+}
+body.landing-page .resource-card-section .section-head>a{
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:#6f808b!important;
+  font-size:10px!important;
+  font-weight:700!important;
+}
+body.landing-page .resource-track{
+  display:flex!important;
+  gap:8px!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  margin-right:0!important;
+  padding:0 8px 8px 0!important;
+  scroll-snap-type:x mandatory!important;
+  scrollbar-width:none!important;
+}
+body.landing-page .resource-track::-webkit-scrollbar{display:none!important}
+body.landing-page .resource-card{
+  flex:0 0 calc((100vw - 40px)/3)!important;
+  min-width:104px!important;
+  max-width:144px!important;
+  min-height:160px!important;
+  border:1px solid #e0e8ec!important;
+  border-radius:10px!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  display:flex!important;
+  flex-direction:column!important;
+  box-shadow:0 3px 9px rgba(16,36,56,.05)!important;
+  scroll-snap-align:start!important;
+}
+body.landing-page .resource-visual{
+  flex:0 0 74px!important;
+  height:74px!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+body.landing-page .resource-card--check .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.03),rgba(16,47,73,.08)),
+    url('../mobile-assets/notebook-clean.jpg') center/cover no-repeat!important;
+}
+body.landing-page .resource-card--price .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.02),rgba(16,47,73,.07)),
+    url('../mobile-assets/desk-mug.jpg') center/cover no-repeat!important;
+}
+body.landing-page .resource-card--3pl .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.02),rgba(16,47,73,.08)),
+    url('../mobile-assets/hero-office.jpg') center/cover no-repeat!important;
+}
+body.landing-page .resource-card-body{
+  position:relative!important;
+  min-height:85px!important;
+  padding:13px 8px 8px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1!important;
+}
+body.landing-page .resource-card-tag{
+  position:absolute!important;
+  left:7px!important;
+  top:-11px!important;
+  min-height:19px!important;
+  padding:0 6px!important;
+  display:flex!important;
+  align-items:center!important;
+  border-radius:6px!important;
+  background:#159a84!important;
+  color:#fff!important;
+  font-size:8px!important;
+  font-weight:850!important;
+  letter-spacing:.01em!important;
+}
+body.landing-page .resource-card strong{
+  margin:1px 0 8px!important;
+  color:#15354d!important;
+  font-size:clamp(10.6px,2.8vw,12px)!important;
+  line-height:1.38!important;
+  letter-spacing:-.24px!important;
+  font-weight:800!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2!important;
+  -webkit-box-orient:vertical!important;
+  overflow:hidden!important;
+}
+body.landing-page .resource-card-meta{
+  margin-top:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  color:#7d8c95!important;
+  font-size:8px!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+}
+body.landing-page .resource-card-meta em{
+  font-style:normal!important;
+  color:#9aa7ae!important;
+  font-size:15px!important;
+  line-height:1!important;
+}
+@media(min-width:390px){
+  body.landing-page .resource-card-section{padding-left:10px!important}
+}
+@media(max-width:359px){
+  body.landing-page .resource-card{
+    flex-basis:calc((100vw - 35px)/3)!important;
+    min-height:157px!important;
+  }
+}
