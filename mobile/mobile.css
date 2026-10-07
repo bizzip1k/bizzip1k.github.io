@@ -2011,3 +2011,59 @@ body.home-fit-ready{background:#fff}
   .home-business-section .biz-icon svg{width:17px;height:17px}
   .bottom-nav .nav-icon svg{width:18px;height:18px}
 }
+
+
+/* ===== Menu stage 1 : align hub pages with landing design ===== */
+.hub-num.hub-icon{
+  background:#fff3eb;
+  color:#ff6a2b;
+}
+.hub-num.hub-icon svg{
+  width:19px;
+  height:19px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.business-hub-card{
+  border-color:#e1eaee;
+  box-shadow:0 4px 12px rgba(16,36,56,.04);
+}
+.business-hub-card:active,
+.problem-hub-card:active{
+  transform:translateY(1px);
+}
+.problem-hub-card:not(.dark) .problem-no{
+  background:#fff3eb;
+  color:#ff6a2b;
+}
+.problem-hub-card.dark{
+  background:linear-gradient(135deg,#062844,#0c446f);
+}
+.problem-guide-card{
+  background:linear-gradient(135deg,#eef9f7,#fbfdfd);
+}
+.business-start-card{
+  background:linear-gradient(135deg,#102f49,#1a5665);
+}
+.business-start-card>a{background:#159c84}
+.bottom-nav .nav-icon svg{
+  width:19px;
+  height:19px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.bottom-nav .nav-icon{
+  width:22px;
+  height:22px;
+  font-size:0;
+}
+@media(max-width:360px){
+  .hub-num.hub-icon svg{width:18px;height:18px}
+  .bottom-nav .nav-icon svg{width:18px;height:18px}
+}
