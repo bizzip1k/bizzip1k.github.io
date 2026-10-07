@@ -8,7 +8,7 @@
 <title>BIZZIP Mobile Season 2</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="mobile.css?v=20261007-0745">
+<link rel="stylesheet" href="mobile.css?v=20261007-ref01">
 </head>
 <body class="landing-page">
 <header class="m-header">
@@ -26,28 +26,33 @@
 </header>
 
 <main>
-  <section class="hero">
-    <h1>사업을 하다 보면 작은 문제에서 막힙니다.<br>필요한 답을 비즈집에서 찾아보세요.</h1>
+  <section class="hero ref-hero">
+    <div class="ref-hero-copy">
+      <span class="ref-kicker">BUSINESS SOLUTIONS<br>FOR A BRIGHTER TOMORROW</span>
+      <h1>내 사업에 사소한 일은<br>없습니다. <em>비즈집</em></h1>
+      <p>사업의 시작부터 성장까지,<br>현실적인 해결책을 찾을 수 있는<br>실무 지식과 가이드로 제공합니다.</p>
+    </div>
+    <div class="ref-hero-visual" aria-hidden="true"></div>
     <button class="hero-search" id="heroSearch" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
       <span>궁금한 내용을 검색해보세요.</span>
     </button>
   </section>
 
-  <section class="primary-actions section-pad">
+  <section class="primary-actions section-pad ref-primary-actions">
     <a class="primary-card problem" href="problems.html">
-      <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg>
+      <span class="primary-icon ref-icon-chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v12H9l-4 4z"></path><path d="M9 8h6M9 11h4"></path></svg>
       </span>
-      <strong>문제별 해결</strong>
-      <span>지금 겪는 문제에서 바로 시작합니다.</span>
+      <strong>문제별 해결 <em>›</em></strong>
+      <span>지금 겪고 있는 사업 문제에 대한<br>해결책을 찾아보세요.</span>
     </a>
     <a class="primary-card business" href="business.html">
-      <span class="primary-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
+      <span class="primary-icon ref-icon-layers">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"></path></svg>
       </span>
-      <strong>사업실무</strong>
-      <span>분야별 실무 가이드를 찾아봅니다.</span>
+      <strong>사업실무 <em>›</em></strong>
+      <span>바로 적용 가능한<br>실무 가이드와 확인하세요.</span>
     </a>
   </section>
 
@@ -59,15 +64,15 @@
       </div>
       <a href="business.html">전체보기</a>
     </div>
-    <div class="business-grid">
-      <a href="startup.html"><span>01</span><strong>창업 준비</strong><em>›</em></a>
-      <a href="product.html"><span>02</span><strong>상품과 서비스</strong><em>›</em></a>
-      <a href="brand.html"><span>03</span><strong>브랜드</strong><em>›</em></a>
-      <a href="marketing.html"><span>04</span><strong>마케팅</strong><em>›</em></a>
-      <a href="sales.html"><span>05</span><strong>판매와 유통</strong><em>›</em></a>
-      <a href="operation.html"><span>06</span><strong>회사 운영</strong><em>›</em></a>
-      <a href="logistics.html"><span>07</span><strong>물류와 재고</strong><em>›</em></a>
-      <a href="data-ai.html"><span class="ai">AI</span><strong>데이터와 AI</strong><em>›</em></a>
+    <div class="business-grid ref-business-grid">
+      <a href="startup.html"><span class="ref-cat-icon">🚀</span><strong>창업준비</strong><em>›</em></a>
+      <a href="product.html"><span class="ref-cat-icon">⬡</span><strong>제품·서비스</strong><em>›</em></a>
+      <a href="brand.html"><span class="ref-cat-icon">◇</span><strong>브랜드</strong><em>›</em></a>
+      <a href="marketing.html"><span class="ref-cat-icon">↗</span><strong>마케팅</strong><em>›</em></a>
+      <a href="sales.html"><span class="ref-cat-icon">♧</span><strong>영업</strong><em>›</em></a>
+      <a href="operation.html"><span class="ref-cat-icon">⚙</span><strong>운영</strong><em>›</em></a>
+      <a href="logistics.html"><span class="ref-cat-icon">▱</span><strong>물류</strong><em>›</em></a>
+      <a href="data-ai.html"><span class="ref-cat-icon">✤</span><strong>데이터·AI</strong><em>›</em></a>
     </div>
   </section>
 
@@ -130,12 +135,11 @@
   <span>© 2026 BIZZIP</span>
 </footer>
 
-<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
+<nav class="bottom-nav ref-bottom-nav" aria-label="모바일 빠른 메뉴">
   <a href="index.html" aria-current="page"><span class="nav-icon">⌂</span><span>홈</span></a>
   <a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
-  <a href="business.html"><span class="nav-icon">▤</span><span>사업실무</span></a>
   <a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
-  <a href="contact.html"><span class="nav-icon">◌</span><span>문의</span></a>
+  <a href="contact.html"><span class="nav-icon">▣</span><span>문의</span></a>
 </nav>
 
 <div class="backdrop" id="menuBackdrop" hidden></div>
@@ -168,6 +172,6 @@
   <div class="search-results" id="searchResults"></div>
 </section>
 
-<script src="mobile.js?v=20261007-0745"></script>
+<script src="mobile.js?v=20261007-ref01"></script>
 </body>
 </html>
