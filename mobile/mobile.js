@@ -73,13 +73,13 @@ function postDate(v){
 }
 function renderPosts(posts){
   const box=$('#latestPosts'); if(!box)return;
-  const active=(posts||[]).filter(p=>!p.deleted).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,5);
+  const active=(posts||[]).filter(p=>!p.deleted).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,3);
   if(!active.length){box.innerHTML='<article class="content-card loading">등록된 콘텐츠가 없습니다.</article>';return}
-  box.innerHTML=active.map(p=>{
+  box.innerHTML=active.map((p,idx)=>{
     const href='post.html?id='+encodeURIComponent(p.id);
     const tag=p.categoryLabel||p.category||'BIZZIP';
-    const imgs=['../mobile-assets/desk-mug.jpg','../mobile-assets/hero-office.jpg','../mobile-assets/notebook-clean.jpg'];
-    const img=imgs[Math.abs(String(p.id||'').split('').reduce((n,ch)=>n+ch.charCodeAt(0),0))%imgs.length];
+    const imgs=['../mobile-assets/notebook-clean.jpg','../mobile-assets/hero-office.jpg','../mobile-assets/desk-mug.jpg'];
+    const img=imgs[idx%imgs.length];
     return '<a class="content-card" href="'+href+'">'
       +'<div class="content-visual" style="background-image:linear-gradient(180deg,rgba(16,47,73,.04),rgba(16,47,73,.18)),url('+img+')"></div>'
       +'<div class="content-body"><span class="content-tag">'+esc(tag)+'</span>'
