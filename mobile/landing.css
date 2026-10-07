@@ -930,3 +930,145 @@ body.landing-page .contact-action a{
     min-width:136px!important;
   }
 }
+
+/* ===== LANDING FINISH 2026-10-08 : keep current proportions ===== */
+/* Do not force a first-screen fold. Current section proportions are intentional. */
+body.landing-page .landing-fold{
+  min-height:0!important;
+  padding-bottom:0!important;
+}
+
+/* Recent content: three unique images and full bottom metadata visibility */
+body.landing-page .content-track{
+  padding-bottom:10px!important;
+  overflow-y:visible!important;
+}
+body.landing-page .content-card{
+  min-height:164px!important;
+}
+body.landing-page .content-visual{
+  flex:0 0 74px!important;
+  height:74px!important;
+}
+body.landing-page .content-body{
+  min-height:89px!important;
+  padding-bottom:9px!important;
+}
+body.landing-page .content-meta{
+  display:block!important;
+  min-height:10px!important;
+  margin-top:auto!important;
+  padding-top:4px!important;
+  overflow:visible!important;
+}
+
+/* Practical resources: deliberately use three images not used by latest contents */
+body.landing-page .resource-card--check .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.03),rgba(16,47,73,.08)),
+    url('../mobile-assets/notebook-close.jpg') center/cover no-repeat!important;
+}
+body.landing-page .resource-card--price .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.02),rgba(16,47,73,.07)),
+    url('../mobile-assets/desk-blur.jpg') center/cover no-repeat!important;
+}
+body.landing-page .resource-card--3pl .resource-visual{
+  background:
+    linear-gradient(180deg,rgba(16,47,73,.02),rgba(16,47,73,.08)),
+    url('../mobile-assets/hero-workspace.jpg') center/cover no-repeat!important;
+}
+
+/* Contact: email + Kakao icons, then one clear CTA */
+body.landing-page .contact-action{
+  width:150px!important;
+  gap:9px!important;
+}
+body.landing-page .contact-channel-row{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+body.landing-page .contact-channel{
+  min-width:0!important;
+  min-height:48px!important;
+  height:48px!important;
+  margin:0!important;
+  padding:5px 4px 4px!important;
+  border-radius:12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+}
+body.landing-page .contact-channel--mail{
+  background:rgba(255,255,255,.10)!important;
+  color:#fff!important;
+}
+body.landing-page .contact-channel--kakao{
+  background:#ffd83d!important;
+  border-color:#ffd83d!important;
+  color:#3a3000!important;
+}
+body.landing-page .contact-channel svg{
+  width:20px!important;
+  height:20px!important;
+  flex:0 0 20px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.8!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+body.landing-page .contact-channel span{
+  font-size:8px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  letter-spacing:-.1px!important;
+}
+body.landing-page .contact-main-cta{
+  width:100%!important;
+  min-width:0!important;
+  min-height:44px!important;
+  height:44px!important;
+  margin:0!important;
+  padding:0 10px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:12px!important;
+  background:#18ad93!important;
+  color:#fff!important;
+  font-size:11.8px!important;
+  font-weight:850!important;
+  white-space:nowrap!important;
+}
+body.landing-page .contact-action-icon{display:none!important}
+
+@media(min-width:390px){
+  body.landing-page .contact-action{width:158px!important}
+  body.landing-page .contact-channel{min-height:50px!important;height:50px!important}
+  body.landing-page .contact-main-cta{min-height:45px!important;height:45px!important}
+}
+@media(max-width:359px){
+  body.landing-page .contact-action{
+    width:100%!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body.landing-page .contact-channel-row{
+    width:112px!important;
+    align-self:flex-end!important;
+  }
+  body.landing-page .contact-main-cta{
+    width:150px!important;
+    align-self:flex-end!important;
+  }
+  body.landing-page .content-card{min-height:160px!important}
+}
