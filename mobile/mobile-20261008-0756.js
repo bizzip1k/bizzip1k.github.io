@@ -176,7 +176,7 @@ renderSearch('');
   const box=document.getElementById('resourcePageList');
   if(!box)return;
 
-  const fallbackData=[
+  const data=[
     {topic:'사업 준비',title:'사업 시작 체크리스트',desc:'사업을 시작하기 전에 놓치기 쉬운 준비항목을 한 장에서 관리합니다.',format:'CSV',href:'resource-start-check.html'},
     {topic:'상품기획·원가',title:'원가·판매가 계산표',desc:'제품 한 개가 팔릴 때 실제로 얼마가 남는지 계산합니다.',format:'XLSX',href:'resource-pricing.html'},
     {topic:'물류·재고',title:'3PL 비교표',desc:'물류업체를 택배비가 아니라 월 총비용 기준으로 비교합니다.',format:'GUIDE',href:'resource-3pl.html'},
@@ -184,12 +184,6 @@ renderSearch('');
     {topic:'마케팅·판매',title:'광고 성과 점검표',desc:'광고비를 늘리기 전에 성과가 막힌 지점을 확인합니다.',format:'GUIDE',href:'resource-ad-check.html'},
     {topic:'마케팅·판매',title:'입점 제안서 작성 가이드',desc:'유통사 담당자가 빠르게 판단할 수 있는 제안서 구조를 정리합니다.',format:'GUIDE',href:'resource-proposal.html'}
   ];
-  let data=fallbackData;
-  try{
-    const embedded=document.getElementById('mobile-resource-data');
-    const parsed=embedded?JSON.parse(embedded.textContent||'[]'):[];
-    if(Array.isArray(parsed)&&parsed.length)data=parsed;
-  }catch(_){};
 
   const chips=document.getElementById('resourceTopicChips');
   const reset=document.getElementById('resourceReset');
