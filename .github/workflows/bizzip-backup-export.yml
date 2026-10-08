@@ -17,13 +17,111 @@ jobs:
         with:
           ref: 7812dec01ab13b2df091a2ddbfb4af2b60680882
           fetch-depth: 1
-      - name: Create exact GitHub snapshot ZIP
+
+      - name: Verify every tracked file against Git blob SHA
+        shell: bash
         run: |
-          zip -r BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip . -x '.git/*'
+          python3 - <<'PY'
+          import csv, hashlib, os, subprocess, sys
+          commit="7812dec01ab13b2df091a2ddbfb4af2b60680882"
+          raw=subprocess.check_output(["git","ls-tree","-r","-l",commit], text=True)
+          expected=[]
+          for line in raw.splitlines():
+              meta,path=line.split("\t",1)
+              mode,typ,sha,size=meta.split()
+              if typ=="blob":
+                  expected.append((path,sha,int(size)))
+          rows=[]
+          ok=0
+          for path,sha,size in expected:
+              exists=os.path.isfile(path)
+              actual_sha=""
+              actual_size=-1
+              status="MISSING"
+              if exists:
+                  actual_size=os.path.getsize(path)
+                  actual_sha=subprocess.check_output(["git","hash-object",path], text=True).strip()
+                  status="OK" if actual_sha==sha and actual_size==size else "MISMATCH"
+              if status=="OK": ok+=1
+              rows.append((path,size,actual_size,sha,actual_sha,status))
+          with open("BIZZIP_FILE_MANIFEST.csv","w",newline="",encoding="utf-8-sig") as f:
+              w=csv.writer(f)
+              w.writerow(["path","github_size","backup_size","github_blob_sha","backup_blob_sha","status"])
+              w.writerows(rows)
+          extras=[]
+          tracked={r[0] for r in expected}
+          for root,dirs,files in os.walk("."):
+              if root.startswith("./.git"): continue
+              for fn in files:
+                  p=os.path.relpath(os.path.join(root,fn),".")
+                  if p in {"BIZZIP_FILE_MANIFEST.csv","BIZZIP_VERIFICATION_REPORT.txt"}: continue
+                  if p not in tracked: extras.append(p)
+          report=[
+              "BIZZIP BACKUP VERIFICATION REPORT",
+              "================================",
+              f"Repository: bizzip1k/bizzip1k.github.io",
+              f"Commit: {commit}",
+              f"Expected tracked files: {len(expected)}",
+              f"Verified OK: {ok}",
+              f"Mismatch/Missing: {len(expected)-ok}",
+              f"Unexpected working files: {len(extras)}",
+              "",
+              "RESULT: "+("PASS" if ok==len(expected) else "FAIL"),
+              "",
+              "Verification method:",
+              "- Expected SHA and size: git ls-tree -r -l <commit>",
+              "- Backup SHA: git hash-object <file>",
+              "- Every tracked blob compared individually.",
+          ]
+          if extras:
+              report += ["","Unexpected files:"]+extras
+          with open("BIZZIP_VERIFICATION_REPORT.txt","w",encoding="utf-8") as f:
+              f.write("\n".join(report)+"\n")
+          print("\n".join(report))
+          if ok != len(expected):
+              sys.exit(1)
+          PY
+
+      - name: Build exact raw and verified backup ZIPs
+        shell: bash
+        run: |
+          zip -r BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip . \
+            -x '.git/*' 'BIZZIP_FILE_MANIFEST.csv' 'BIZZIP_VERIFICATION_REPORT.txt' \
+               'BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip' 'BIZZIP_VERIFIED_BACKUP_2026-10-08_7812dec.zip'
+
+          mkdir -p /tmp/bizzip_verified/site /tmp/bizzip_verified/__BACKUP_INFO__
+          git ls-files -z | while IFS= read -r -d '' f; do
+            mkdir -p "/tmp/bizzip_verified/site/$(dirname "$f")"
+            cp -p "$f" "/tmp/bizzip_verified/site/$f"
+          done
+          cp BIZZIP_FILE_MANIFEST.csv /tmp/bizzip_verified/__BACKUP_INFO__/
+          cp BIZZIP_VERIFICATION_REPORT.txt /tmp/bizzip_verified/__BACKUP_INFO__/
+          cat > /tmp/bizzip_verified/__BACKUP_INFO__/README_BACKUP.txt <<'EOF'
+BIZZIP 1차 오픈 최종 검증 백업
+기준 저장소: bizzip1k/bizzip1k.github.io
+기준 커밋: 7812dec01ab13b2df091a2ddbfb4af2b60680882
+
+site/ 폴더:
+- 해당 커밋의 GitHub 추적 파일 전체
+- 운영 사이트 복원용
+
+__BACKUP_INFO__/ 폴더:
+- BIZZIP_FILE_MANIFEST.csv : 파일별 GitHub blob SHA, 크기, 백업 SHA, 검증 결과
+- BIZZIP_VERIFICATION_REPORT.txt : 전체 검증 결과
+
+검증 기준:
+GitHub 커밋의 모든 추적 파일을 파일별로 git hash-object로 재계산하여 git ls-tree 값과 대조했습니다.
+EOF
+          (cd /tmp/bizzip_verified && zip -r "$GITHUB_WORKSPACE/BIZZIP_VERIFIED_BACKUP_2026-10-08_7812dec.zip" .)
+
       - name: Upload backup artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BIZZIP_GITHUB_RAW_2026-10-08_7812dec
-          path: BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip
+          name: BIZZIP_FINAL_BACKUPS_2026-10-08_7812dec
+          path: |
+            BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip
+            BIZZIP_VERIFIED_BACKUP_2026-10-08_7812dec.zip
+            BIZZIP_FILE_MANIFEST.csv
+            BIZZIP_VERIFICATION_REPORT.txt
           if-no-files-found: error
           retention-days: 7
