@@ -219,3 +219,60 @@ body.mobile-detail-page .drawer nav a span{font-size:9.5px}
   body.mobile-detail-page .mobile-guide-article .biz-section-body p{font-size:12px}
   body.mobile-detail-page .mobile-guide-article .biz-item-title{font-size:12.7px}
 }
+
+
+/* ===== FINAL DETAIL POLISH 2026-10-08 13:24 ===== */
+body.mobile-detail-page .mobile-guide-article .biz-flex-sections{
+  gap:8px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-flex-section{
+  padding:14px 13px;
+  border-radius:15px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-title{
+  margin-bottom:7px;
+  font-size:17.5px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-body{
+  gap:5px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-items{
+  gap:6px;
+  margin-top:8px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-item{
+  padding:10px 10px 10px 36px;
+  border-radius:11px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-item::before{
+  left:10px;top:11px;width:18px;height:18px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-section-item::after{
+  left:14px;top:9px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-item{
+  padding-left:43px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-flex-section[data-kind="steps"] .biz-section-item::before{
+  left:10px;top:10px;width:22px;height:22px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-flex-section[data-kind="links"] .biz-section-item{
+  padding:11px;
+}
+body.mobile-detail-page .mobile-guide-article .biz-item-link:not([hidden]){
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  margin-top:7px;
+  padding:0 9px;
+  border:1px solid #dce7eb;
+  border-radius:9px;
+  background:#fff;
+  color:var(--detail-navy);
+  font-size:10.5px;
+  font-weight:900;
+  text-decoration:none;
+}
+body.mobile-detail-page .pc-link-wrap{
+  padding-top:0;
+}
