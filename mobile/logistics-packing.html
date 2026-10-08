@@ -8,11 +8,12 @@
 <title>포장비 | BIZZIP Mobile</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="mobile.css">
+<link rel="stylesheet" href="mobile.css?v=20261008-1205">
+<link rel="stylesheet" href="detailpages-20261008-1205.css">
 </head>
-<body class="mobile-guide-page">
+<body class="mobile-guide-page mobile-detail-page">
 <header class="m-header">
-<a class="m-logo" href="index.html"><img src="../bizzip-logo.png" alt="BIZZIP"></a>
+<a class="m-logo sub-wordmark" href="index.html" aria-label="BIZZIP 모바일 홈"><span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span></a>
 <div class="m-header-actions">
 <button class="icon-btn" id="searchOpen" type="button" aria-label="검색 열기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button>
 <button class="icon-btn" id="menuOpen" type="button" aria-label="메뉴 열기" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
@@ -64,16 +65,10 @@
 <div class="pc-link-wrap"><a class="pc-link" href="../logistics-packing.html">PC 버전 보기</a></div>
 </main>
 <footer class="m-footer"><strong>내 사업에 사소한 일은 없습니다. 비즈집</strong><span>© 2026 BIZZIP</span></footer>
-<nav class="bottom-nav" aria-label="모바일 빠른 메뉴">
-<a href="index.html"><span class="nav-icon">⌂</span><span>홈</span></a>
-<a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a>
-<a href="business.html" aria-current="page"><span class="nav-icon">▤</span><span>사업실무</span></a>
-<a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a>
-<a href="contact.html"><span class="nav-icon">◌</span><span>문의</span></a>
-</nav>
+<nav class="bottom-nav ref-bottom-nav" aria-label="모바일 빠른 메뉴"><a href="index.html"><span class="nav-icon">⌂</span><span>홈</span></a><a href="problems.html"><span class="nav-icon">⌕</span><span>문제별 해결</span></a><a href="contents.html"><span class="nav-icon">▧</span><span>콘텐츠</span></a><a href="contact.html"><span class="nav-icon">◌</span><span>문의</span></a></nav>
 <div class="backdrop" id="menuBackdrop" hidden></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
-<div class="drawer-head"><img src="../bizzip-logo.png" alt="BIZZIP"><button type="button" id="menuClose">×</button></div>
+<div class="drawer-head"><div class="sub-wordmark" aria-label="BIZZIP"><span class="wm-biz">BIZ</span><span class="wm-zip">ZIP</span></div><button type="button" id="menuClose">×</button></div>
 <nav>
 <a href="index.html"><strong>홈</strong><span>모바일 홈으로 이동</span></a>
 <a class="dark" href="problems.html"><strong>문제별 해결</strong><span>지금 겪는 문제에서 시작</span></a>
@@ -90,5 +85,5 @@
 <div class="search-head"><div class="search-box"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="searchInput" type="search" placeholder="궁금한 내용을 검색해보세요."></div><button type="button" id="searchClose">×</button></div>
 <div class="search-results" id="searchResults"></div>
 </section>
-<script src="mobile.js"></script>
+<script src="mobile-20261008-0756.js"></script>
 </body></html>
