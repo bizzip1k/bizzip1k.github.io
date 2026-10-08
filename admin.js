@@ -1105,6 +1105,8 @@ function wrapSaveWithMobileSync(id,label,fn,statusId){
   el.dataset.mobileSyncWrapped="1";
   el.onclick=async function(ev){
     await original.call(this,ev);
+    const statusBox=$(statusId);
+    if(statusBox?.classList.contains("err"))return;
     await runMobileSync(label,fn,statusId);
   };
 }
