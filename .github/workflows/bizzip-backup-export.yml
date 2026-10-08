@@ -1,0 +1,29 @@
+name: BIZZIP Backup Export
+
+on:
+  push:
+    branches:
+      - backup-export-temp-20261008
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact first-open snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: 7812dec01ab13b2df091a2ddbfb4af2b60680882
+          fetch-depth: 1
+      - name: Create exact GitHub snapshot ZIP
+        run: |
+          zip -r BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip . -x '.git/*'
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BIZZIP_GITHUB_RAW_2026-10-08_7812dec
+          path: BIZZIP_GITHUB_RAW_2026-10-08_7812dec.zip
+          if-no-files-found: error
+          retention-days: 7
