@@ -899,3 +899,222 @@ $("saveContact").onclick=async()=>{try{
 /* repeat helpers */
 function renderRep(id,arr,fields,preview){$(id).innerHTML=arr.map((x,i)=>`<div class="repeat-row" data-i="${i}"><div class="repeat-head"><strong>${i+1}번</strong><div class="actions"><button class="btn light mini rr-up">↑</button><button class="btn light mini rr-down">↓</button><button class="btn danger mini rr-del">삭제</button></div></div>${fields.map(([k,l])=>`<label class="label">${l}</label>${["desc","body","career"].includes(k)?`<textarea class="textarea rr-field" data-k="${k}" style="min-height:55px">${esc(x[k]||"")}</textarea>`:`<input class="input rr-field" data-k="${k}" value="${esc(x[k]||"")}">`}`).join("")}</div>`).join("");$(id).querySelectorAll(".repeat-row").forEach(r=>{const i=+r.dataset.i;r.querySelectorAll(".rr-field").forEach(e=>e.oninput=()=>{arr[i][e.dataset.k]=e.value;preview&&preview()});r.querySelector(".rr-up").onclick=()=>move(arr,i,-1,()=>renderRep(id,arr,fields,preview),preview);r.querySelector(".rr-down").onclick=()=>move(arr,i,1,()=>renderRep(id,arr,fields,preview),preview);r.querySelector(".rr-del").onclick=()=>{arr.splice(i,1);renderRep(id,arr,fields,preview);preview&&preview()}})}
 function syncProjects(sec,arr){const g=sec?.querySelector(".project-grid");if(g)g.innerHTML=arr.map(x=>`<article class="project-card"><span class="year">${esc(x.year)}</span><h3>${esc(x.name)}</h3><p><strong>${esc(x.topic)}</strong><br>${esc(x.desc)}</p></article>`).join("")}
+
+
+/* ===== BIZZIP PC -> Mobile content sync layer v1 (2026-10-08) =====
+   Keeps mobile layout/CSS intact and synchronizes only editable content.
+   The PC index and locked mobile landing remain intentionally independent. */
+function mobilePath(path=""){return "mobile/"+String(path||"").replace(/^mobile\//,"")}
+function mobileInternalHref(href=""){
+  const v=String(href||"").trim();
+  if(!v)return "";
+  if(/^(?:https?:|mailto:|tel:|#)/i.test(v))return v;
+  return v.replace(/^\.\.\//,"").split("/").pop();
+}
+function mobileItemLinkHtml(link=""){
+  const href=mobileInternalHref(link);
+  if(!href)return '<a class="biz-item-link" href="" hidden></a>';
+  const external=/^https?:/i.test(href);
+  return '<a class="biz-item-link" href="'+esc(href)+'"'+(external?' target="_blank" rel="noopener"':'')+'>바로가기 →</a>';
+}
+function mobileBusinessSectionHtml(s){
+  const kind=s.kind||"text",items=s.items||[];
+  const itemHtml=items.map(it=>'<div class="biz-section-item"><strong class="biz-item-title">'+esc(it.title||"")+'</strong><p class="biz-item-body">'+esc(it.body||"")+'</p>'+mobileItemLinkHtml(it.link||"")+'</div>').join("");
+  return '<section class="biz-flex-section" data-kind="'+esc(kind)+'"><h2 class="biz-section-title">'+esc(s.title||"")+'</h2><div class="biz-section-body">'+sectionBodyHtml(s.body||"")+'</div><div class="biz-section-items">'+itemHtml+'</div></section>';
+}
+async function getOptional(path){
+  try{return await get(path)}catch(e){if(String(e.message||"").startsWith("404 "))return null;throw e}
+}
+async function updateMobileFile(path,mutator,message){
+  const p=mobilePath(path),g=await getOptional(p);
+  if(!g)return null;
+  const d=doc(d64(g.content));
+  await mutator(d,g);
+  return put(p,out(d),g.sha,message||("Sync mobile "+path));
+}
+async function syncMobileBusinessLanding(){
+  await updateMobileFile("business.html",d=>{
+    setText(d,".mobile-page-hero h1",$("bizLandingTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("bizLandingSummary").value);
+    const grid=d.querySelector(".business-hub-grid");
+    if(grid){
+      const old=Array.from(grid.querySelectorAll(".business-hub-card")),tpl=old[0]?.cloneNode(true);
+      const oldByHref=new Map(old.map(a=>[a.getAttribute("href")||"",a]));
+      grid.innerHTML="";
+      S.business.categories.forEach(x=>{
+        let n=(oldByHref.get(mobileInternalHref(x.href))||tpl)?.cloneNode(true);
+        if(!n){n=d.createElement("a");n.className="business-hub-card";n.innerHTML='<div><strong></strong><p></p></div><em>›</em>'}
+        n.href=mobileInternalHref(x.href);setText(n,"strong",x.title);setText(n,"p",x.summary);grid.appendChild(n)
+      });
+    }
+  },"Sync mobile business landing");
+}
+async function syncMobileBusinessCategory(){
+  const x=S.business.categories[S.business.selected];if(!x)return;
+  await updateMobileFile(x.href,d=>{
+    setText(d,".mobile-page-hero h1",$("bizCatTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("bizCatSummary").value);
+    setText(d,".content-list-head h2",$("bizCatSectionTitle").value);
+    setText(d,".content-list-head p",$("bizCatSectionSummary").value);
+    const count=d.querySelector(".content-list-head > span");if(count)count.textContent=String((S.business.cat.topics||[]).length);
+    const grid=d.querySelector(".mobile-topic-list");
+    if(grid){
+      grid.innerHTML=(S.business.cat.topics||[]).map(t=>'<a class="mobile-topic-card" href="'+esc(mobileInternalHref(t.href))+'"><div><strong>'+esc(t.title)+'</strong><p>'+esc(t.summary)+'</p></div><em>›</em></a>').join("");
+    }
+  },"Sync mobile business category");
+}
+async function syncMobileBusinessDetail(){
+  const st=S.business.detail;if(!st?.path)return;
+  await updateMobileFile(st.path,d=>{
+    setText(d,".mobile-page-hero h1",$("bdFlexTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("bdFlexSummary").value);
+    const host=d.querySelector(".biz-flex-sections");
+    if(host)host.innerHTML=(st.flexSections||[]).map(mobileBusinessSectionHtml).join("");
+  },"Sync mobile business detail");
+}
+async function syncMobileProblemsLanding(){
+  await updateMobileFile("problems.html",d=>{
+    setText(d,".mobile-page-hero h1",$("prLandingTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("prLandingSummary").value);
+    const grid=d.querySelector(".problem-hub-grid");
+    if(grid){
+      const old=Array.from(grid.querySelectorAll(".problem-hub-card")),tpl=old[0]?.cloneNode(true);
+      const oldByHref=new Map(old.map(a=>[a.getAttribute("href")||"",a]));
+      grid.innerHTML="";
+      S.problems.roots.forEach((x,i)=>{
+        let n=(oldByHref.get(mobileInternalHref(x.href))||tpl)?.cloneNode(true);
+        if(!n){n=d.createElement("a");n.className="problem-hub-card";n.innerHTML='<div><strong></strong><p></p></div><em>›</em>'}
+        n.classList.toggle("dark",i===0);n.href=mobileInternalHref(x.href);setText(n,"strong",x.title);grid.appendChild(n)
+      });
+    }
+  },"Sync mobile problems landing");
+}
+async function syncMobileProblemPage(){
+  const root=S.problems.roots[S.problems.selected];if(!root)return;
+  await updateMobileFile(root.href,d=>{
+    setText(d,".mobile-page-hero h1",$("prPageTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("prPageSummary").value);
+    setText(d,".content-list-head h2",$("prSectionTitle").value);
+    setText(d,".content-list-head p",$("prSectionSummary").value);
+    const count=d.querySelector(".content-list-head > span");if(count)count.textContent=String((S.problems.page.subs||[]).length);
+    const grid=d.querySelector(".mobile-problem-solution-list");
+    if(grid)grid.innerHTML=(S.problems.page.subs||[]).map(x=>'<a class="mobile-problem-solution" href="'+esc(mobileInternalHref(x.href))+'"><div><strong>'+esc(x.title)+'</strong><p>'+esc(x.summary)+'</p></div><em>›</em></a>').join("");
+  },"Sync mobile problem page");
+}
+async function syncMobileContentsLanding(){
+  await updateMobileFile("contents.html",d=>{
+    setText(d,".mobile-page-hero h1",$("ctLandingTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("ctLandingSummary").value);
+  },"Sync mobile contents landing");
+}
+function resourceFormatFor(card,existing){
+  const prev=(existing||[]).find(x=>x.href===mobileInternalHref(card.href));
+  if(prev?.format)return prev.format;
+  const fp=(S.resources.selected>=0&&S.resources.cards[S.resources.selected]===card)?(S.resources.detail.file||""):"";
+  const ext=(fp.split(".").pop()||"").toUpperCase();
+  return ["CSV","XLSX","XLS","DOCX","PDF","PPTX"].includes(ext)?ext:"GUIDE";
+}
+async function syncMobileResourcesLanding(){
+  await updateMobileFile("resources.html",d=>{
+    setText(d,".mobile-page-hero h1",$("rsLandingTitle").value);
+    setText(d,".mobile-page-hero h1 + p",$("rsLandingSummary").value);
+    let existing=[];try{existing=JSON.parse(d.querySelector("#mobile-resource-data")?.textContent||"[]")}catch(_){}
+    const data=(S.resources.cards||[]).map(x=>{
+      const topic=(S.resources.topics||[]).find(t=>t.id===x.topic);
+      return {topic:topic?.label||"미분류",title:x.title,desc:x.summary,format:resourceFormatFor(x,existing),href:mobileInternalHref(x.href)}
+    });
+    let node=d.querySelector("#mobile-resource-data");
+    if(!node){node=d.createElement("script");node.id="mobile-resource-data";node.type="application/json";d.body.appendChild(node)}
+    node.textContent=JSON.stringify(data);
+    const count=d.querySelector("#resourceCount");if(count)count.textContent=String(data.length);
+  },"Sync mobile resources landing");
+}
+async function syncMobileResourceDetail(){
+  const st=S.resources.detail;if(!st?.path)return;
+  await updateMobileFile(st.path,d=>{
+    setText(d,".mobile-page-hero h1",$("rsTitle").value.trim());
+    setText(d,".mobile-page-hero h1 + p",$("rsSummary").value.trim());
+    const article=d.querySelector(".mobile-resource-detail .article")||d.querySelector(".article");
+    if(!article)return;
+    const h2s=Array.from(article.querySelectorAll(":scope > h2"));
+    if(h2s[0])h2s[0].textContent=$("rsUsageHeading").value;
+    const ul=article.querySelector(":scope > ul");if(ul)ul.innerHTML=lines($("rsUsage").value).map(x=>'<li>'+esc(x)+'</li>').join("");
+    setText(article,".practice-box strong",$("rsTipHeading").value);setText(article,".practice-box p",$("rsTip").value);
+    if(h2s[1])h2s[1].textContent=$("rsExampleHeading").value;
+    setText(article,".example-box strong",$("rsExampleLabel").value);setText(article,".example-box p",$("rsExample").value);
+    if(h2s[2])h2s[2].textContent=$("rsStepsHeading").value;
+    const ol=article.querySelector(".resource-steps");if(ol)ol.innerHTML=lines($("rsSteps").value).map(x=>'<li>'+esc(x)+'</li>').join("");
+    setText(article,".finish-box strong",$("rsFinishTitle").value);setText(article,".finish-box p",$("rsFinishBody").value);
+    let a=article.querySelector("a[download]");
+    if(st.file){
+      if(!a){const wrap=d.createElement("div");wrap.style.marginTop="24px";a=d.createElement("a");a.className="btn primary";a.setAttribute("download","");a.textContent="샘플 파일 내려받기";wrap.appendChild(a);article.appendChild(wrap)}
+      a.href="../"+String(st.file).replace(/^\.\.\//,"");
+    }else if(a){a.parentElement?.remove()}
+  },"Sync mobile resource detail");
+}
+async function syncMobileAbout(){
+  await updateMobileFile("about.html",d=>{
+    setText(d,".mobile-page-hero h1",$("abTitle").value);setText(d,".mobile-page-hero h1 + p",$("abSummary").value);
+    const person=(S.about.people||[])[0]||{};
+    setText(d,".about-person-copy h2",person.name||$("abPeopleTitle").value);
+    setText(d,".about-person-copy p",person.body||$("abPeopleSummary").value);
+    const img=d.querySelector(".about-person-photo img");if(img&&person.image)img.src="../"+person.image.replace(/^\.\.\//,"");
+    const career=d.querySelector(".about-career-list");if(career)career.innerHTML=lines(person.career||"").map(x=>'<div>'+esc(x)+'</div>').join("");
+    const secs=Array.from(d.querySelectorAll(".about-mobile-section"));
+    if(secs[0]){
+      setText(secs[0],".section-head h2",$("abConsultingTitle").value);
+      const list=secs[0].querySelector(".about-project-list");if(list)list.innerHTML=(S.about.consulting||[]).map(x=>'<article><span>'+esc(x.year)+'</span><strong>'+esc(x.name)+'</strong><p>'+esc((x.topic?x.topic+" — ":"")+x.desc)+'</p></article>').join("");
+    }
+    if(secs[1]){
+      setText(secs[1],".section-head h2",$("abBrandTitle").value);
+      const grid=secs[1].querySelector(".about-brand-grid");if(grid)grid.innerHTML=(S.about.brands||[]).map(x=>'<article><span>'+esc(x.year)+'</span><strong>'+esc(x.name)+'</strong><p>'+esc((x.topic?x.topic+" — ":"")+x.desc)+'</p></article>').join("");
+    }
+    if(secs[2]){
+      setText(secs[2],".section-head h2",$("abBookTitle").value);
+      const list=secs[2].querySelector(".about-book-list");if(list)list.innerHTML=(S.about.books||[]).map(x=>'<a href="'+esc(x.href||"#")+'" target="_blank" rel="noopener">'+(x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.title)+' 표지">':"")+'<div><span>'+esc(x.year)+'</span><strong>'+esc(x.title)+'</strong><p>'+esc(x.desc)+'</p></div></a>').join("");
+    }
+  },"Sync mobile about");
+}
+async function syncMobileContact(){
+  await updateMobileFile("contact.html",d=>{
+    const email=$("coEmail").value.trim(),kakao=$("coKakaoUrl").value.trim();
+    setText(d,".mobile-page-hero h1",$("coTitle").value.trim());setText(d,".mobile-page-hero h1 + p",$("coSummary").value.trim());
+    setHtmlWithBreaks(d.querySelector(".mobile-contact-main h2"),$("coMainTitle").value);
+    setText(d,".mobile-contact-main p",$("coMainBody").value.trim());
+    const mainMail=d.querySelector(".mobile-contact-main a");if(mainMail){mainMail.href="mailto:"+email;mainMail.textContent=email}
+    const grid=d.querySelector(".contact-type-grid");if(grid)grid.innerHTML=(S.contact.types||[]).map(x=>'<article><span>'+esc(x.label)+'</span><strong>'+esc(x.title)+'</strong><p>'+esc(x.body)+'</p></article>').join("");
+    const info=d.querySelector(".mobile-contact-info");if(info){
+      const as=info.querySelectorAll("a");if(as[0]){as[0].href="mailto:"+email;setText(as[0],"strong",email)}
+      if(as[1]){as[1].href=kakao||"#";setText(as[1],"strong",$("coKakao").value.trim()||"카카오톡 문의")}
+      const manager=info.querySelector("div");if(manager)setText(manager,"strong",$("coManager").value.trim());
+      setText(info,":scope > p",$("coPrivacy").value.trim());
+    }
+    const guide=d.querySelector(".contact-guide-card");if(guide){
+      setText(guide,":scope > span",$("coGuideTitle").value.trim());
+      const ol=guide.querySelector("ol");if(ol)ol.innerHTML=lines($("coGuideItems").value).map(x=>'<li>'+esc(x)+'</li>').join("");
+    }
+  },"Sync mobile contact");
+}
+async function runMobileSync(label,fn,statusId){
+  try{await fn();stat(statusId,"✓ "+label+"을 PC와 모바일에 함께 저장했습니다.","ok")}
+  catch(e){console.error("mobile sync",label,e);stat(statusId,"PC 저장은 완료했지만 모바일 동기화 점검이 필요합니다: "+e.message,"info")}
+}
+function wrapSaveWithMobileSync(id,label,fn,statusId){
+  const el=$(id);if(!el||el.dataset.mobileSyncWrapped)return;
+  const original=el.onclick;if(typeof original!=="function")return;
+  el.dataset.mobileSyncWrapped="1";
+  el.onclick=async function(ev){
+    await original.call(this,ev);
+    await runMobileSync(label,fn,statusId);
+  };
+}
+wrapSaveWithMobileSync("saveBizLanding","사업 실무 랜딩/1단계",syncMobileBusinessLanding,"businessStatus");
+wrapSaveWithMobileSync("saveBizCategory","사업 실무 선택 분야/2단계",syncMobileBusinessCategory,"businessStatus");
+wrapSaveWithMobileSync("bdSave","사업 실무 상세페이지",syncMobileBusinessDetail,"businessStatus");
+wrapSaveWithMobileSync("saveProblemLanding","문제별 해결 랜딩/1단계",syncMobileProblemsLanding,"problemStatus");
+wrapSaveWithMobileSync("saveProblemPage","문제별 해결 선택 문제/2단계",syncMobileProblemPage,"problemStatus");
+wrapSaveWithMobileSync("saveContentsLanding","콘텐츠 랜딩",syncMobileContentsLanding,"contentsStatus");
+wrapSaveWithMobileSync("saveResourceLanding","실무 자료 랜딩/목록",syncMobileResourcesLanding,"resourcesStatus");
+wrapSaveWithMobileSync("saveResourceDetail","실무 자료 상세",syncMobileResourceDetail,"resourcesStatus");
+wrapSaveWithMobileSync("saveAbout","BIZZIP 소개",syncMobileAbout,"aboutStatus");
+wrapSaveWithMobileSync("saveContact","문의",syncMobileContact,"contactStatus");
