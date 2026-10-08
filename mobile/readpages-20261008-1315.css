@@ -169,3 +169,32 @@ body.mobile-read-page .mobile-resource-detail .btn.secondary{
   body.mobile-read-page .mobile-resource-detail p,
   body.mobile-read-page .mobile-resource-detail li{font-size:12px}
 }
+
+
+/* ===== FINAL READING POLISH 2026-10-08 13:24 ===== */
+body.mobile-read-page .mobile-post-section{
+  padding-bottom:14px;
+}
+body.mobile-read-page .mobile-post-section h2{
+  margin-bottom:8px;
+}
+body.mobile-read-page .mobile-post-section p{
+  margin-bottom:9px;
+}
+body.mobile-read-page .mobile-post-divider{
+  margin-bottom:14px;
+}
+body.mobile-read-page .mobile-resource-detail h2{
+  margin-top:17px;
+}
+body.mobile-read-page .mobile-resource-detail .practice-box,
+body.mobile-read-page .mobile-resource-detail .example-box,
+body.mobile-read-page .mobile-resource-detail .finish-box{
+  margin:10px 0;
+  padding:13px 12px;
+}
+body.mobile-read-page .mobile-resource-detail .resource-steps li{
+  margin-bottom:6px;
+  padding-top:10px;
+  padding-bottom:10px;
+}
